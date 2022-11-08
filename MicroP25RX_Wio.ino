@@ -126,12 +126,24 @@ void tgz_dec_y();
 
 static int scap_count;
 static int did_sd_init;
-int gen_screencaps=1;
 
-//////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////
+#define DO_SCREENCAPS 0
+int gen_screencaps=DO_SCREENCAPS;
+////////////////////////////////////////////////////////////////////////////////////
+// when DO_SCREENCAPS==1, then generate screencaps throughout the menu system
+//
+// easy way to dump the LCD to the SD card, each subsequent call
+//
+// creates a new screencap file with .001, .002, ...  suffix
+//
+// The format is RGB 8-bit. Use ImageMagick convert to convert the files to png
+//
+// e.g. convert -depth 8 -size 320x240+0 rgb:screencap.1 screencap1.png
+//
+////////////////////////////////////////////////////////////////////////////////////
 void do_screencap() {
 
+#ifdef DO_SCREENCAPS==1
 File scap_file;
 uint8_t screencap_data[3 * 320 * 30];
 
@@ -152,6 +164,7 @@ char filename[64];
   scap_file = SD.open(filename, FILE_WRITE);
   if(scap_file==NULL) return;
 
+  //do 30 lines at a time so we don't take up too much ram
   tft.readRectRGB(0, 0, 320, 30, screencap_data);
   scap_file.write(screencap_data, 320*30*3);
   tft.readRectRGB(0, 30, 320, 30, screencap_data);
@@ -170,7 +183,7 @@ char filename[64];
   scap_file.write(screencap_data, 320*30*3);
 
   scap_file.close();
-
+#endif
 }
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
