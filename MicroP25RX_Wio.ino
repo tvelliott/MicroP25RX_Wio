@@ -22,7 +22,6 @@
 //SOFTWARE.
 
 
-
 #include "TFT_eSPI.h"
 #include "Free_Fonts.h"
 #include "Free_Keybord.h"
@@ -44,6 +43,10 @@ Keybord mykey; // Cleate a keybord
 #include <stdint.h>
 #include "crc32.h"  
 #include "metainfo.h"
+
+#include <Seeed_FS.h>
+#include <SD/Seeed_SD.h>
+
 
 meta_config_info minfo_config;
 
@@ -121,6 +124,49 @@ void tgz_dec_x();
 void tgz_inc_y();
 void tgz_dec_y();
 
+static int scap_count;
+static int did_sd_init;
+
+//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+void do_screencap() {
+
+File scap_file;
+uint8_t screencap_data[3 * 320 * 30];
+
+char filename[64];
+
+  sprintf(filename, "/screencap.%d", ++scap_count);
+
+
+  if(!did_sd_init && !SD.begin(SDCARD_SS_PIN, SDCARD_SPI)) {
+    return;
+  }
+  did_sd_init=1;
+
+  scap_file = SD.open(filename, FILE_WRITE);
+  if(scap_file==NULL) return;
+
+  tft.readRectRGB(0, 0, 320, 30, screencap_data);
+  scap_file.write(screencap_data, 320*30*3);
+  tft.readRectRGB(0, 30, 320, 30, screencap_data);
+  scap_file.write(screencap_data, 320*30*3);
+  tft.readRectRGB(0, 60, 320, 30, screencap_data);
+  scap_file.write(screencap_data, 320*30*3);
+  tft.readRectRGB(0, 90, 320, 30, screencap_data);
+  scap_file.write(screencap_data, 320*30*3);
+  tft.readRectRGB(0, 120, 320, 30, screencap_data);
+  scap_file.write(screencap_data, 320*30*3);
+  tft.readRectRGB(0, 150, 320, 30, screencap_data);
+  scap_file.write(screencap_data, 320*30*3);
+  tft.readRectRGB(0, 180, 320, 30, screencap_data);
+  scap_file.write(screencap_data, 320*30*3);
+  tft.readRectRGB(0, 210, 320, 30, screencap_data);
+  scap_file.write(screencap_data, 320*30*3);
+
+  scap_file.close();
+
+}
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
 void init_sprites() {
@@ -188,9 +234,8 @@ void setup()
   tft.setRotation(3);
   tft.fillScreen(TFT_BLACK);  //background
   tft.setFreeFont(FS18);
-
- 
   tft.fillScreen(TFT_BLACK);  //background
+
 
   init_sprites();
 
@@ -264,6 +309,8 @@ void loop()
         press_but_pressed = 0;
         memcpy((void *)&minfo_copy, (void *)&minfo_verified, sizeof(metainfo));
         metainfo *m = &minfo_copy;
+
+
         int ret = handle_button_mode();
         if(ret>=0) {
           current_button_mode = ret; 
@@ -430,6 +477,9 @@ void loop()
       press_but_pressed = 0;
       memcpy((void *)&minfo_copy, (void *)&minfo_verified, sizeof(metainfo));
       metainfo *m = &minfo_copy;
+
+      do_screencap();
+
       int ret = handle_button_mode();
       if(ret>=0) {
         current_button_mode = ret; 
