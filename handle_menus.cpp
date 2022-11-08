@@ -153,10 +153,21 @@ void handle_main_menu(metainfo *m)
       clr_screen();
    }
    else if( ret==2 ) {  //EDIT SYSTEM
-      int ret2 = get_menu_choice(8,"EDIT  SYSTEM  NAME","EDIT  TG  NAME","DISABLE  TG","TG  HOLD  TIME","ALLOW  UNKNOWN","EDIT  ALIAS", "EDIT  SITE  NAME", "TG  PRIORITY  INT");
+      int ret2 = get_menu_choice(8,
+        "EDIT  ALIAS",  //0
+        "EDIT  SYSTEM  NAME",//1
+        "EDIT  SITE  NAME", //2
+        "EDIT  TG  NAME",//3
+        "TG  HOLD  TIME",//4
+        "ALLOW  UNKNOWN",//5
+        "DISABLE  TG",//6
+        "TG  PRIORITY  INT"//7
+        );
+
+
       if(ret2==-1) return;
 
-      if(ret2==0) { //edit system name
+      if(ret2==1) { //edit system name
         tft.setTextColor(TFT_GREEN, TFT_BLACK); 
         clr_screen();
         FNT=4;
@@ -172,7 +183,7 @@ void handle_main_menu(metainfo *m)
         send_cmd( cmd, strlen(cmd));
       }
 
-      if( ret2==3 ) { //tgtimeout
+      if( ret2==4 ) { //tgtimeout
         int ret3 = get_menu_choice(8,"100 ms","500 ms", "1 sec","2 sec (default)","5 sec","10 sec","30 sec","60 sec");
         if(ret3==-1) return;
 
@@ -191,7 +202,7 @@ void handle_main_menu(metainfo *m)
         send_cmd(cmd,strlen(cmd));
       }
 
-      if( ret2==4 ) { //allow unknown
+      if( ret2==5 ) { //allow unknown
         int ret3 = get_menu_choice(2,"DISABLE","ENABLE", NULL,NULL,NULL,NULL,NULL,NULL);
         if(ret3==-1) return;
 
@@ -200,7 +211,7 @@ void handle_main_menu(metainfo *m)
         send_cmd(cmd,strlen(cmd));
       }
 
-      if(ret2==1) { //edit tg name
+      if(ret2==3) { //edit tg name
         tft.setTextColor(TFT_GREEN, TFT_BLACK); 
         clr_screen();
         FNT=4;
@@ -216,7 +227,7 @@ void handle_main_menu(metainfo *m)
         send_cmd( cmd, strlen(cmd));
       }
 
-      if(ret2==5) { //edit alias 
+      if(ret2==0) { //edit alias 
         tft.setTextColor(TFT_GREEN, TFT_BLACK); 
         clr_screen();
 
@@ -238,7 +249,7 @@ void handle_main_menu(metainfo *m)
         }
       }
 
-      if(ret2==6) { //edit site name
+      if(ret2==2) { //edit site name
         tft.setTextColor(TFT_GREEN, TFT_BLACK); 
         clr_screen();
         FNT=4;
@@ -254,7 +265,7 @@ void handle_main_menu(metainfo *m)
         send_cmd( cmd, strlen(cmd));
       }
 
-      if(ret2==2) { //disable talkgroup
+      if(ret2==6) { //disable talkgroup
         char cmd[64];
         snprintf(cmd,63,"tgen %u 0\r\n", m->tg_s); 
         send_cmd( cmd, strlen(cmd));
