@@ -126,6 +126,7 @@ void tgz_dec_y();
 
 static int scap_count;
 static int did_sd_init;
+int gen_screencaps=1;
 
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
@@ -310,6 +311,7 @@ void loop()
         memcpy((void *)&minfo_copy, (void *)&minfo_verified, sizeof(metainfo));
         metainfo *m = &minfo_copy;
 
+        if(gen_screencaps) do_screencap();
 
         int ret = handle_button_mode();
         if(ret>=0) {
@@ -401,6 +403,9 @@ void loop()
     //pressed and released
     if (press_but_pressed && press_but == 0x00) { //select button mode menu
       press_but_pressed = 0;
+
+      if(gen_screencaps) do_screencap();
+
       int ret = handle_button_mode();
       if(ret>=0) {
         current_button_mode = ret; 
@@ -478,7 +483,7 @@ void loop()
       memcpy((void *)&minfo_copy, (void *)&minfo_verified, sizeof(metainfo));
       metainfo *m = &minfo_copy;
 
-      do_screencap();
+      if(gen_screencaps) do_screencap();
 
       int ret = handle_button_mode();
       if(ret>=0) {

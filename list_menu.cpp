@@ -29,6 +29,9 @@
 #include "Free_Fonts.h"
 #include "metainfo.h"
 
+extern int gen_screencaps; 
+extern void do_screencap(void);        
+
 extern TFT_eSPI tft;
 
 static int choice=0;
@@ -185,6 +188,7 @@ int get_menu_choice(int nchoices, char *str1, char *str2, char *str3, char *str4
       } else if (digitalRead(WIO_5S_PRESS) == LOW) {
         delay(db_delay);
         if (digitalRead(WIO_5S_PRESS) == LOW) {
+          if(gen_screencaps) do_screencap();
           break;
         }
       }

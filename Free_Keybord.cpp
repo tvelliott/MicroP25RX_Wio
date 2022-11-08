@@ -36,6 +36,9 @@
 #include "Free_Fonts.h"
 #include "Free_Keybord.h"
 
+extern int gen_screencaps;
+extern void do_screencap(void);        
+
 extern TFT_eSPI tft;
 extern TFT_eSprite spr;
 
@@ -467,6 +470,8 @@ String text_input_5waySwitch(Keybord mykey,int xi,int yi, String init_str, int a
       delay(rep_delay);
     }
   }
+
+  if(gen_screencaps) do_screencap();
   return text_i;
 }
 
