@@ -127,8 +127,8 @@ void tgz_dec_y();
 static int scap_count;
 static int did_sd_init;
 
-#define DO_SCREENCAPS 0
-int gen_screencaps=DO_SCREENCAPS;
+#define DO_SCREENCAPS 1
+int gen_screencaps=0;
 ////////////////////////////////////////////////////////////////////////////////////
 // when DO_SCREENCAPS==1, then generate screencaps throughout the menu system
 //

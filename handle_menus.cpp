@@ -33,6 +33,7 @@
 #include "metainfo.h"
 
 extern TFT_eSPI tft;
+extern int gen_screencaps;
 
 void clr_cmd(void);
 void clr_screen(void);
@@ -275,7 +276,7 @@ void handle_main_menu(metainfo *m)
       clr_screen();
    }
    else if( ret==3 ) {  //SD CARD
-      int ret2 = get_menu_choice(7,"CANCEL","BACKUP","RESTORE","GEN  SUMMARY  REPORT", "IMPORT  TALK  GROUPS","IMPORT  SITES","IMPORT  ALIASES",NULL);
+      int ret2 = get_menu_choice(8,"CANCEL","BACKUP","RESTORE","GEN  SUMMARY  REPORT", "IMPORT  TALK  GROUPS","IMPORT  SITES","IMPORT  ALIASES","DO  SCREEN  CAPS");
       if(ret2==-1) return;
 
       if(ret2==4) { //import tg
@@ -308,6 +309,11 @@ void handle_main_menu(metainfo *m)
         char cmd[64];
         snprintf(cmd,63,"gen_summary\r\n"); 
         send_cmd( cmd, strlen(cmd));
+      }
+      if( ret2==7 ) { //screen caps
+        int ret3 = get_menu_choice(2,"DISABLE","ENABLE", NULL,NULL,NULL,NULL,NULL,NULL);
+        if(ret3==-1) return;
+        gen_screencaps = ret3;
       }
 
       clr_buttons();
@@ -370,6 +376,7 @@ void handle_main_menu(metainfo *m)
         snprintf(cmd,63,"vol %3.1f\r\n", v);
         send_cmd(cmd,strlen(cmd));
       }
+
 
       if( ret2==2 ) { //audio agc
         int ret3 = get_menu_choice(2,"DISABLE","ENABLE", NULL,NULL,NULL,NULL,NULL,NULL);
