@@ -30,6 +30,8 @@
 #include "meta_config_info.h"
 #include "metainfo.h"
 
+extern int gen_screencaps; 
+extern void do_screencap(void);        
 extern TFT_eSPI tft;
 extern int current_button_mode;
 extern TFT_eSprite spr;
@@ -356,6 +358,7 @@ typedef struct {
         return;
       } else if (digitalRead(WIO_5S_PRESS) == LOW) {
         delay(100);
+         if(gen_screencaps) do_screencap();
         return;
       }
 

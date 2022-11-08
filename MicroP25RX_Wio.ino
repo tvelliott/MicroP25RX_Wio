@@ -145,6 +145,10 @@ char filename[64];
   }
   did_sd_init=1;
 
+  if( SD.exists(filename) ) {
+    SD.remove(filename);
+  }
+
   scap_file = SD.open(filename, FILE_WRITE);
   if(scap_file==NULL) return;
 
