@@ -105,7 +105,7 @@ typedef struct __attribute__( ( packed ) )
   uint8_t slot_b;
   uint32_t send_const_count;
   uint8_t roam;
-  uint32_t dmr_current_talkgroup;
+  uint32_t padding1;
   uint32_t global_sync_count;
   uint16_t tgzone_s;
   uint32_t lsm_std;
