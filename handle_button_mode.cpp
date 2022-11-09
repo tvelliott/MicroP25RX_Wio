@@ -33,6 +33,8 @@
 
 extern TFT_eSPI tft;
 extern int current_button_mode;
+extern int gen_screencaps; 
+extern void do_screencap(void);        
 
 void clr_screen(void);
 void send_cmd(const char *str, int len);
@@ -48,6 +50,8 @@ int handle_button_mode(void)
   current_button_mode = ret;
   char cmd[64];
   snprintf(cmd,63,"wio_but_mode %u\r\n", ret);
+
+  if(gen_screencaps) do_screencap();
 
   send_cmd(cmd,strlen(cmd));
   clr_screen();
