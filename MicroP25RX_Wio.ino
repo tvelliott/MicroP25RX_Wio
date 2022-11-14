@@ -808,7 +808,7 @@ void loop()
             sprintf(disp_buf, "MODE: CONFIG  ROAM-PAUSE" );
           }
           else {
-              sprintf(disp_buf, " " );
+              sprintf(disp_buf, "MODE: CONFIG          " );
           }
         }
         else if( current_button_mode==WIO_BUTTON_MODE_MONITOR ) {
