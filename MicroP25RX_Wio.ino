@@ -783,7 +783,8 @@ void loop()
       }
       strcpy(line6_str, disp_buf);
 
-      if(mptr->on_control_b && mptr->total_session_time>1500) {
+      //if(mptr->on_control_b && mptr->total_session_time>1500) {
+      if(mptr->on_control_b ) {
         sprintf(disp_buf, "TSBK/SEC %u    REF %u        ", mptr->tsbk_sec, mptr->ref_freq_cal );
       }
       else {
