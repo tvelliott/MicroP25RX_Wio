@@ -46,6 +46,153 @@ extern Keybord mykey; // Cleate a keybord
 
 void menu_set_font_size(int size);
 
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void do_edit(metainfo *m) {
+  int ret2 = get_menu_choice(8,
+    "EDIT  ALIAS",  //0
+    "EDIT  SYSTEM  NAME",//1
+    "EDIT  SITE  NAME", //2
+    "EDIT  TG  NAME",//3
+    "TG  HOLD  TIME",//4
+    "ALLOW  UNKNOWN",//5
+    "DISABLE  TG",//6
+    "TG  PRIORITY  INT"//7
+    );
+
+
+  if(ret2==-1) {
+    return;
+  }
+
+  if(ret2==1) { //edit system name
+    tft.setTextColor(TFT_GREEN, TFT_BLACK); 
+    clr_screen();
+    FNT=4;
+    tft.drawString("System Name", 5, 10, FNT);
+    mykey.set_flag(2);	//start with alpha 
+    mykey.set_cur(28);	//start key
+    draw_keybord(mykey, 0, 110, 320, 120, 32, 1);
+    String system_name = text_input_5waySwitch(mykey,35,60, String((char *) m->sys_name));
+    system_name.replace(" ","_");
+    system_name.trim();
+    char cmd[64];
+    snprintf(cmd,63,"sys_name 0x%05X 0x%03X %s\r\n", m->wacn_id, m->sys_id, system_name.c_str()); 
+    send_cmd( cmd, strlen(cmd));
+  }
+
+  if( ret2==4 ) { //tgtimeout
+    int ret3 = get_menu_choice(8,"100 ms","500 ms", "1 sec","2 sec (default)","5 sec","10 sec","30 sec","60 sec");
+    if(ret3==-1) return;
+
+    int to = 2000; 
+    if(ret3==0) to=100; 
+    if(ret3==1) to=500; 
+    if(ret3==2) to=1000;
+    if(ret3==3) to=2000; 
+    if(ret3==4) to=5000; 
+    if(ret3==5) to=10000; 
+    if(ret3==6) to=30000; 
+    if(ret3==7) to=60000; 
+
+    char cmd[64];
+    snprintf(cmd,63,"tgtimeout %u\r\n", to);
+    send_cmd(cmd,strlen(cmd));
+  }
+
+  if( ret2==5 ) { //allow unknown
+    int ret3 = get_menu_choice(2,"DISABLE","ENABLE", NULL,NULL,NULL,NULL,NULL,NULL);
+    if(ret3==-1) return;
+
+    char cmd[64];
+    snprintf(cmd,63,"allow_unknown %u\r\n", ret3);
+    send_cmd(cmd,strlen(cmd));
+  }
+
+  if(ret2==3) { //edit tg name
+    tft.setTextColor(TFT_GREEN, TFT_BLACK); 
+    clr_screen();
+    FNT=4;
+    tft.drawString("TG AlphaTag", 5, 10, FNT);
+    mykey.set_flag(2);	//start with alpha 
+    mykey.set_cur(28);	//start key
+    draw_keybord(mykey, 0, 110, 320, 120, 32, 1);
+    String alpha_tag = text_input_5waySwitch(mykey,35,60, String((char *) m->alpha));
+    alpha_tag.replace(" ","_");
+    alpha_tag.trim();
+    char cmd[64];
+    snprintf(cmd,63,"tgalpha 0x%05X 0x%03X %u %s\r\n", m->wacn_id, m->sys_id, m->tg_s, alpha_tag.c_str()); 
+    send_cmd( cmd, strlen(cmd));
+  }
+
+  if(ret2==0) { //edit alias 
+    tft.setTextColor(TFT_GREEN, TFT_BLACK); 
+    clr_screen();
+
+    if(m->RID==0) {
+      //handle this
+    }
+    else {
+      FNT=4;
+      tft.drawString("RID ALIAS", 5, 10, FNT);
+      mykey.set_flag(2);	//start with alpha 
+      mykey.set_cur(28);	//start key
+      draw_keybord(mykey, 0, 110, 320, 120, 32, 1);
+      String alias = text_input_5waySwitch(mykey,35,60, String((char *) m->alias));
+      alias.replace(" ","_");
+      alias.trim();
+      char cmd[64];
+      snprintf(cmd,63,"ridalias 0x%05X 0x%03X %u %s\r\n", m->wacn_id, m->sys_id, m->RID, alias.c_str()); 
+      send_cmd( cmd, strlen(cmd));
+    }
+  }
+
+  if(ret2==2) { //edit site name
+    tft.setTextColor(TFT_GREEN, TFT_BLACK); 
+    clr_screen();
+    FNT=4;
+    tft.drawString("SITE NAME", 5, 10, FNT);
+    mykey.set_flag(2);	//start with alpha 
+    mykey.set_cur(28);	//start key
+    draw_keybord(mykey, 0, 110, 320, 120, 32, 1);
+    String sitename = text_input_5waySwitch(mykey,35,60, String((char *) m->site_name));
+    sitename.replace(" ","_");
+    sitename.trim();
+    char cmd[64];
+    snprintf(cmd,63,"site_name 0x%05X 0x%03X %u %u %s\r\n", m->wacn_id, m->sys_id, m->site_id, m->rf_id, sitename.c_str()); 
+    send_cmd( cmd, strlen(cmd));
+  }
+
+  if(ret2==6) { //disable talkgroup
+    char cmd[64];
+    if(follow!=0) {
+      snprintf(cmd,63,"tgen %u 0\r\n", follow); 
+    }
+    else {
+      snprintf(cmd,63,"tgen %u 0\r\n", m->tg_s); 
+    }
+    send_cmd( cmd, strlen(cmd));
+  }
+
+  if( ret2==7 ) { //audio agc
+    int ret3 = get_menu_choice(3,"DISABLE","ENABLE NO TONE", "ENABLE WITH TONE",NULL,NULL,NULL,NULL,NULL);
+    if(ret3==-1) return;
+
+
+    char cmd[64];
+    snprintf(cmd,63,"en_tg_pri_int %u\r\n", ret3);
+    send_cmd(cmd,strlen(cmd));
+  }
+
+
+  clr_buttons();
+
+  clr_screen();
+}
+
+
+
 void handle_main_menu(metainfo *m) 
 {
   int ret = get_menu_choice(8,"ZIP  CODE  SEARCH","ADD  P25  SYSTEM","EDIT","SD  CARD","FLASH  CONFIG","AUDIO","ROAMING CFG","ROAM  TIMEOUT");
@@ -154,143 +301,9 @@ void handle_main_menu(metainfo *m)
       clr_screen();
    }
    else if( ret==2 ) {  //EDIT SYSTEM
-      int ret2 = get_menu_choice(8,
-        "EDIT  ALIAS",  //0
-        "EDIT  SYSTEM  NAME",//1
-        "EDIT  SITE  NAME", //2
-        "EDIT  TG  NAME",//3
-        "TG  HOLD  TIME",//4
-        "ALLOW  UNKNOWN",//5
-        "DISABLE  TG",//6
-        "TG  PRIORITY  INT"//7
-        );
 
+     do_edit(m);
 
-      if(ret2==-1) return;
-
-      if(ret2==1) { //edit system name
-        tft.setTextColor(TFT_GREEN, TFT_BLACK); 
-        clr_screen();
-        FNT=4;
-        tft.drawString("System Name", 5, 10, FNT);
-        mykey.set_flag(2);	//start with alpha 
-        mykey.set_cur(28);	//start key
-        draw_keybord(mykey, 0, 110, 320, 120, 32, 1);
-        String system_name = text_input_5waySwitch(mykey,35,60, String((char *) m->sys_name));
-        system_name.replace(" ","_");
-        system_name.trim();
-        char cmd[64];
-        snprintf(cmd,63,"sys_name 0x%05X 0x%03X %s\r\n", m->wacn_id, m->sys_id, system_name.c_str()); 
-        send_cmd( cmd, strlen(cmd));
-      }
-
-      if( ret2==4 ) { //tgtimeout
-        int ret3 = get_menu_choice(8,"100 ms","500 ms", "1 sec","2 sec (default)","5 sec","10 sec","30 sec","60 sec");
-        if(ret3==-1) return;
-
-        int to = 2000; 
-        if(ret3==0) to=100; 
-        if(ret3==1) to=500; 
-        if(ret3==2) to=1000;
-        if(ret3==3) to=2000; 
-        if(ret3==4) to=5000; 
-        if(ret3==5) to=10000; 
-        if(ret3==6) to=30000; 
-        if(ret3==7) to=60000; 
-
-        char cmd[64];
-        snprintf(cmd,63,"tgtimeout %u\r\n", to);
-        send_cmd(cmd,strlen(cmd));
-      }
-
-      if( ret2==5 ) { //allow unknown
-        int ret3 = get_menu_choice(2,"DISABLE","ENABLE", NULL,NULL,NULL,NULL,NULL,NULL);
-        if(ret3==-1) return;
-
-        char cmd[64];
-        snprintf(cmd,63,"allow_unknown %u\r\n", ret3);
-        send_cmd(cmd,strlen(cmd));
-      }
-
-      if(ret2==3) { //edit tg name
-        tft.setTextColor(TFT_GREEN, TFT_BLACK); 
-        clr_screen();
-        FNT=4;
-        tft.drawString("TG AlphaTag", 5, 10, FNT);
-        mykey.set_flag(2);	//start with alpha 
-        mykey.set_cur(28);	//start key
-        draw_keybord(mykey, 0, 110, 320, 120, 32, 1);
-        String alpha_tag = text_input_5waySwitch(mykey,35,60, String((char *) m->alpha));
-        alpha_tag.replace(" ","_");
-        alpha_tag.trim();
-        char cmd[64];
-        snprintf(cmd,63,"tgalpha 0x%05X 0x%03X %u %s\r\n", m->wacn_id, m->sys_id, m->tg_s, alpha_tag.c_str()); 
-        send_cmd( cmd, strlen(cmd));
-      }
-
-      if(ret2==0) { //edit alias 
-        tft.setTextColor(TFT_GREEN, TFT_BLACK); 
-        clr_screen();
-
-        if(m->RID==0) {
-          //handle this
-        }
-        else {
-          FNT=4;
-          tft.drawString("RID ALIAS", 5, 10, FNT);
-          mykey.set_flag(2);	//start with alpha 
-          mykey.set_cur(28);	//start key
-          draw_keybord(mykey, 0, 110, 320, 120, 32, 1);
-          String alias = text_input_5waySwitch(mykey,35,60, String((char *) m->alias));
-          alias.replace(" ","_");
-          alias.trim();
-          char cmd[64];
-          snprintf(cmd,63,"ridalias 0x%05X 0x%03X %u %s\r\n", m->wacn_id, m->sys_id, m->RID, alias.c_str()); 
-          send_cmd( cmd, strlen(cmd));
-        }
-      }
-
-      if(ret2==2) { //edit site name
-        tft.setTextColor(TFT_GREEN, TFT_BLACK); 
-        clr_screen();
-        FNT=4;
-        tft.drawString("SITE NAME", 5, 10, FNT);
-        mykey.set_flag(2);	//start with alpha 
-        mykey.set_cur(28);	//start key
-        draw_keybord(mykey, 0, 110, 320, 120, 32, 1);
-        String sitename = text_input_5waySwitch(mykey,35,60, String((char *) m->site_name));
-        sitename.replace(" ","_");
-        sitename.trim();
-        char cmd[64];
-        snprintf(cmd,63,"site_name 0x%05X 0x%03X %u %u %s\r\n", m->wacn_id, m->sys_id, m->site_id, m->rf_id, sitename.c_str()); 
-        send_cmd( cmd, strlen(cmd));
-      }
-
-      if(ret2==6) { //disable talkgroup
-        char cmd[64];
-        if(follow!=0) {
-          snprintf(cmd,63,"tgen %u 0\r\n", follow); 
-        }
-        else {
-          snprintf(cmd,63,"tgen %u 0\r\n", m->tg_s); 
-        }
-        send_cmd( cmd, strlen(cmd));
-      }
-
-      if( ret2==7 ) { //audio agc
-        int ret3 = get_menu_choice(3,"DISABLE","ENABLE NO TONE", "ENABLE WITH TONE",NULL,NULL,NULL,NULL,NULL);
-        if(ret3==-1) return;
-
-
-        char cmd[64];
-        snprintf(cmd,63,"en_tg_pri_int %u\r\n", ret3);
-        send_cmd(cmd,strlen(cmd));
-      }
-
-
-      clr_buttons();
-
-      clr_screen();
    }
    else if( ret==3 ) {  //SD CARD
       int ret2 = get_menu_choice(8,"CANCEL","BACKUP","RESTORE","GEN  SUMMARY  REPORT", "IMPORT  TALK  GROUPS","IMPORT  SITES","IMPORT  ALIASES","DO  SCREEN  CAPS");

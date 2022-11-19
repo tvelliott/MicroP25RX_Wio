@@ -54,6 +54,7 @@ static uint32_t roam_time;
 
 extern volatile int cmd_acked;
 
+void do_edit(metainfo *m);
 uint8_t tg_zones[16][7];
 void draw_tg_zones(void);
 void tg_toggle_select(void);
@@ -65,8 +66,10 @@ metainfo minfo_verified;
 metainfo minfo_copy;
 static int clean_wio_line2;
 
-extern uint32_t button_press_time;
+extern uint32_t b_button_press_time;
+extern uint32_t c_button_press_time;
 static int did_save;
+static int did_edit;
 int current_button_mode=-1;
 static int prev_button_mode=-1;
 
@@ -292,7 +295,8 @@ void setup()
 
   clr_buttons();
   did_save=0;
-  button_press_time=0;
+  b_button_press_time=0;
+  c_button_press_time=0;
   
 }
 
@@ -305,15 +309,31 @@ void loop()
 	check_buttons();
 
 
+  //middle-top button held for more than 3 seconds?
+  if(!did_edit && C_but_pressed && (millis()-c_button_press_time > 1000) && C_but==0xff) {
+    //do edit here
+
+    memcpy((void *)&minfo_copy, (void *)&minfo_verified, sizeof(metainfo));
+    metainfo *m = &minfo_copy;
+    do_edit(m);
+    clr_screen();
+    did_edit=1;
+  }
+  else if(did_edit && C_but==0x00) {
+    did_edit=0;
+    c_button_press_time=0;
+    C_but_pressed=0;
+  }
+
 
   //middle-top button held for more than 3 seconds?
-  if(!did_save && B_but_pressed && (millis()-button_press_time > 3000) && B_but==0xff) {
+  if(!did_save && B_but_pressed && (millis()-b_button_press_time > 3000) && B_but==0xff) {
     send_cmd("save",4);  //save config
     did_save=1;
   }
   else if(did_save && B_but==0x00) {
     did_save=0;
-    button_press_time=0;
+    b_button_press_time=0;
     B_but_pressed=0;
   }
 
@@ -374,6 +394,7 @@ void loop()
       //left-most button
       if (C_but_pressed && C_but == 0x00) {
         C_but_pressed = 0;
+        c_button_press_time=0;
 
         metainfo *mptr = &minfo_verified;
         char cmd[32];
@@ -389,7 +410,7 @@ void loop()
       //middle-most button
       if(B_but_pressed && B_but == 0x00) { //configuration menu
         B_but_pressed = 0;
-        button_press_time=0;
+        b_button_press_time=0;
 
 
         memcpy((void *)&minfo_copy, (void *)&minfo_verified, sizeof(metainfo));
@@ -526,6 +547,7 @@ void loop()
     //left-most button
     if (C_but_pressed && C_but == 0x00) { //TG HOLD
       C_but_pressed = 0;
+      c_button_press_time=0;
       char cmd[32];
       if(follow==0) {
         snprintf(cmd, 31, "f %d\r\n",prev_tgs); 
@@ -539,7 +561,7 @@ void loop()
     //middle-most button
     if(B_but_pressed && B_but == 0x00) { //MUTE
       B_but_pressed = 0;
-      button_press_time=0;
+      b_button_press_time=0;
 
       char cmd[32];
       snprintf(cmd, 31, "audio_mute %u\r\n", (mute^0x01) );
@@ -667,7 +689,8 @@ void loop()
         clr_buttons();
 
         did_save=0;
-        button_press_time=0;
+        b_button_press_time=0;
+        c_button_press_time=0;
       }
 
       prev_button_mode = current_button_mode;

@@ -50,7 +50,8 @@ int C_but_pressed;
 volatile int cmd_acked;
 
 
-uint32_t button_press_time;
+uint32_t b_button_press_time;
+uint32_t c_button_press_time;
 
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
@@ -112,10 +113,11 @@ void check_buttons() {
   }
   if (B_but == 0xff) {
     B_but_pressed = 1;
-    if(button_press_time==0) button_press_time = millis();
+    if(b_button_press_time==0) b_button_press_time = millis();
   }
   if (C_but == 0xff) {
     C_but_pressed = 1;
+    if(c_button_press_time==0) c_button_press_time = millis();
   }
 }
 
