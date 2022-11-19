@@ -34,6 +34,7 @@
 
 extern TFT_eSPI tft;
 extern int gen_screencaps;
+extern int follow;
 
 void clr_cmd(void);
 void clr_screen(void);
@@ -267,7 +268,12 @@ void handle_main_menu(metainfo *m)
 
       if(ret2==6) { //disable talkgroup
         char cmd[64];
-        snprintf(cmd,63,"tgen %u 0\r\n", m->tg_s); 
+        if(follow!=0) {
+          snprintf(cmd,63,"tgen %u 0\r\n", follow); 
+        }
+        else {
+          snprintf(cmd,63,"tgen %u 0\r\n", m->tg_s); 
+        }
         send_cmd( cmd, strlen(cmd));
       }
 

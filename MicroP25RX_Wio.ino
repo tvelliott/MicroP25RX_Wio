@@ -111,7 +111,7 @@ static int FNT = 4;
 static uint8_t demod;
 static uint8_t inc_in_scan;
 static uint8_t learn;
-static int32_t follow;
+int32_t follow;
 static int32_t mute;
 uint16_t tgzone;
 
