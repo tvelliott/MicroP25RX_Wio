@@ -363,7 +363,7 @@ void loop()
       //pressed and released
       if (right_but_pressed && right_but == 0x00) {
         right_but_pressed = 0;
-        send_cmd("nfreq",5);  //next primary/active frequency
+        send_cmd("nfreq_force",11);  //next primary/active frequency
       }
       //pressed and released
       if (left_but_pressed && left_but == 0x00) {
@@ -536,7 +536,7 @@ void loop()
     //pressed and released
     if (right_but_pressed && right_but == 0x00) {
       right_but_pressed = 0;
-      send_cmd("nfreq",5);  //next primary/active frequency
+      send_cmd("nfreq_force",11);  //next primary/active frequency
     }
     //pressed and released
     if (left_but_pressed && left_but == 0x00) {
