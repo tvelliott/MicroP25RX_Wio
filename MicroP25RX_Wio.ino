@@ -786,10 +786,10 @@ void loop()
            spr.fillSprite(TFT_BLACK);
            for (int i = 0; i < 128; i++) {
              if(i>0) {
-               spr.drawLine(i, 200-(int)fft_data[i], i+1, 200-(int)fft_data[i+1], TFT_GREEN);
+               spr.drawLine(i, (200-(int)fft_data[i])+90, i+1, (200-(int)fft_data[i+1])+90, TFT_GREEN);
              }
            }
-           spr.pushSprite(5,5);  //send to lcd. upper left corner of sprite
+           spr.pushSprite(5,0);  //send to lcd. upper left corner of sprite
            spr.deleteSprite();  //free memory
          }
          #if 1
@@ -817,7 +817,7 @@ void loop()
 
              spr.fillCircle(40+ii, 40+qq, 1, TFT_YELLOW);  //symbols
            }
-           spr.pushSprite(200,120);  //send to lcd. upper left corner of sprite
+           spr.pushSprite(150,115);  //send to lcd. upper left corner of sprite
            spr.deleteSprite();  //free memory
          }
          #endif
@@ -855,15 +855,21 @@ void loop()
              spr.fillSprite(TFT_BLACK);
 
              for (int i = 0; i < 128-2; i+=2) {
-               spr.drawLine(40+iq8_data[i], 40+iq8_data[i+1], 40+iq8_data[i+2], 40+iq8_data[i+3], TFT_GREEN);
+               spr.drawLine(40+iq8_data[i], 40+iq8_data[i+1], 40+iq8_data[i+2], 40+iq8_data[i+3], TFT_CYAN);
              }
 
-             spr.pushSprite(200,25);  //send to lcd. upper left corner of sprite
+             spr.pushSprite(150,20);  //send to lcd. upper left corner of sprite
            //}
            spr.deleteSprite();  //free memory
          }
          #endif
 
+        FNT=4;
+        tft.setFreeFont(NULL);
+        tft.setTextColor(TFT_WHITE, TFT_BLACK);
+
+        sprintf(disp_buf, "EVM %3.1f  RSSI %3.1f dBm    ", mptr->evm_p, mptr->rssi_f );
+        tft.drawString(disp_buf, 5, 210, FNT);
 
          goto draw_end;  //it really is ok to use goto. don't worry about it.
       }
