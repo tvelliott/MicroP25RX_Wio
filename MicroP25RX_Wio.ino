@@ -834,9 +834,9 @@ void loop()
 
             __disable_irq();
             do_draw_rx = 0;
-            if(iq8_idx==0) {
+            //if(iq8_idx==0) {
               memcpy( (uint8_t *) &iq8_data[0], (uint8_t *) mptr->data, FFT_M);
-            }
+            //}
            #if 0
             else if(iq8_idx==1) {
               memcpy( (uint8_t *) &iq8_data[128], (uint8_t *) mptr->data, FFT_M);
