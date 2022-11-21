@@ -35,10 +35,12 @@ extern "C" {
 #define META_DATA_TYPE_CONST 1
 #define META_DATA_TYPE_ZONEINFO 2
 #define META_DATA_TYPE_META_CONFIG_INFO 3
+#define META_DATA_TYPE_FFT 4
 
 #define WIO_BUTTON_MODE_MONITOR 0
 #define WIO_BUTTON_MODE_CONFIG 1
 #define WIO_BUTTON_MODE_TG_ZONE 2
+#define WIO_BUTTON_MODE_RF_GAIN 3
 
 void update_metainfo( void );
 void init_metainfo( void );

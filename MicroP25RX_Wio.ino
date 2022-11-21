@@ -54,6 +54,9 @@ static uint32_t roam_time;
 
 extern volatile int cmd_acked;
 
+#define FFT_M 128
+uint8_t fft_data[FFT_M];
+
 void do_edit(metainfo *m);
 uint8_t tg_zones[16][7];
 void draw_tg_zones(void);
@@ -582,6 +585,58 @@ void loop()
       }
     }
   }
+  /////////////////////////////////////////////////////////////////////////
+  // RF GAIN MODE
+  /////////////////////////////////////////////////////////////////////////
+  else if( current_button_mode == WIO_BUTTON_MODE_RF_GAIN) {
+    //pressed and released
+    if (press_but_pressed && press_but == 0x00) { //select button mode menu
+      press_but_pressed = 0;
+      memcpy((void *)&minfo_copy, (void *)&minfo_verified, sizeof(metainfo));
+      metainfo *m = &minfo_copy;
+
+      if(gen_screencaps) do_screencap();
+
+      int ret = handle_button_mode();
+      if(ret>=0) {
+        current_button_mode = ret; 
+      }
+      else {
+        B_but=0;
+        B_but_pressed=0;
+        clr_screen();
+      }
+    }
+    //pressed and released
+    if (right_but_pressed && right_but == 0x00) {
+      right_but_pressed = 0;
+    }
+    //pressed and released
+    if (left_but_pressed && left_but == 0x00) {
+      left_but_pressed = 0;
+    }
+    //pressed, released
+    //left-most button
+    if (C_but_pressed && C_but == 0x00) { //TG HOLD
+      C_but_pressed = 0;
+      c_button_press_time=0;
+      char cmd[32];
+    }
+    //middle-most button
+    if(B_but_pressed && B_but == 0x00) { //MUTE
+      B_but_pressed = 0;
+      b_button_press_time=0;
+
+      char cmd[32];
+      //snprintf(cmd, 31, "audio_mute %u\r\n", (mute^0x01) );
+      //send_cmd( (const char *) cmd,strlen(cmd));
+    }
+    //right-most button
+    if (A_but_pressed && A_but == 0x00) { //SKIP
+      A_but_pressed = 0;
+
+    }
+  }
 
 	///////////////////////////////////////////////////////////////////////
 	// We received a new metainfo structure. Time to redraw the screen
@@ -710,7 +765,61 @@ void loop()
           __enable_irq();
 
           draw_tg_zones();
-          goto draw_end; 
+          goto draw_end;  //it really is ok to use goto. don't worry about it.
+      }
+      else if( current_button_mode == WIO_BUTTON_MODE_RF_GAIN) {
+
+          __disable_irq();
+          do_draw_rx = 0;
+          memcpy( (uint8_t *) fft_data, (uint8_t *) mptr->data, FFT_M);
+          __enable_irq();
+
+          if( mptr->data_type == META_DATA_TYPE_FFT) { 
+            //draw_fft();
+           init_sprites(); //best to re-init
+           spr.createSprite(128,200);   //allocate sprite memory
+           spr.fillSprite(TFT_BLACK); //clear to black bground
+
+           spr.fillSprite(TFT_BLACK);
+           for (int i = 0; i < 128; i++) {
+             if(i>0) {
+               spr.drawLine(i, 200-(int)fft_data[i], i+1, 200-(int)fft_data[i+1], TFT_GREEN);
+             }
+           }
+           spr.pushSprite(5,5);  //send to lcd. upper left corner of sprite
+           spr.deleteSprite();  //free memory
+         }
+         #if 1
+         //////////////////////////////////////////////////////////
+         //Draw IQ Constellation
+         //////////////////////////////////////////////////////////
+         int idx = 0;
+         int ii;
+         int qq;
+         int8_t *ptr;
+
+         if( mptr->data_type == META_DATA_TYPE_CONST) { //incoming data is symbol constellation? 
+
+           ptr = (int8_t *) &mptr->data[0];  //pointer to incoming data 128 bytes
+           spr.createSprite(80,80);  //allocate memory for 80 x 80 sprite
+           spr.fillSprite(TFT_BLACK);
+           //grid lines
+           spr.drawLine(40, 0, 40, 80, TFT_DARKGREY);
+           spr.drawLine(0, 40, 80, 40, TFT_DARKGREY);
+           //draw 64-symbol constellation
+           idx = 0;
+           for (int i = 0; i < 64; i++) {
+             ii = *ptr++/2; //scale to +/- 32 range
+             qq = *ptr++/2;
+
+             spr.fillCircle(40+ii, 40+qq, 1, TFT_YELLOW);  //symbols
+           }
+           spr.pushSprite(200,120);  //send to lcd. upper left corner of sprite
+           spr.deleteSprite();  //free memory
+         }
+         #endif
+
+         goto draw_end;  //it really is ok to use goto. don't worry about it.
       }
 
 

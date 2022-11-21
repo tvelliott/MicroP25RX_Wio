@@ -44,7 +44,7 @@ extern Keybord mykey; // Cleate a keybord
 
 int handle_button_mode(void) 
 {
-  int ret = get_menu_choice(3,"MONITOR  MODE","CONFIG  MODE","TG  ZONE MODE", NULL,NULL,NULL,NULL,NULL);
+  int ret = get_menu_choice(4,"MONITOR  MODE","CONFIG  MODE","TG  ZONE MODE", "RF  GAIN  MODE",NULL,NULL,NULL,NULL);
   if(ret==-1) return -1;
 
   current_button_mode = ret;
