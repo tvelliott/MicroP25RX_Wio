@@ -780,16 +780,16 @@ void loop()
           if( mptr->data_type == META_DATA_TYPE_FFT) { 
             //draw_fft();
            init_sprites(); //best to re-init
-           spr.createSprite(128,200);   //allocate sprite memory
+           spr.createSprite(128,110);   //allocate sprite memory
            spr.fillSprite(TFT_BLACK); //clear to black bground
 
            spr.fillSprite(TFT_BLACK);
            for (int i = 0; i < 128; i++) {
              if(i>0) {
-               spr.drawLine(i, (200-(int)fft_data[i])+90, i+1, (200-(int)fft_data[i+1])+90, TFT_GREEN);
+               spr.drawLine(i, (110-(int)fft_data[i])+90, i+1, (110-(int)fft_data[i+1])+90, TFT_GREEN);
              }
            }
-           spr.pushSprite(5,0);  //send to lcd. upper left corner of sprite
+           spr.pushSprite(5,90);  //send to lcd. upper left corner of sprite
            spr.deleteSprite();  //free memory
          }
          #if 1
@@ -858,7 +858,7 @@ void loop()
                spr.drawLine(40+iq8_data[i], 40+iq8_data[i+1], 40+iq8_data[i+2], 40+iq8_data[i+3], TFT_CYAN);
              }
 
-             spr.pushSprite(150,20);  //send to lcd. upper left corner of sprite
+             spr.pushSprite(30,0);  //send to lcd. upper left corner of sprite
            //}
            spr.deleteSprite();  //free memory
          }
