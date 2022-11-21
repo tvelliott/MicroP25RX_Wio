@@ -57,6 +57,9 @@ extern volatile int cmd_acked;
 #define FFT_M 128
 uint8_t fft_data[FFT_M];
 
+int8_t iq8_data[512];
+uint8_t iq8_idx; 
+
 void do_edit(metainfo *m);
 uint8_t tg_zones[16][7];
 void draw_tg_zones(void);
@@ -818,6 +821,49 @@ void loop()
            spr.deleteSprite();  //free memory
          }
          #endif
+
+         #if 1
+         //////////////////////////////////////////////////////////
+         //Draw IQ / XY 
+         //////////////////////////////////////////////////////////
+
+         if( mptr->data_type == META_DATA_TYPE_IQ8) { //incoming data is symbol constellation? 
+
+            iq8_idx++;
+            iq8_idx &= 0x03;
+
+            __disable_irq();
+            do_draw_rx = 0;
+            if(iq8_idx==0) {
+              memcpy( (uint8_t *) &iq8_data[0], (uint8_t *) mptr->data, FFT_M);
+            }
+           #if 0
+            else if(iq8_idx==1) {
+              memcpy( (uint8_t *) &iq8_data[128], (uint8_t *) mptr->data, FFT_M);
+            }
+            else if(iq8_idx==2) {
+              memcpy( (uint8_t *) &iq8_data[256], (uint8_t *) mptr->data, FFT_M);
+            }
+            else if(iq8_idx==3) {
+              memcpy( (uint8_t *) &iq8_data[384], (uint8_t *) mptr->data, FFT_M);
+            }
+           #endif
+            __enable_irq();
+
+           //if(iq8_idx==3) {
+             spr.createSprite(80,80);  //allocate memory for 80 x 80 sprite
+             spr.fillSprite(TFT_BLACK);
+
+             for (int i = 0; i < 128-2; i+=2) {
+               spr.drawLine(40+iq8_data[i], 40+iq8_data[i+1], 40+iq8_data[i+2], 40+iq8_data[i+3], TFT_GREEN);
+             }
+
+             spr.pushSprite(200,25);  //send to lcd. upper left corner of sprite
+           //}
+           spr.deleteSprite();  //free memory
+         }
+         #endif
+
 
          goto draw_end;  //it really is ok to use goto. don't worry about it.
       }
