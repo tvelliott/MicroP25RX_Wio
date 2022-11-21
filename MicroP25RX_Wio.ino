@@ -871,6 +871,18 @@ void loop()
         sprintf(disp_buf, "EVM %3.1f  RSSI %3.1f dBm    ", mptr->evm_p, mptr->rssi_f );
         tft.drawString(disp_buf, 5, 210, FNT);
 
+        FNT=2;
+        snprintf(disp_buf, 32, "FREQ: %3.6f MHz", mptr->current_freq );
+        tft.drawString(disp_buf, 160, 0, FNT);
+
+        if(mptr->on_control_b && mptr->total_session_time>1500) {
+          sprintf(disp_buf, "TSBK/SEC %u      ", mptr->tsbk_sec);
+        }
+        else {
+          sprintf(disp_buf, "ERATE %1.3f      ", mptr->erate );
+        }
+        tft.drawString(disp_buf, 160, 15, FNT);
+
          goto draw_end;  //it really is ok to use goto. don't worry about it.
       }
 
