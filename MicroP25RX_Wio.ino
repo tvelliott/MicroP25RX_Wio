@@ -864,6 +864,38 @@ void loop()
          }
          #endif
 
+         FNT=2;
+         spr.createSprite(140,20);  //allocate memory for 80 x 80 sprite
+         spr.fillSprite(TFT_BLACK);
+         int _lna_gain = mptr->lna_gain;
+         if(_lna_gain<0) _lna_gain=0;
+         if(_lna_gain>15) _lna_gain=15;
+         sprintf(disp_buf,"%02d LNA", _lna_gain);
+         spr.drawString(disp_buf, 0, 0, FNT);
+         spr.fillRect(55, 3, 10*_lna_gain, 7, TFT_WHITE);
+         spr.pushSprite(130,50);  //send to lcd. upper left corner of sprite
+         spr.deleteSprite();  //free memory
+
+         spr.createSprite(140,20);  //allocate memory for 80 x 80 sprite
+         int _mixer_gain = mptr->mixer_gain;
+         if(_mixer_gain<0) _mixer_gain=0;
+         if(_mixer_gain>15) _mixer_gain=15;
+         sprintf(disp_buf,"%02d MIX", _mixer_gain);
+         spr.drawString(disp_buf, 0, 0, FNT);
+         spr.fillRect(55, 3, 10*_mixer_gain, 7, TFT_WHITE);
+         spr.pushSprite(130,70);  //send to lcd. upper left corner of sprite
+         spr.deleteSprite();  //free memory
+
+         spr.createSprite(140,20);  //allocate memory for 80 x 80 sprite
+         int _vga_gain = mptr->vga_gain;
+         if(_vga_gain<0) _vga_gain=0;
+         if(_vga_gain>15) _vga_gain=15;
+         sprintf(disp_buf,"%02d VGA", _vga_gain);
+         spr.drawString(disp_buf, 0, 0, FNT);
+         spr.fillRect(55, 3, 10*_vga_gain, 7, TFT_WHITE);
+         spr.pushSprite(130,90);  //send to lcd. upper left corner of sprite
+         spr.deleteSprite();  //free memory
+
         FNT=4;
         tft.setFreeFont(NULL);
         tft.setTextColor(TFT_WHITE, TFT_BLACK);
@@ -873,7 +905,7 @@ void loop()
 
         FNT=2;
         snprintf(disp_buf, 32, "FREQ: %3.6f MHz", mptr->current_freq );
-        tft.drawString(disp_buf, 160, 0, FNT);
+        tft.drawString(disp_buf, 130, 0, FNT);
 
         if(mptr->on_control_b && mptr->total_session_time>1500) {
           sprintf(disp_buf, "TSBK/SEC %u      ", mptr->tsbk_sec);
@@ -881,7 +913,7 @@ void loop()
         else {
           sprintf(disp_buf, "ERATE %1.3f      ", mptr->erate );
         }
-        tft.drawString(disp_buf, 160, 15, FNT);
+        tft.drawString(disp_buf, 130, 15, FNT);
 
          goto draw_end;  //it really is ok to use goto. don't worry about it.
       }
