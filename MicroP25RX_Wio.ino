@@ -980,8 +980,10 @@ void loop()
          }
          else {
            spr.setTextColor(TFT_GREEN, TFT_BLACK);
-           if(gain_select==2) sprintf(disp_buf,"> VGA AUTO %d dB", _vga_gain*3);
-            else sprintf(disp_buf,"VGA AUTO %d dB", _vga_gain*3);
+           //if(gain_select==2) sprintf(disp_buf,"> VGA AUTO %d dB", _vga_gain*3);
+            //else sprintf(disp_buf,"VGA AUTO %d dB", _vga_gain*3);
+           if(gain_select==2) sprintf(disp_buf,"> VGA AUTO %d  ", _vga_gain);
+            else sprintf(disp_buf,"VGA AUTO %d  ", _vga_gain);
            spr.drawString(disp_buf, 0, 0, FNT);
          }
          spr.pushSprite(140,90);  //send to lcd. upper left corner of sprite
