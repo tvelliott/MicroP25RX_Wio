@@ -904,24 +904,16 @@ void loop()
          if(_lna_gain>16) _lna_gain=16;
 
          if(_lna_gain<16) {
-           if(gain_select==0) {
-             spr.setTextColor(TFT_BLACK, TFT_WHITE);
-           }
-           else {
-             spr.setTextColor(TFT_WHITE, TFT_BLACK);
-           }
-           sprintf(disp_buf,"%02d LNA", _lna_gain);
+           spr.setTextColor(TFT_WHITE, TFT_BLACK);
+           if(gain_select==0) sprintf(disp_buf,"> %02d LNA", _lna_gain);
+            else sprintf(disp_buf,"%02d LNA", _lna_gain);
            spr.drawString(disp_buf, 0, 0, FNT);
            spr.fillRect(55, 3, 7*_lna_gain, 7, TFT_WHITE);
          }
          else {
-           if(gain_select==0) {
-             spr.setTextColor(TFT_BLACK, TFT_GREEN);
-           }
-           else {
-             spr.setTextColor(TFT_GREEN, TFT_BLACK);
-           }
-           sprintf(disp_buf,"LNA AUTO");
+           spr.setTextColor(TFT_GREEN, TFT_BLACK);
+           if(gain_select==0) sprintf(disp_buf,"> LNA AUTO");
+            else sprintf(disp_buf,"LNA AUTO");
            spr.drawString(disp_buf, 0, 0, FNT);
          }
          spr.pushSprite(140,50);  //send to lcd. upper left corner of sprite
@@ -932,24 +924,16 @@ void loop()
          if(_mixer_gain<0) _mixer_gain=0;
          if(_mixer_gain>16) _mixer_gain=16;
          if(_mixer_gain<16) {
-           if(gain_select==1) {
-             spr.setTextColor(TFT_BLACK, TFT_WHITE);
-           }
-           else {
-             spr.setTextColor(TFT_WHITE, TFT_BLACK);
-           }
-           sprintf(disp_buf,"%02d MIX", _mixer_gain);
+           spr.setTextColor(TFT_WHITE, TFT_BLACK);
+           if(gain_select==1) sprintf(disp_buf,"> %02d MIX", _mixer_gain);
+            else sprintf(disp_buf,"%02d MIX", _mixer_gain);
            spr.drawString(disp_buf, 0, 0, FNT);
            spr.fillRect(55, 3, 7*_mixer_gain, 7, TFT_WHITE);
          }
          else {
-           if(gain_select==1) {
-             spr.setTextColor(TFT_BLACK, TFT_GREEN);
-           }
-           else {
-             spr.setTextColor(TFT_GREEN, TFT_BLACK);
-           }
-           sprintf(disp_buf,"MIX AUTO");
+           spr.setTextColor(TFT_GREEN, TFT_BLACK);
+           if(gain_select==1) sprintf(disp_buf,"> MIX AUTO");
+            else sprintf(disp_buf,"MIX AUTO");
            spr.drawString(disp_buf, 0, 0, FNT);
          }
          spr.pushSprite(140,70);  //send to lcd. upper left corner of sprite
@@ -963,24 +947,16 @@ void loop()
          _vga_gain &= 0x0f;
 
          if(!is_vga_auto) {
-           if(gain_select==2) {
-             spr.setTextColor(TFT_BLACK, TFT_WHITE);
-           }
-           else {
-             spr.setTextColor(TFT_WHITE, TFT_BLACK);
-           }
-           sprintf(disp_buf,"%02d VGA", _vga_gain);
+           spr.setTextColor(TFT_WHITE, TFT_BLACK);
+           if(gain_select==2) sprintf(disp_buf,"> %02d VGA", _vga_gain);
+            else sprintf(disp_buf,"%02d VGA", _vga_gain);
            spr.drawString(disp_buf, 0, 0, FNT);
            spr.fillRect(55, 3, 7*_vga_gain, 7, TFT_WHITE);
          }
          else {
-           if(gain_select==2) {
-             spr.setTextColor(TFT_BLACK, TFT_GREEN);
-           }
-           else {
-             spr.setTextColor(TFT_GREEN, TFT_BLACK);
-           }
-           sprintf(disp_buf,"VGA AUTO %d dB", _vga_gain*3);
+           spr.setTextColor(TFT_GREEN, TFT_BLACK);
+           if(gain_select==2) sprintf(disp_buf,"> VGA AUTO %d dB", _vga_gain*3);
+            else sprintf(disp_buf,"VGA AUTO %d dB", _vga_gain*3);
            spr.drawString(disp_buf, 0, 0, FNT);
          }
          spr.pushSprite(140,90);  //send to lcd. upper left corner of sprite
