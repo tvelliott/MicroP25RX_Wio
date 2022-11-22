@@ -306,8 +306,22 @@ void handle_main_menu(metainfo *m)
 
    }
    else if( ret==3 ) {  //SD CARD
-      int ret2 = get_menu_choice(8,"CANCEL","BACKUP","RESTORE","GEN  SUMMARY  REPORT", "IMPORT  TALK  GROUPS","IMPORT  SITES","IMPORT  ALIASES","DO  SCREEN  CAPS");
+      int ret2 = get_menu_choice(8,"SD  FORMAT  CARD","BACKUP","RESTORE","GEN  SUMMARY  REPORT", "IMPORT  TALK  GROUPS","IMPORT  SITES","IMPORT  ALIASES","DO  SCREEN  CAPS");
       if(ret2==-1) return;
+
+      if( ret2==0 ) { //format card
+        int ret3 = get_menu_choice(2,"NO / CANCEL","YES  FORMAT  SD",NULL,NULL,NULL,NULL,NULL,NULL);
+        if(ret3==-1) return;
+
+        if(ret3==1) {
+          char cmd[64];
+          snprintf(cmd,63,"sd_fmt\r\n");
+          send_cmd(cmd,strlen(cmd));
+          delay(1000);
+
+          clr_cmd();
+        }
+      }
 
       if(ret2==4) { //import tg
         char cmd[64];
