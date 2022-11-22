@@ -56,9 +56,10 @@ extern volatile int cmd_acked;
 
 #define FFT_M 128
 uint8_t fft_data[FFT_M];
-
 int8_t iq8_data[512];
 uint8_t iq8_idx; 
+
+static int gain_select;
 
 void do_edit(metainfo *m);
 uint8_t tg_zones[16][7];
@@ -610,34 +611,70 @@ void loop()
         clr_screen();
       }
     }
+
     //pressed and released
-    if (right_but_pressed && right_but == 0x00) {
-      right_but_pressed = 0;
+    if (up_but_pressed && up_but==0x00) {
+      up_but_pressed = 0;
+
+      gain_select++;
+      if(gain_select>2) gain_select=2;
+
+
     }
     //pressed and released
-    if (left_but_pressed && left_but == 0x00) {
+    if (down_but_pressed && down_but==0x00) {
+      down_but_pressed = 0;
+
+      gain_select--;
+      if(gain_select<0) gain_select=0;
+
+    }
+
+
+    //pressed and released
+    //if (right_but_pressed && right_but == 0x00) {
+    if (right_but_pressed ) {
+      right_but_pressed = 0;
+
+      char cmd[32];
+      if(gain_select==0) snprintf(cmd, 31, "lna_gain up\r\n" );
+      if(gain_select==1) snprintf(cmd, 31, "mix_gain up\r\n" );
+      if(gain_select==2) snprintf(cmd, 31, "vga_gain up\r\n" );
+      send_cmd( (const char *) cmd,strlen(cmd));
+
+      delay(25);
+    }
+    //pressed and released
+    //if (left_but_pressed && left_but == 0x00) {
+    if (left_but_pressed ) {
       left_but_pressed = 0;
+
+      char cmd[32];
+      if(gain_select==0) snprintf(cmd, 31, "lna_gain down\r\n" );
+      if(gain_select==1) snprintf(cmd, 31, "mix_gain down\r\n" );
+      if(gain_select==2) snprintf(cmd, 31, "vga_gain down\r\n" );
+      send_cmd( (const char *) cmd,strlen(cmd));
+
+      delay(25);
     }
     //pressed, released
     //left-most button
-    if (C_but_pressed && C_but == 0x00) { //TG HOLD
+    if (C_but_pressed && C_but == 0x00) { //lna_gain
       C_but_pressed = 0;
       c_button_press_time=0;
-      char cmd[32];
+      gain_select=0;
     }
     //middle-most button
-    if(B_but_pressed && B_but == 0x00) { //MUTE
+    if(B_but_pressed && B_but == 0x00) { //mix gain
       B_but_pressed = 0;
       b_button_press_time=0;
+      gain_select=1;
 
-      char cmd[32];
-      //snprintf(cmd, 31, "audio_mute %u\r\n", (mute^0x01) );
-      //send_cmd( (const char *) cmd,strlen(cmd));
     }
     //right-most button
-    if (A_but_pressed && A_but == 0x00) { //SKIP
+    if (A_but_pressed && A_but == 0x00) { //vga gain
       A_but_pressed = 0;
-
+      gain_select=2;
     }
   }
 
