@@ -908,7 +908,7 @@ void loop()
            if(gain_select==0) sprintf(disp_buf,"> %02d LNA", _lna_gain);
             else sprintf(disp_buf,"%02d LNA", _lna_gain);
            spr.drawString(disp_buf, 0, 0, FNT);
-           spr.fillRect(55, 3, 7*_lna_gain, 7, TFT_WHITE);
+           spr.fillRect(60, 3, 7*_lna_gain, 7, TFT_WHITE);
          }
          else {
            spr.setTextColor(TFT_GREEN, TFT_BLACK);
@@ -928,7 +928,7 @@ void loop()
            if(gain_select==1) sprintf(disp_buf,"> %02d MIX", _mixer_gain);
             else sprintf(disp_buf,"%02d MIX", _mixer_gain);
            spr.drawString(disp_buf, 0, 0, FNT);
-           spr.fillRect(55, 3, 7*_mixer_gain, 7, TFT_WHITE);
+           spr.fillRect(60, 3, 7*_mixer_gain, 7, TFT_WHITE);
          }
          else {
            spr.setTextColor(TFT_GREEN, TFT_BLACK);
@@ -951,7 +951,7 @@ void loop()
            if(gain_select==2) sprintf(disp_buf,"> %02d VGA", _vga_gain);
             else sprintf(disp_buf,"%02d VGA", _vga_gain);
            spr.drawString(disp_buf, 0, 0, FNT);
-           spr.fillRect(55, 3, 7*_vga_gain, 7, TFT_WHITE);
+           spr.fillRect(60, 3, 7*_vga_gain, 7, TFT_WHITE);
          }
          else {
            spr.setTextColor(TFT_GREEN, TFT_BLACK);
@@ -981,6 +981,9 @@ void loop()
           sprintf(disp_buf, "ERATE %1.3f      ", mptr->erate );
         }
         tft.drawString(disp_buf, 140, 15, FNT);
+
+        sprintf(disp_buf, "SITE %d, RFSS %d     ", mptr->site_id, mptr->rf_id);
+        tft.drawString(disp_buf, 140, 30, FNT);
 
          goto draw_end;  //it really is ok to use goto. don't worry about it.
       }
