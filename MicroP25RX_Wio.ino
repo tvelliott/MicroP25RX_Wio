@@ -616,13 +616,13 @@ void loop()
     if (up_but_pressed && up_but==0x00) {
       up_but_pressed = 0;
       gain_select--;
-      if(gain_select<0) gain_select=2;
+      if(gain_select<0) gain_select=3;
     }
     //pressed and released
     if (down_but_pressed && down_but==0x00) {
       down_but_pressed = 0;
       gain_select++;
-      if(gain_select>2) gain_select=0;
+      if(gain_select>3) gain_select=0;
     }
 
 
@@ -849,7 +849,7 @@ void loop()
 
              spr.fillCircle(40+ii, 40+qq, 1, TFT_YELLOW);  //symbols
            }
-           spr.pushSprite(150,115);  //send to lcd. upper left corner of sprite
+           spr.pushSprite(230,115);  //send to lcd. upper left corner of sprite
            spr.deleteSprite();  //free memory
          }
          #endif
@@ -961,6 +961,15 @@ void loop()
          }
          spr.pushSprite(140,90);  //send to lcd. upper left corner of sprite
          spr.deleteSprite();  //free memory
+
+
+         spr.createSprite(90,20);  //allocate memory for 80 x 80 sprite
+         if(gain_select==3) sprintf(disp_buf,"> SAVE GAINS");
+          else sprintf(disp_buf,"SAVE GAINS");
+         spr.drawString(disp_buf, 0, 0, FNT);
+         spr.pushSprite(140,110);  //send to lcd. upper left corner of sprite
+         spr.deleteSprite();  //free memory
+
 
 
         FNT=4;
