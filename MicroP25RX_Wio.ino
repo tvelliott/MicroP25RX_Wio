@@ -60,6 +60,10 @@ int8_t iq8_data[512];
 uint8_t iq8_idx; 
 
 static int gain_select;
+static int _lna_gain;
+static int _mixer_gain;
+static int _vga_gain;
+static int is_vga_auto;
 
 void do_edit(metainfo *m);
 uint8_t tg_zones[16][7];
@@ -616,13 +620,13 @@ void loop()
     if (up_but_pressed && up_but==0x00) {
       up_but_pressed = 0;
       gain_select--;
-      if(gain_select<0) gain_select=3;
+      if(gain_select<0) gain_select=2;
     }
     //pressed and released
     if (down_but_pressed && down_but==0x00) {
       down_but_pressed = 0;
       gain_select++;
-      if(gain_select>3) gain_select=0;
+      if(gain_select>2) gain_select=0;
     }
 
 
@@ -657,19 +661,40 @@ void loop()
     if (C_but_pressed && C_but == 0x00) { //lna_gain
       C_but_pressed = 0;
       c_button_press_time=0;
-      gain_select=0;
     }
     //middle-most button
     if(B_but_pressed && B_but == 0x00) { //mix gain
       B_but_pressed = 0;
       b_button_press_time=0;
-      gain_select=1;
+
+      char cmd_str[32];
+      metainfo *mptr = &minfo_verified;
+
+      is_vga_auto = ( (mptr->vga_gain&0x80) !=0 );
+      if(is_vga_auto) {
+        sprintf(cmd_str,"update_gains %05X %03X %03u %03u %u %u 16\r\n", mptr->wacn_id, mptr->sys_id, mptr->site_id, mptr->rf_id, _lna_gain, _mixer_gain);  
+
+      }
+      else {
+        sprintf(cmd_str,"update_gains %05X %03X %03u %03u %u %u %u\r\n", mptr->wacn_id, mptr->sys_id, mptr->site_id, mptr->rf_id, _lna_gain, _mixer_gain, _vga_gain);  
+      }
+
+      FNT=4;
+      tft.setFreeFont(NULL);
+      tft.setTextColor(TFT_WHITE, TFT_BLACK);
+
+
+      int len = strlen(cmd_str);
+      send_cmd(cmd_str,len);  //next primary/active frequency
+
+      sprintf(disp_buf, "CONFIGURATION SAVED           ");
+      tft.drawString(disp_buf, 5, 210, FNT);
+      delay(250);
 
     }
     //right-most button
     if (A_but_pressed && A_but == 0x00) { //vga gain
       A_but_pressed = 0;
-      gain_select=2;
     }
   }
 
@@ -849,7 +874,7 @@ void loop()
 
              spr.fillCircle(40+ii, 40+qq, 1, TFT_YELLOW);  //symbols
            }
-           spr.pushSprite(230,115);  //send to lcd. upper left corner of sprite
+           spr.pushSprite(220,115);  //send to lcd. upper left corner of sprite
            spr.deleteSprite();  //free memory
          }
          #endif
@@ -883,14 +908,14 @@ void loop()
             __enable_irq();
 
            //if(iq8_idx==3) {
-             spr.createSprite(80,80);  //allocate memory for 80 x 80 sprite
+           spr.createSprite(80,80);  //allocate memory for 80 x 80 sprite
              spr.fillSprite(TFT_BLACK);
 
              for (int i = 0; i < 128-2; i+=2) {
                spr.drawLine(40+iq8_data[i], 40+iq8_data[i+1], 40+iq8_data[i+2], 40+iq8_data[i+3], TFT_CYAN);
              }
 
-             spr.pushSprite(30,0);  //send to lcd. upper left corner of sprite
+             spr.pushSprite(30,8);  //send to lcd. upper left corner of sprite
            //}
            spr.deleteSprite();  //free memory
          }
@@ -899,7 +924,7 @@ void loop()
          FNT=2;
          spr.createSprite(170,20);  //allocate memory for 80 x 80 sprite
          spr.fillSprite(TFT_BLACK);
-         int _lna_gain = mptr->lna_gain;
+         _lna_gain = mptr->lna_gain;
          if(_lna_gain<0) _lna_gain=0;
          if(_lna_gain>16) _lna_gain=16;
 
@@ -920,7 +945,7 @@ void loop()
          spr.deleteSprite();  //free memory
 
          spr.createSprite(170,20);  //allocate memory for 80 x 80 sprite
-         int _mixer_gain = mptr->mixer_gain;
+         _mixer_gain = mptr->mixer_gain;
          if(_mixer_gain<0) _mixer_gain=0;
          if(_mixer_gain>16) _mixer_gain=16;
          if(_mixer_gain<16) {
@@ -940,10 +965,10 @@ void loop()
          spr.deleteSprite();  //free memory
 
          spr.createSprite(170,20);  //allocate memory for 80 x 80 sprite
-         int _vga_gain = mptr->vga_gain;
+         _vga_gain = mptr->vga_gain;
          if(_vga_gain<0) _vga_gain=0;
 
-         int is_vga_auto = ( (_vga_gain&0x80) !=0 );
+         is_vga_auto = ( (_vga_gain&0x80) !=0 );
          _vga_gain &= 0x0f;
 
          if(!is_vga_auto) {
@@ -963,12 +988,15 @@ void loop()
          spr.deleteSprite();  //free memory
 
 
+
+         #if 0
          spr.createSprite(90,20);  //allocate memory for 80 x 80 sprite
          if(gain_select==3) sprintf(disp_buf,"> SAVE GAINS");
           else sprintf(disp_buf,"SAVE GAINS");
          spr.drawString(disp_buf, 0, 0, FNT);
          spr.pushSprite(140,110);  //send to lcd. upper left corner of sprite
          spr.deleteSprite();  //free memory
+         #endif
 
 
 
