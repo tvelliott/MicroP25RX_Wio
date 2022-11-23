@@ -59,6 +59,7 @@ uint8_t fft_data[FFT_M];
 int8_t iq8_data[512];
 uint8_t iq8_idx; 
 
+static int force_scan;
 static int gain_select;
 static int _lna_gain;
 static int _mixer_gain;
@@ -661,6 +662,13 @@ void loop()
     if (C_but_pressed && C_but == 0x00) { //lna_gain
       C_but_pressed = 0;
       c_button_press_time=0;
+
+      FNT=4;
+      force_scan ^= 0x01;
+      if(force_scan) sprintf(disp_buf, "SCANNING ENABLE    ");
+        else sprintf(disp_buf, "SCANNING DISABLE    ");
+      tft.drawString(disp_buf, 5, 210, FNT);
+      delay(250);
     }
     //middle-most button
     if(B_but_pressed && B_but == 0x00) { //mix gain
@@ -742,6 +750,10 @@ void loop()
 
 
 
+      if( current_button_mode != WIO_BUTTON_MODE_RF_GAIN) {
+        force_scan=0;
+      }
+       
 
       //////////////////////////////////////////////////////////////////////////////////////////////
       // SCANNING/ROAMING CONTROL via the 'nfreq' command.
@@ -754,21 +766,21 @@ void loop()
       // - time since last channel change is >250ms
       //////////////////////////////////////////////////////////////////////////////////////////////
       //ROAMING MODE 1
-      if(cmd_acked==0 && current_button_mode==WIO_BUTTON_MODE_MONITOR && follow==0 && 
+      if(cmd_acked==0 && (force_scan || current_button_mode==WIO_BUTTON_MODE_MONITOR) && follow==0 && 
         mptr->roaming==1 && mptr->voice_tg_timeout==0 && (millis()-roam_time > mptr->roaming_timeout) ) { //ROAMING=1 // scanning
 
         roam_time=millis();
         send_cmd("nfreq",15);
       }
       //ROAMING MODE 2
-      else if(cmd_acked==0 && current_button_mode==WIO_BUTTON_MODE_MONITOR && follow==0 && (millis()-roam_time > mptr->roaming_timeout) &&
+      else if(cmd_acked==0 && (force_scan || current_button_mode==WIO_BUTTON_MODE_MONITOR) && follow==0 && (millis()-roam_time > mptr->roaming_timeout) &&
         mptr->roaming==2 && (mptr->evm_p>10 || mptr->rssi_f<-115) ) { //ROAMING=2 // auto-switch-over-on-lost-sig, P+S ALL systems
 
         roam_time=millis();
         send_cmd("nfreq",15);
       }
       //ROAMING MODE 3
-      else if(cmd_acked==0 && current_button_mode==WIO_BUTTON_MODE_MONITOR && follow==0 && (millis()-roam_time > mptr->roaming_timeout) &&
+      else if(cmd_acked==0 && (force_scan || current_button_mode==WIO_BUTTON_MODE_MONITOR) && follow==0 && (millis()-roam_time > mptr->roaming_timeout) &&
         mptr->roaming==3 && (mptr->evm_p>10 || mptr->rssi_f<-115) ) { //ROAMING=3 // P+S auto-switch-over-on-lost-sig, SINGLE SYSTEM 
 
         roam_time=millis();
@@ -777,14 +789,14 @@ void loop()
         send_cmd(cmd_str,15);
       }
       //ROAMING MODE 4
-      else if(cmd_acked==0 && current_button_mode==WIO_BUTTON_MODE_MONITOR && follow==0 && (millis()-roam_time > mptr->roaming_timeout) &&
+      else if(cmd_acked==0 && (force_scan || current_button_mode==WIO_BUTTON_MODE_MONITOR) && follow==0 && (millis()-roam_time > mptr->roaming_timeout) &&
         mptr->roaming==4 && (mptr->evm_p>10 || mptr->rssi_f<-115) ) { //ROAMING=4 // auto-switch-over-on-lost-sig, P+S+A ALL systems
 
         roam_time=millis();
         send_cmd("nfreq",15);
       }
       //ROAMING MODE 5
-      else if(cmd_acked==0 && current_button_mode==WIO_BUTTON_MODE_MONITOR && follow==0 && 
+      else if(cmd_acked==0 && (force_scan || current_button_mode==WIO_BUTTON_MODE_MONITOR) && follow==0 && 
         mptr->roaming==5 && mptr->voice_tg_timeout==0 && (millis()-roam_time > mptr->roaming_timeout) ) { //ROAMING=5 // scanning, INC_IN_SCAN=1
 
         roam_time=millis();
