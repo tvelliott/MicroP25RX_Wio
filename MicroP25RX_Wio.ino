@@ -703,6 +703,10 @@ void loop()
     //right-most button
     if (A_but_pressed && A_but == 0x00) { //vga gain
       A_but_pressed = 0;
+      metainfo *mptr = &minfo_verified;
+      char cmd[32];
+      snprintf(cmd, 31, "demod %d\r\n", (demod^0x01) );
+      send_cmd( (const char *) cmd,strlen(cmd));
     }
   }
 
