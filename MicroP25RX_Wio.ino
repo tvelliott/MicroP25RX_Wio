@@ -441,7 +441,7 @@ void loop()
           send_cmd( (const char *) cmd,strlen(cmd));
         }
         else {
-          snprintf(cmd, 31, "demod %d\r\n", (demod^0x01) );
+          snprintf(cmd, 31, "demod %d\r\n", (mptr->use_demod^0x01) );
           send_cmd( (const char *) cmd,strlen(cmd));
         }
       }
@@ -705,7 +705,7 @@ void loop()
       A_but_pressed = 0;
       metainfo *mptr = &minfo_verified;
       char cmd[32];
-      snprintf(cmd, 31, "demod %d\r\n", (demod^0x01) );
+      snprintf(cmd, 31, "demod %d\r\n", (mptr->use_demod^0x01) );
       send_cmd( (const char *) cmd,strlen(cmd));
     }
   }
@@ -739,6 +739,11 @@ void loop()
 
       memcpy((void *)&minfo_verified, (void *)&minfo, sizeof(metainfo));
 
+			demod = mptr->use_demod;
+      follow = mptr->follow;
+      mute = mptr->audio_mute;
+      learn = mptr->learn_mode;
+      inc_in_scan = mptr->inc_in_scan;
 
 
       extern uint8_t packet_id;
@@ -828,11 +833,6 @@ void loop()
 
 
 
-			demod = mptr->use_demod;
-      follow = mptr->follow;
-      mute = mptr->audio_mute;
-      learn = mptr->learn_mode;
-      inc_in_scan = mptr->inc_in_scan;
 
       if( current_button_mode == WIO_BUTTON_MODE_TG_ZONE) {
           __disable_irq();
@@ -1016,6 +1016,15 @@ void loop()
          spr.deleteSprite();  //free memory
          #endif
 
+        FNT=2;
+        tft.setTextColor(TFT_LIGHTGREY, TFT_BLACK);
+        char demod_str[8];
+        demod_str[0]=0;
+        if( mptr->use_demod==0) strcpy(demod_str,"LSM");
+        if( mptr->use_demod==1) strcpy(demod_str,"FM");
+        
+        sprintf(disp_buf, "DEMOD %s   ", demod_str );
+        tft.drawString(disp_buf, 140, 110, FNT);
 
 
         FNT=4;
