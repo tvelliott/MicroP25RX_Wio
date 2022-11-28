@@ -21,7 +21,6 @@
 //OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 //SOFTWARE.
 
-
 #include "TFT_eSPI.h"
 #include "Free_Fonts.h"
 #include "Free_Keybord.h"
@@ -141,6 +140,26 @@ void tgz_dec_y();
 
 static int scap_count;
 static int did_sd_init;
+
+
+#ifdef __arm__
+// should use uinstd.h to define sbrk but Due causes a conflict
+extern "C" char* sbrk(int incr);
+#else  // __ARM__
+extern char *__brkval;
+#endif  // __arm__
+
+static int freeMemory() {
+  char top;
+#ifdef __arm__
+  return &top - reinterpret_cast<char*>(sbrk(0));
+#elif defined(CORE_TEENSY) || (ARDUINO > 103 && ARDUINO != 151)
+  return &top - __brkval;
+#else  // __arm__
+  return __brkval ? &top - __brkval : &top - __malloc_heap_start;
+#endif  // __arm__
+}
+
 
 #define DO_SCREENCAPS 1
 int gen_screencaps=0;
@@ -1167,7 +1186,7 @@ void loop()
       else {
         if( current_button_mode==WIO_BUTTON_MODE_CONFIG ) {
           if(mptr->roaming) {
-            sprintf(disp_buf, "MODE: CONFIG  ROAM-PAUSE" );
+            sprintf(disp_buf, "CONFIG  ROAM-PAUSE" );
           }
           else {
               sprintf(disp_buf, "MODE: CONFIG          " );
@@ -1175,10 +1194,10 @@ void loop()
         }
         else if( current_button_mode==WIO_BUTTON_MODE_MONITOR ) {
           if(mptr->roaming) {
-            sprintf(disp_buf, "MODE: MONITOR ROAM-ON-%u",mptr->roaming );
+            sprintf(disp_buf, "MONITOR ROAM-ON-%u Free %u",mptr->roaming, freeMemory() );
           }
           else {
-            sprintf(disp_buf, "MODE: MONITOR ROAM-OFF" );
+            sprintf(disp_buf, "MONITOR ROAM-OFF" );
           }
         }
         else {

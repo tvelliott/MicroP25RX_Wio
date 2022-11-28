@@ -162,7 +162,9 @@ void Keybord::draw(){
   
   
 
-  spr.createSprite(ikw_,ikh_);
+  //spr.createSprite(ikw_,ikh_);
+  init_sprites();
+  spr.createSprite(320,120,1);
   spr.fillSprite(TFT_BLACK);
 
   for  (int i=0; i <= 31; i++){
