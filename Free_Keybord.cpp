@@ -164,7 +164,11 @@ void Keybord::draw(){
 
   //spr.createSprite(ikw_,ikh_);
   init_sprites();
-  spr.createSprite(320,120,1);
+
+  uint8_t data[320*120]; 
+  spr.createSprite(320,120,data,1);
+
+  #if 1
   spr.fillSprite(TFT_BLACK);
 
   for  (int i=0; i <= 31; i++){
@@ -285,7 +289,8 @@ void Keybord::draw(){
     }
   }
   spr.pushSprite(ix_, iy_); //push to LCD 
-  spr.deleteSprite(); //clear buffer
+  //spr.deleteSprite(); //clear buffer
+  #endif
 }
 // Method for getting the key number when the current key number is moved 1:up, 2:down, 3:left, or 4:ight
 void Keybord::move_cur(int dir){
@@ -355,7 +360,8 @@ String my_back_space(String tx){
 }
 // Functions for creating input screens
 void tx_box(int ix, int iy, String tx) {
-  spr.createSprite(260,50);
+  uint8_t data[260*50];
+  spr.createSprite(260,50,data,1);
   spr.fillSprite(TFT_BLACK);
   spr.fillRect(0,0,250,40,TFT_WHITE);
 
@@ -365,7 +371,7 @@ void tx_box(int ix, int iy, String tx) {
   spr.drawString(tx,10,10);
 
   spr.pushSprite(ix, iy); //push to LCD 
-  spr.deleteSprite(); //clear buffer
+  //spr.deleteSprite(); //clear buffer
 }
 // Function for Free_Keybord text input example using 5-waySwitch
 String text_input_5waySwitch(Keybord mykey,int xi,int yi, String init_str, int auto_add_dot){
