@@ -360,6 +360,8 @@ String my_back_space(String tx){
 }
 // Functions for creating input screens
 void tx_box(int ix, int iy, String tx) {
+
+  init_sprites();
   uint8_t data[260*50];
   spr.createSprite(260,50,data,1);
   spr.fillSprite(TFT_BLACK);
