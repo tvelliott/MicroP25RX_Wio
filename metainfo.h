@@ -146,6 +146,7 @@ typedef struct __attribute__( ( packed ) )
   uint32_t roam_wacn;
   uint16_t roam_sysid;
   uint8_t inc_in_scan;
+  uint8_t lock_nac;
 
   uint32_t crc_val;
   uint32_t padding;

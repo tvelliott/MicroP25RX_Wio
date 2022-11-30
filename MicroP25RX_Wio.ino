@@ -1136,8 +1136,11 @@ void loop()
 
       FNT=2;
       tft.setTextColor(TFT_CYAN, TFT_BLACK);
+
+      uint8_t nac_lock_str = 'U';
+      if(mptr->lock_nac) nac_lock_str='L';
       
-      sprintf(disp_buf, "%05X-%03X-%03X  RSSI %3.1f dBm    ", mptr->wacn_id, mptr->sys_id, mptr->p25_sys_nac, mptr->rssi_f);
+      sprintf(disp_buf, "%05X-%03X-%03X%c  RSSI %3.1f dBm    ", mptr->wacn_id, mptr->sys_id, mptr->p25_sys_nac, nac_lock_str, mptr->rssi_f);
       if( strcmp(disp_buf,line4_str)!=0 ) { 
         //clear_line4(); //space at the end of this line is better solution
         tft.drawString(disp_buf, 5, 100, FNT);
