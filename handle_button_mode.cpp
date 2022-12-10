@@ -36,13 +36,11 @@ extern int current_button_mode;
 extern int gen_screencaps;
 extern void do_screencap( void );
 
-extern bool TGLogScreen;  // <<<<<<<< TG LOG SCREEN
-
 void clr_screen( void );
 void send_cmd( const char *str, int len );
 static int FNT = 4;
 extern int do_refresh;
-extern Keybord mykey; // Create a keybord
+extern Keybord mykey; // Cleate a keybord
 
 int handle_button_mode( void )
 {
@@ -54,12 +52,6 @@ int handle_button_mode( void )
   snprintf( cmd, 63, "wio_but_mode %u\r\n", ret );
 
   if( gen_screencaps ) do_screencap();
-  if( current_button_mode != 0 ) {
-    TGLogScreen = false; // <<<<<<<<<<<<<<<< TG LOG SCREEN
-  }
-  if( current_button_mode == 0 ) {
-    TGLogScreen = !TGLogScreen; // <<<<<<<<<< TG LOG SCREEN
-  }
 
   send_cmd( cmd, strlen( cmd ) );
   clr_screen();
