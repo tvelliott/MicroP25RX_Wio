@@ -31,7 +31,7 @@
 
 TFT_eSPI tft;
 TFT_eSprite spr = TFT_eSprite( &tft );
-Keybord mykey; // Cleate a keybord
+Keybord mykey; // Create a keybord
 
 
 #include "buttons.h"
@@ -95,7 +95,17 @@ volatile uint16_t meta_port;
 volatile uint16_t meta_len;
 volatile uint32_t sclk_count;
 /////////////////////////////////////////////////////
+//////////////////////////////////////////////////TG LOG////////////////
+bool TGLogScreen = false;
+char TGlog1[35];
+char TGlog2[35];
+char TGlog3[35];
+char TGlog4[35];
+char TGlog5[35];
+char tglog_buf[35];
+///////////////////////////////////////////////////////////////////////////////
 //
+
 void reset_info( void );
 void change_freq( int freq, int is_inc );
 int is_valid_freq( double freq );
@@ -259,7 +269,7 @@ void clear_line2()
 //////////////////////////////////////////////////////////////////////////
 void clear_line3()
 {
-  tft.fillRect( 0, 60, 320, 30, TFT_BLACK );
+  tft.fillRect( 0, 60, 320, 35, TFT_BLACK ); // height 30 to 35 (desc sometimes leaves 'marks' below line 3 with h 30
 }
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
@@ -1113,16 +1123,54 @@ void loop()
           if( strncmp( ( char * )disp_buf, ( char * )line2_str, 31 ) != 0 ) clear_line2();
           strncpy( line2_str, disp_buf, 31 );
         }
+// >>>>>>>>>>>>>>>>> TGLogScreen <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+        //    snprintf(disp_buf2,45, "%s", mptr->desc ); //changed for TG log
+        //    if( strncmp((char *)disp_buf2,(char *)line3_str, 31)!=0 ) clear_line3(); //changed for TG log
+        snprintf( disp_buf2, 24, "%s", mptr->desc );
+        if( strncmp( ( char * )disp_buf2, ( char * )line3_str, 31 ) != 0 )
 
-        snprintf( disp_buf2, 45, "%s", mptr->desc );
-        if( strncmp( ( char * )disp_buf2, ( char * )line3_str, 31 ) != 0 ) clear_line3();
+        {
+          clear_line3();
+
+
+          snprintf( tglog_buf, 32, "%s  %d  ", disp_buf2, mptr->tg_s ); // send desc and tg number to buf
+
+          // move the TG log down
+          strncpy( TGlog5, TGlog4, 32 );
+          strncpy( TGlog4, TGlog3, 32 );
+          strncpy( TGlog3, TGlog2, 32 );
+          strncpy( TGlog2, TGlog1, 32 );
+          strncpy( TGlog1, tglog_buf, 32 );
+
+          sprintf( tglog_buf, " " ); // clear buf
+
+
+          if( TGLogScreen == true ) {
+            tft.setTextColor( TFT_BLUE, TFT_BLACK ); // set tg log to blue
+            tft.fillRect( 0, 118, 235, 70, TFT_BLACK ); //
+            tft.drawString( TGlog1, 5, 116, 2 ); //
+            tft.drawString( TGlog2, 5, 130, 2 ); //
+            tft.drawString( TGlog3, 5, 144, 2 ); //
+            tft.drawString( TGlog4, 5, 158, 2 ); //
+            tft.drawString( TGlog5, 5, 172, 2 ); //
+
+            tft.setTextColor( TFT_YELLOW, TFT_BLACK ); // return to yellow
+          } //
+
+        } //
+
+//<<<<<<<<<<<<<<<<<<<<<^^^ TG LOG SCREEN ^^ <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+
+
         strncpy( line3_str, disp_buf2, 31 );
 
         if( !mptr->do_wio_lines ) {
           tft.drawString( disp_buf, 5, 40, FNT );
         }
       }
-      tft.setTextColor( TFT_ORANGE, TFT_BLACK );
+      tft.setTextColor( TFT_YELLOW, TFT_BLACK ); // was orange
       tft.drawString( disp_buf2, 5, 70, FNT );
       //}
 
@@ -1148,15 +1196,22 @@ void loop()
 
       sprintf( disp_buf, "SITE %d, RFSS %d  DEMOD %s", mptr->site_id, mptr->rf_id, demod_str );
       if( strcmp( disp_buf, line5_str ) != 0 ) {
-        clear_line5();
-        tft.drawString( disp_buf, 5, 130, FNT );
+        //   clear_line5();
+        if( TGLogScreen != true ) {
+          clear_line5();  // < tg log screen <<<<<<<<<
+          tft.drawString( disp_buf, 5, 130, FNT );
+        }
+        // tft.drawString(disp_buf, 5, 130, FNT);
       }
       strcpy( line5_str, disp_buf );
 
       sprintf( disp_buf, "NCO1 %3.3f, NCO2 %3.2f, EVM %3.1f    ", mptr->nco_offset, mptr->loop_freq, mptr->evm_p );
       if( strcmp( disp_buf, line6_str ) != 0 ) {
         //clear_line6(); //space at the end of this line is better solution
-        tft.drawString( disp_buf, 5, 160, FNT );
+        if( TGLogScreen != true ) {
+          tft.drawString( disp_buf, 5, 160, FNT ); // < tg log screen <<<<<<<<<<<<<<<<
+        }
+        // tft.drawString(disp_buf, 5, 160, FNT);
       }
       strcpy( line6_str, disp_buf );
 
@@ -1174,7 +1229,7 @@ void loop()
 
       FNT = 2;
       memset( disp_buf, 0x00, sizeof( disp_buf ) );
-      tft.setTextColor( TFT_ORANGE, TFT_BLACK );
+      tft.setTextColor( TFT_YELLOW, TFT_BLACK ); // was orange
       if( mptr->on_control_b == 0 && mptr->RID != 0 && mptr->alias != NULL ) {
         sprintf( disp_buf, "RID %u, %s", mptr->RID, mptr->alias );
       } else {
