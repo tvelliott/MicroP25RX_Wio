@@ -1,5 +1,6 @@
 # MicroP25RX_Wio
 <img src="https://github.com/tvelliott/MicroP25RX_Wio/blob/main/images/monitor.png">
+<img src="https://github.com/tvelliott/MicroP25RX_Wio/blob/main/images/tglog.png">
 Firmware source for the Wio-terminal portion of the MicroP25RX product
 
 
