@@ -24,4 +24,4 @@
 
 
 #include "metainfo.h"
-int handle_button_mode(void);
+int handle_button_mode( void );

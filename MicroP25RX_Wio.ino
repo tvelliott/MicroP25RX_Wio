@@ -30,7 +30,7 @@
 #include "meta_config_info.h"
 
 TFT_eSPI tft;
-TFT_eSprite spr = TFT_eSprite(&tft);
+TFT_eSprite spr = TFT_eSprite( &tft );
 Keybord mykey; // Cleate a keybord
 
 
@@ -40,7 +40,7 @@ Keybord mykey; // Cleate a keybord
 #include <wiring_private.h>
 
 #include <stdint.h>
-#include "crc32.h"  
+#include "crc32.h"
 #include "metainfo.h"
 
 #include <Seeed_FS.h>
@@ -56,7 +56,7 @@ extern volatile int cmd_acked;
 #define FFT_M 128
 uint8_t fft_data[FFT_M];
 int8_t iq8_data[512];
-uint8_t iq8_idx; 
+uint8_t iq8_idx;
 
 static int force_scan;
 static int gain_select;
@@ -65,11 +65,11 @@ static int _mixer_gain;
 static int _vga_gain;
 static int is_vga_auto;
 
-void do_edit(metainfo *m);
+void do_edit( metainfo *m );
 uint8_t tg_zones[16][7];
-void draw_tg_zones(void);
-void tg_toggle_select(void);
-int get_sel_zone(void);
+void draw_tg_zones( void );
+void tg_toggle_select( void );
+int get_sel_zone( void );
 
 volatile uint8_t buf[1500];
 metainfo minfo;
@@ -81,8 +81,8 @@ extern uint32_t b_button_press_time;
 extern uint32_t c_button_press_time;
 static int did_save;
 static int did_edit;
-int current_button_mode=-1;
-static int prev_button_mode=-1;
+int current_button_mode = -1;
+static int prev_button_mode = -1;
 
 volatile uint32_t rx_count;
 volatile int spi_state;
@@ -96,8 +96,8 @@ volatile uint16_t meta_len;
 volatile uint32_t sclk_count;
 /////////////////////////////////////////////////////
 //
-void reset_info(void);
-void change_freq(int freq, int is_inc);
+void reset_info( void );
+void change_freq( int freq, int is_inc );
 int is_valid_freq( double freq );
 char disp_buf[256];
 char disp_buf2[256];
@@ -144,15 +144,16 @@ static int did_sd_init;
 
 #ifdef __arm__
 // should use uinstd.h to define sbrk but Due causes a conflict
-extern "C" char* sbrk(int incr);
+extern "C" char *sbrk( int incr );
 #else  // __ARM__
 extern char *__brkval;
 #endif  // __arm__
 
-static int freeMemory() {
+static int freeMemory()
+{
   char top;
 #ifdef __arm__
-  return &top - reinterpret_cast<char*>(sbrk(0));
+  return &top - reinterpret_cast<char *>( sbrk( 0 ) );
 #elif defined(CORE_TEENSY) || (ARDUINO > 103 && ARDUINO != 151)
   return &top - __brkval;
 #else  // __arm__
@@ -162,7 +163,7 @@ static int freeMemory() {
 
 
 #define DO_SCREENCAPS 1
-int gen_screencaps=0;
+int gen_screencaps = 0;
 ////////////////////////////////////////////////////////////////////////////////////
 // when DO_SCREENCAPS==1, then generate screencaps throughout the menu system
 //
@@ -175,161 +176,172 @@ int gen_screencaps=0;
 // e.g. convert -depth 8 -size 320x240+0 rgb:screencap.1 screencap1.png
 //
 ////////////////////////////////////////////////////////////////////////////////////
-void do_screencap() {
+void do_screencap()
+{
 
 #ifdef DO_SCREENCAPS==1
-File scap_file;
-uint8_t screencap_data[3 * 320 * 30];
+  File scap_file;
+  uint8_t screencap_data[3 * 320 * 30];
 
-char filename[64];
+  char filename[64];
 
-  sprintf(filename, "/screencap.%d", ++scap_count);
+  sprintf( filename, "/screencap.%d", ++scap_count );
 
 
-  if(!did_sd_init && !SD.begin(SDCARD_SS_PIN, SDCARD_SPI)) {
+  if( !did_sd_init && !SD.begin( SDCARD_SS_PIN, SDCARD_SPI ) ) {
     return;
   }
-  did_sd_init=1;
+  did_sd_init = 1;
 
-  if( SD.exists(filename) ) {
-    SD.remove(filename);
+  if( SD.exists( filename ) ) {
+    SD.remove( filename );
   }
 
-  scap_file = SD.open(filename, FILE_WRITE);
-  if(scap_file==NULL) return;
+  scap_file = SD.open( filename, FILE_WRITE );
+  if( scap_file == NULL ) return;
 
   //do 30 lines at a time so we don't take up too much ram
-  tft.readRectRGB(0, 0, 320, 30, screencap_data);
-  scap_file.write(screencap_data, 320*30*3);
-  tft.readRectRGB(0, 30, 320, 30, screencap_data);
-  scap_file.write(screencap_data, 320*30*3);
-  tft.readRectRGB(0, 60, 320, 30, screencap_data);
-  scap_file.write(screencap_data, 320*30*3);
-  tft.readRectRGB(0, 90, 320, 30, screencap_data);
-  scap_file.write(screencap_data, 320*30*3);
-  tft.readRectRGB(0, 120, 320, 30, screencap_data);
-  scap_file.write(screencap_data, 320*30*3);
-  tft.readRectRGB(0, 150, 320, 30, screencap_data);
-  scap_file.write(screencap_data, 320*30*3);
-  tft.readRectRGB(0, 180, 320, 30, screencap_data);
-  scap_file.write(screencap_data, 320*30*3);
-  tft.readRectRGB(0, 210, 320, 30, screencap_data);
-  scap_file.write(screencap_data, 320*30*3);
+  tft.readRectRGB( 0, 0, 320, 30, screencap_data );
+  scap_file.write( screencap_data, 320 * 30 * 3 );
+  tft.readRectRGB( 0, 30, 320, 30, screencap_data );
+  scap_file.write( screencap_data, 320 * 30 * 3 );
+  tft.readRectRGB( 0, 60, 320, 30, screencap_data );
+  scap_file.write( screencap_data, 320 * 30 * 3 );
+  tft.readRectRGB( 0, 90, 320, 30, screencap_data );
+  scap_file.write( screencap_data, 320 * 30 * 3 );
+  tft.readRectRGB( 0, 120, 320, 30, screencap_data );
+  scap_file.write( screencap_data, 320 * 30 * 3 );
+  tft.readRectRGB( 0, 150, 320, 30, screencap_data );
+  scap_file.write( screencap_data, 320 * 30 * 3 );
+  tft.readRectRGB( 0, 180, 320, 30, screencap_data );
+  scap_file.write( screencap_data, 320 * 30 * 3 );
+  tft.readRectRGB( 0, 210, 320, 30, screencap_data );
+  scap_file.write( screencap_data, 320 * 30 * 3 );
 
   scap_file.close();
 #endif
 }
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
-void init_sprites() {
-  spr = TFT_eSprite(&tft);
-  spr.setColorDepth(4);
+void init_sprites()
+{
+  spr = TFT_eSprite( &tft );
+  spr.setColorDepth( 4 );
 }
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
-void clr_screen() {
-  tft.fillScreen(TFT_BLACK);  //background
-  memset(line1_str,0x00,32);
-  memset(line2_str,0x00,32);
-  memset(line3_str,0x00,32);
-  memset(line4_str,0x00,32);
-  memset(line5_str,0x00,32);
-  memset(line6_str,0x00,32);
-  memset(line7_str,0x00,32);
-  memset(line8_str,0x00,32);
+void clr_screen()
+{
+  tft.fillScreen( TFT_BLACK ); //background
+  memset( line1_str, 0x00, 32 );
+  memset( line2_str, 0x00, 32 );
+  memset( line3_str, 0x00, 32 );
+  memset( line4_str, 0x00, 32 );
+  memset( line5_str, 0x00, 32 );
+  memset( line6_str, 0x00, 32 );
+  memset( line7_str, 0x00, 32 );
+  memset( line8_str, 0x00, 32 );
 }
 
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
-void clear_line1() {
-  tft.fillRect(0, 0, 320, 30, TFT_BLACK);
+void clear_line1()
+{
+  tft.fillRect( 0, 0, 320, 30, TFT_BLACK );
 }
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
-void clear_line2() {
-  tft.fillRect(0, 30, 320, 30, TFT_BLACK);
+void clear_line2()
+{
+  tft.fillRect( 0, 30, 320, 30, TFT_BLACK );
 }
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
-void clear_line3() {
-  tft.fillRect(0, 60, 320, 30, TFT_BLACK);
+void clear_line3()
+{
+  tft.fillRect( 0, 60, 320, 30, TFT_BLACK );
 }
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
-void clear_line4() {
-  tft.fillRect(0, 90, 320, 30, TFT_BLACK);
+void clear_line4()
+{
+  tft.fillRect( 0, 90, 320, 30, TFT_BLACK );
 }
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
-void clear_line5() {
-  tft.fillRect(0, 120, 320, 30, TFT_BLACK);
+void clear_line5()
+{
+  tft.fillRect( 0, 120, 320, 30, TFT_BLACK );
 }
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
-void clear_line6() {
-  tft.fillRect(0, 150, 320, 30, TFT_BLACK);
+void clear_line6()
+{
+  tft.fillRect( 0, 150, 320, 30, TFT_BLACK );
 }
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
-void clear_line7() {
-  tft.fillRect(0, 180, 320, 30, TFT_BLACK);
+void clear_line7()
+{
+  tft.fillRect( 0, 180, 320, 30, TFT_BLACK );
 }
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
-void clear_line8() {
-  tft.fillRect(0, 210, 235, 30, TFT_BLACK);
+void clear_line8()
+{
+  tft.fillRect( 0, 210, 235, 30, TFT_BLACK );
 }
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
 void setup()
 {
   tft.begin();
-  tft.setRotation(3);
-  tft.fillScreen(TFT_BLACK);  //background
-  tft.setFreeFont(FS18);
-  tft.fillScreen(TFT_BLACK);  //background
+  tft.setRotation( 3 );
+  tft.fillScreen( TFT_BLACK ); //background
+  tft.setFreeFont( FS18 );
+  tft.fillScreen( TFT_BLACK ); //background
 
 
   init_sprites();
 
   //joystick
-  pinMode(WIO_5S_UP, INPUT_PULLUP);
-  pinMode(WIO_5S_DOWN, INPUT_PULLUP);
-  pinMode(WIO_5S_LEFT, INPUT_PULLUP);
-  pinMode(WIO_5S_RIGHT, INPUT_PULLUP);
-  pinMode(WIO_5S_PRESS, INPUT_PULLUP);
+  pinMode( WIO_5S_UP, INPUT_PULLUP );
+  pinMode( WIO_5S_DOWN, INPUT_PULLUP );
+  pinMode( WIO_5S_LEFT, INPUT_PULLUP );
+  pinMode( WIO_5S_RIGHT, INPUT_PULLUP );
+  pinMode( WIO_5S_PRESS, INPUT_PULLUP );
 
   //3-buttons
-  pinMode(WIO_KEY_A, INPUT_PULLUP);
-  pinMode(WIO_KEY_B, INPUT_PULLUP);
-  pinMode(WIO_KEY_C, INPUT_PULLUP);
+  pinMode( WIO_KEY_A, INPUT_PULLUP );
+  pinMode( WIO_KEY_B, INPUT_PULLUP );
+  pinMode( WIO_KEY_C, INPUT_PULLUP );
 
 
-  tft.setFreeFont(NULL);
-  tft.setTextColor(TFT_WHITE, TFT_BLACK);
+  tft.setFreeFont( NULL );
+  tft.setTextColor( TFT_WHITE, TFT_BLACK );
 
-  sprintf(disp_buf, "%s","BlueTail    MicroP25RX");
-  FNT=4;
-  tft.drawString(disp_buf, 5, 10, FNT);
+  sprintf( disp_buf, "%s", "BlueTail    MicroP25RX" );
+  FNT = 4;
+  tft.drawString( disp_buf, 5, 10, FNT );
 
   //SPI.begin();
   initSPI();
 
   //we have to control this manually due to silicon bug?? in SAMD51
-  pinMode(PIN_SPI_MISO, OUTPUT);
-  digitalWrite(PIN_SPI_MISO,HIGH);
-  
-  pinMode(PIN_SPI_SS, INPUT_PULLUP);
-  //interrupt handler for Wio -> to -> Teensy
-  attachInterrupt(digitalPinToInterrupt(PIN_SPI_SS), spi_miso_int, FALLING);
+  pinMode( PIN_SPI_MISO, OUTPUT );
+  digitalWrite( PIN_SPI_MISO, HIGH );
 
-  delay(100);//let button-inputs settle after power-up
+  pinMode( PIN_SPI_SS, INPUT_PULLUP );
+  //interrupt handler for Wio -> to -> Teensy
+  attachInterrupt( digitalPinToInterrupt( PIN_SPI_SS ), spi_miso_int, FALLING );
+
+  delay( 100 ); //let button-inputs settle after power-up
 
   clr_buttons();
-  did_save=0;
-  b_button_press_time=0;
-  c_button_press_time=0;
-  
+  did_save = 0;
+  b_button_press_time = 0;
+  c_button_press_time = 0;
+
 }
 
 
@@ -338,428 +350,417 @@ void setup()
 void loop()
 {
 
-	check_buttons();
+  check_buttons();
 
 
   //middle-top button held for more than 3 seconds?
-  if(!did_edit && C_but_pressed && (millis()-c_button_press_time > 1000) && C_but==0xff) {
+  if( !did_edit && C_but_pressed && ( millis() - c_button_press_time > 1000 ) && C_but == 0xff ) {
     //do edit here
 
-    memcpy((void *)&minfo_copy, (void *)&minfo_verified, sizeof(metainfo));
+    memcpy( ( void * )&minfo_copy, ( void * )&minfo_verified, sizeof( metainfo ) );
     metainfo *m = &minfo_copy;
-    do_edit(m);
+    do_edit( m );
     clr_screen();
-    did_edit=1;
-  }
-  else if(did_edit && C_but==0x00) {
-    did_edit=0;
-    c_button_press_time=0;
-    C_but_pressed=0;
+    did_edit = 1;
+  } else if( did_edit && C_but == 0x00 ) {
+    did_edit = 0;
+    c_button_press_time = 0;
+    C_but_pressed = 0;
   }
 
 
   //middle-top button held for more than 3 seconds?
-  if(!did_save && B_but_pressed && (millis()-b_button_press_time > 3000) && B_but==0xff) {
-    send_cmd("save",4);  //save config
-    did_save=1;
-  }
-  else if(did_save && B_but==0x00) {
-    did_save=0;
-    b_button_press_time=0;
-    B_but_pressed=0;
+  if( !did_save && B_but_pressed && ( millis() - b_button_press_time > 3000 ) && B_but == 0xff ) {
+    send_cmd( "save", 4 ); //save config
+    did_save = 1;
+  } else if( did_save && B_but == 0x00 ) {
+    did_save = 0;
+    b_button_press_time = 0;
+    B_but_pressed = 0;
   }
 
   /////////////////////////////////////////////////////////////////////////
   // CONFIG MODE
   /////////////////////////////////////////////////////////////////////////
-  if( current_button_mode == WIO_BUTTON_MODE_CONFIG) {
-  
-      //pressed and released
-      if (press_but_pressed && press_but == 0x00) { //select button mode menu
-        press_but_pressed = 0;
-        memcpy((void *)&minfo_copy, (void *)&minfo_verified, sizeof(metainfo));
-        metainfo *m = &minfo_copy;
+  if( current_button_mode == WIO_BUTTON_MODE_CONFIG ) {
 
-        if(gen_screencaps) do_screencap();
+    //pressed and released
+    if( press_but_pressed && press_but == 0x00 ) { //select button mode menu
+      press_but_pressed = 0;
+      memcpy( ( void * )&minfo_copy, ( void * )&minfo_verified, sizeof( metainfo ) );
+      metainfo *m = &minfo_copy;
 
-        int ret = handle_button_mode();
-        if(ret>=0) {
-          current_button_mode = ret; 
-        }
-        else {
-          B_but=0;
-          B_but_pressed=0;
-          clr_screen();
-        }
-      }
-      //pressed and released
-      if (right_but_pressed && right_but == 0x00) {
-        right_but_pressed = 0;
-        send_cmd("nfreq_force",11);  //next primary/active frequency
-      }
-      //pressed and released
-      if (left_but_pressed && left_but == 0x00) {
-        left_but_pressed = 0;
-        send_cmd("pfreq",5); //previous primary/active frequency
-      }
-      //pressed and released
-      if (up_but_pressed && up_but == 0x00) {
-        up_but_pressed = 0;
-        char cmd_str[32];
-        metainfo *mptr = &minfo_verified;
-        sprintf(cmd_str,"nsfreq %05X %03X\r\n", mptr->wacn_id, mptr->sys_id);  //roam mode=3 needs wacn and sysid arguments
-        int len = strlen(cmd_str);
-        send_cmd(cmd_str,len);  //next primary/active frequency
-      }
-      //pressed and released
-      if (down_but_pressed && down_but == 0x00) {
-        down_but_pressed = 0;
-        char cmd_str[32];
-        metainfo *mptr = &minfo_verified;
-        sprintf(cmd_str,"psfreq %05X %03X\r\n", mptr->wacn_id, mptr->sys_id);  //roam mode=3 needs wacn and sysid arguments
-        int len = strlen(cmd_str);
-        send_cmd(cmd_str,len);  //next primary/active frequency
-      }
+      if( gen_screencaps ) do_screencap();
 
-
-      //pressed, released
-      //left-most button
-      if (C_but_pressed && C_but == 0x00) {
-        C_but_pressed = 0;
-        c_button_press_time=0;
-
-        metainfo *mptr = &minfo_verified;
-        char cmd[32];
-        if( mptr->roaming==5 ) {
-          snprintf(cmd, 31, "inc_scan %05X %03X %u %u 1\r\n", mptr->wacn_id, mptr->sys_id, mptr->site_id, mptr->rf_id); 
-          send_cmd( (const char *) cmd,strlen(cmd));
-        }
-        else {
-          snprintf(cmd, 31, "learn %d\r\n", (learn^0x01) ); //learn mode on/off
-          send_cmd( (const char *) cmd,strlen(cmd));
-        }
-      }
-      //middle-most button
-      if(B_but_pressed && B_but == 0x00) { //configuration menu
+      int ret = handle_button_mode();
+      if( ret >= 0 ) {
+        current_button_mode = ret;
+      } else {
+        B_but = 0;
         B_but_pressed = 0;
-        b_button_press_time=0;
-
-
-        memcpy((void *)&minfo_copy, (void *)&minfo_verified, sizeof(metainfo));
-        metainfo *m = &minfo_copy;
-        handle_main_menu(m);
-
         clr_screen();
       }
-      //right-most button
-      if (A_but_pressed && A_but == 0x00) { //demod mode LSM/FM
-        A_but_pressed = 0;
-        metainfo *mptr = &minfo_verified;
-        char cmd[32];
-        if( mptr->roaming==5 ) {
-          snprintf(cmd, 31, "inc_scan %05X %03X %u %u 0\r\n", mptr->wacn_id, mptr->sys_id, mptr->site_id, mptr->rf_id); 
-          send_cmd( (const char *) cmd,strlen(cmd));
-        }
-        else {
-          snprintf(cmd, 31, "demod %d\r\n", (mptr->use_demod^0x01) );
-          send_cmd( (const char *) cmd,strlen(cmd));
-        }
+    }
+    //pressed and released
+    if( right_but_pressed && right_but == 0x00 ) {
+      right_but_pressed = 0;
+      send_cmd( "nfreq_force", 11 ); //next primary/active frequency
+    }
+    //pressed and released
+    if( left_but_pressed && left_but == 0x00 ) {
+      left_but_pressed = 0;
+      send_cmd( "pfreq", 5 ); //previous primary/active frequency
+    }
+    //pressed and released
+    if( up_but_pressed && up_but == 0x00 ) {
+      up_but_pressed = 0;
+      char cmd_str[32];
+      metainfo *mptr = &minfo_verified;
+      sprintf( cmd_str, "nsfreq %05X %03X\r\n", mptr->wacn_id, mptr->sys_id ); //roam mode=3 needs wacn and sysid arguments
+      int len = strlen( cmd_str );
+      send_cmd( cmd_str, len ); //next primary/active frequency
+    }
+    //pressed and released
+    if( down_but_pressed && down_but == 0x00 ) {
+      down_but_pressed = 0;
+      char cmd_str[32];
+      metainfo *mptr = &minfo_verified;
+      sprintf( cmd_str, "psfreq %05X %03X\r\n", mptr->wacn_id, mptr->sys_id ); //roam mode=3 needs wacn and sysid arguments
+      int len = strlen( cmd_str );
+      send_cmd( cmd_str, len ); //next primary/active frequency
+    }
+
+
+    //pressed, released
+    //left-most button
+    if( C_but_pressed && C_but == 0x00 ) {
+      C_but_pressed = 0;
+      c_button_press_time = 0;
+
+      metainfo *mptr = &minfo_verified;
+      char cmd[32];
+      if( mptr->roaming == 5 ) {
+        snprintf( cmd, 31, "inc_scan %05X %03X %u %u 1\r\n", mptr->wacn_id, mptr->sys_id, mptr->site_id, mptr->rf_id );
+        send_cmd( ( const char * ) cmd, strlen( cmd ) );
+      } else {
+        snprintf( cmd, 31, "learn %d\r\n", ( learn ^ 0x01 ) ); //learn mode on/off
+        send_cmd( ( const char * ) cmd, strlen( cmd ) );
       }
+    }
+    //middle-most button
+    if( B_but_pressed && B_but == 0x00 ) { //configuration menu
+      B_but_pressed = 0;
+      b_button_press_time = 0;
+
+
+      memcpy( ( void * )&minfo_copy, ( void * )&minfo_verified, sizeof( metainfo ) );
+      metainfo *m = &minfo_copy;
+      handle_main_menu( m );
+
+      clr_screen();
+    }
+    //right-most button
+    if( A_but_pressed && A_but == 0x00 ) { //demod mode LSM/FM
+      A_but_pressed = 0;
+      metainfo *mptr = &minfo_verified;
+      char cmd[32];
+      if( mptr->roaming == 5 ) {
+        snprintf( cmd, 31, "inc_scan %05X %03X %u %u 0\r\n", mptr->wacn_id, mptr->sys_id, mptr->site_id, mptr->rf_id );
+        send_cmd( ( const char * ) cmd, strlen( cmd ) );
+      } else {
+        snprintf( cmd, 31, "demod %d\r\n", ( mptr->use_demod ^ 0x01 ) );
+        send_cmd( ( const char * ) cmd, strlen( cmd ) );
+      }
+    }
   }
   /////////////////////////////////////////////////////////////////////////
   // TG ZONE MODE
   /////////////////////////////////////////////////////////////////////////
-  else if( current_button_mode == WIO_BUTTON_MODE_TG_ZONE) {
+  else if( current_button_mode == WIO_BUTTON_MODE_TG_ZONE ) {
     //pressed and released
-    if (press_but_pressed && press_but == 0x00) { //select button mode menu
+    if( press_but_pressed && press_but == 0x00 ) { //select button mode menu
       press_but_pressed = 0;
 
-      if(gen_screencaps) do_screencap();
+      if( gen_screencaps ) do_screencap();
 
       int ret = handle_button_mode();
-      if(ret>=0) {
-        current_button_mode = ret; 
-      }
-      else {
-        B_but=0;
-        B_but_pressed=0;
+      if( ret >= 0 ) {
+        current_button_mode = ret;
+      } else {
+        B_but = 0;
+        B_but_pressed = 0;
         clr_screen();
       }
     }
     //pressed and released
-    if (right_but_pressed && right_but==0x00) {
+    if( right_but_pressed && right_but == 0x00 ) {
       right_but_pressed = 0;
       tgz_inc_x();
     }
     //pressed and released
-    if (left_but_pressed && left_but==0x00) {
+    if( left_but_pressed && left_but == 0x00 ) {
       left_but_pressed = 0;
       tgz_dec_x();
     }
     //pressed and released
-    if (up_but_pressed && up_but==0x00) {
+    if( up_but_pressed && up_but == 0x00 ) {
       up_but_pressed = 0;
       tgz_dec_y();
     }
     //pressed and released
-    if (down_but_pressed && down_but==0x00) {
+    if( down_but_pressed && down_but == 0x00 ) {
       down_but_pressed = 0;
       tgz_inc_y();
     }
-    if (A_but_pressed && A_but == 0x00) { 
+    if( A_but_pressed && A_but == 0x00 ) {
       A_but_pressed = 0;
       char cmd[64];
-      snprintf(cmd,63,"wio_but_mode 0\r\n");
-      send_cmd(cmd,15);
+      snprintf( cmd, 63, "wio_but_mode 0\r\n" );
+      send_cmd( cmd, 15 );
     }
-    if (C_but_pressed && C_but == 0x00) { 
+    if( C_but_pressed && C_but == 0x00 ) {
       C_but_pressed = 0;
       tg_toggle_select();
     }
-    if (B_but_pressed && B_but == 0x00) { 
+    if( B_but_pressed && B_but == 0x00 ) {
       B_but_pressed = 0;
       int zone = get_sel_zone();
 
-      tft.setTextColor(TFT_GREEN, TFT_BLACK); 
+      tft.setTextColor( TFT_GREEN, TFT_BLACK );
       clr_screen();
-      FNT=4;
-      tft.drawString("Zone Name", 5, 10, FNT);
-      mykey.set_flag(2);	//start with alphanum
-      mykey.set_cur(28);	//start key
-      draw_keybord(mykey, 0, 110, 320, 120, 32, 1);
+      FNT = 4;
+      tft.drawString( "Zone Name", 5, 10, FNT );
+      mykey.set_flag( 2 ); //start with alphanum
+      mykey.set_cur( 28 ); //start key
+      draw_keybord( mykey, 0, 110, 320, 120, 32, 1 );
       zone &= 0x0f;
 
       char zone_name[8];
-      zone_name[7]=0;
-      memcpy(zone_name,&tg_zones[zone][0],7);
-      String zone_str = text_input_5waySwitch(mykey,35,60, String((char *) zone_name));
+      zone_name[7] = 0;
+      memcpy( zone_name, &tg_zones[zone][0], 7 );
+      String zone_str = text_input_5waySwitch( mykey, 35, 60, String( ( char * ) zone_name ) );
 
-      zone_str.replace(' ','_');
+      zone_str.replace( ' ', '_' );
 
-      memcpy(zone_name,zone_str.c_str(),7);
+      memcpy( zone_name, zone_str.c_str(), 7 );
 
       char cmd[32];
-      snprintf(cmd, 31, "zonename %u %s\r\n",zone,zone_name); 
-      send_cmd( (const char *) cmd,strlen(cmd));
+      snprintf( cmd, 31, "zonename %u %s\r\n", zone, zone_name );
+      send_cmd( ( const char * ) cmd, strlen( cmd ) );
     }
   }
   /////////////////////////////////////////////////////////////////////////
   // MONITOR MODE
   /////////////////////////////////////////////////////////////////////////
-  else if( current_button_mode == WIO_BUTTON_MODE_MONITOR) {
+  else if( current_button_mode == WIO_BUTTON_MODE_MONITOR ) {
     //pressed and released
-    if (press_but_pressed && press_but == 0x00) { //select button mode menu
+    if( press_but_pressed && press_but == 0x00 ) { //select button mode menu
       press_but_pressed = 0;
-      memcpy((void *)&minfo_copy, (void *)&minfo_verified, sizeof(metainfo));
+      memcpy( ( void * )&minfo_copy, ( void * )&minfo_verified, sizeof( metainfo ) );
       metainfo *m = &minfo_copy;
 
-      if(gen_screencaps) do_screencap();
+      if( gen_screencaps ) do_screencap();
 
       int ret = handle_button_mode();
-      if(ret>=0) {
-        current_button_mode = ret; 
-      }
-      else {
-        B_but=0;
-        B_but_pressed=0;
+      if( ret >= 0 ) {
+        current_button_mode = ret;
+      } else {
+        B_but = 0;
+        B_but_pressed = 0;
         clr_screen();
       }
     }
     //pressed and released
-    if (right_but_pressed && right_but == 0x00) {
+    if( right_but_pressed && right_but == 0x00 ) {
       right_but_pressed = 0;
-      send_cmd("nfreq_force",11);  //next primary/active frequency
+      send_cmd( "nfreq_force", 11 ); //next primary/active frequency
     }
     //pressed and released
-    if (left_but_pressed && left_but == 0x00) {
+    if( left_but_pressed && left_but == 0x00 ) {
       left_but_pressed = 0;
-      send_cmd("pfreq",5); //previous primary/active frequency
+      send_cmd( "pfreq", 5 ); //previous primary/active frequency
     }
     //pressed, released
     //left-most button
-    if (C_but_pressed && C_but == 0x00) { //TG HOLD
+    if( C_but_pressed && C_but == 0x00 ) { //TG HOLD
       C_but_pressed = 0;
-      c_button_press_time=0;
+      c_button_press_time = 0;
       char cmd[32];
-      if(follow==0) {
-        snprintf(cmd, 31, "f %d\r\n",prev_tgs); 
-        send_cmd( (const char *) cmd,strlen(cmd));
-      }
-      else {
-        snprintf(cmd, 31, "f\r\n"); 
-        send_cmd( (const char *) cmd,strlen(cmd));
+      if( follow == 0 ) {
+        snprintf( cmd, 31, "f %d\r\n", prev_tgs );
+        send_cmd( ( const char * ) cmd, strlen( cmd ) );
+      } else {
+        snprintf( cmd, 31, "f\r\n" );
+        send_cmd( ( const char * ) cmd, strlen( cmd ) );
       }
     }
     //middle-most button
-    if(B_but_pressed && B_but == 0x00) { //MUTE
+    if( B_but_pressed && B_but == 0x00 ) { //MUTE
       B_but_pressed = 0;
-      b_button_press_time=0;
+      b_button_press_time = 0;
 
       char cmd[32];
-      snprintf(cmd, 31, "audio_mute %u\r\n", (mute^0x01) );
-      send_cmd( (const char *) cmd,strlen(cmd));
+      snprintf( cmd, 31, "audio_mute %u\r\n", ( mute ^ 0x01 ) );
+      send_cmd( ( const char * ) cmd, strlen( cmd ) );
     }
     //right-most button
-    if (A_but_pressed && A_but == 0x00) { //SKIP
+    if( A_but_pressed && A_but == 0x00 ) { //SKIP
       A_but_pressed = 0;
 
       char cmd[32];
-      if(prev_tgs>0) {
-        snprintf(cmd, 31, "s %d\r\n", prev_tgs);
-        send_cmd( (const char *) cmd,strlen(cmd));
-      }
-      else {
-        snprintf(cmd, 31, "s\r\n", prev_tgs);
-        send_cmd( (const char *) cmd,strlen(cmd));
+      if( prev_tgs > 0 ) {
+        snprintf( cmd, 31, "s %d\r\n", prev_tgs );
+        send_cmd( ( const char * ) cmd, strlen( cmd ) );
+      } else {
+        snprintf( cmd, 31, "s\r\n", prev_tgs );
+        send_cmd( ( const char * ) cmd, strlen( cmd ) );
       }
     }
   }
   /////////////////////////////////////////////////////////////////////////
   // RF GAIN MODE
   /////////////////////////////////////////////////////////////////////////
-  else if( current_button_mode == WIO_BUTTON_MODE_RF_GAIN) {
+  else if( current_button_mode == WIO_BUTTON_MODE_RF_GAIN ) {
     //pressed and released
-    if (press_but_pressed && press_but == 0x00) { //select button mode menu
+    if( press_but_pressed && press_but == 0x00 ) { //select button mode menu
       press_but_pressed = 0;
-      memcpy((void *)&minfo_copy, (void *)&minfo_verified, sizeof(metainfo));
+      memcpy( ( void * )&minfo_copy, ( void * )&minfo_verified, sizeof( metainfo ) );
       metainfo *m = &minfo_copy;
 
-      if(gen_screencaps) do_screencap();
+      if( gen_screencaps ) do_screencap();
 
       int ret = handle_button_mode();
-      if(ret>=0) {
-        current_button_mode = ret; 
-      }
-      else {
-        B_but=0;
-        B_but_pressed=0;
+      if( ret >= 0 ) {
+        current_button_mode = ret;
+      } else {
+        B_but = 0;
+        B_but_pressed = 0;
         clr_screen();
       }
     }
 
     //pressed and released
-    if (up_but_pressed && up_but==0x00) {
+    if( up_but_pressed && up_but == 0x00 ) {
       up_but_pressed = 0;
       gain_select--;
-      if(gain_select<0) gain_select=2;
+      if( gain_select < 0 ) gain_select = 2;
     }
     //pressed and released
-    if (down_but_pressed && down_but==0x00) {
+    if( down_but_pressed && down_but == 0x00 ) {
       down_but_pressed = 0;
       gain_select++;
-      if(gain_select>2) gain_select=0;
+      if( gain_select > 2 ) gain_select = 0;
     }
 
 
     //pressed and released
     //if (right_but_pressed && right_but == 0x00) {
-    if (right_but_pressed ) {
+    if( right_but_pressed ) {
       right_but_pressed = 0;
 
       char cmd[32];
-      if(gain_select==0) snprintf(cmd, 31, "lna_gain up\r\n" );
-      if(gain_select==1) snprintf(cmd, 31, "mix_gain up\r\n" );
-      if(gain_select==2) snprintf(cmd, 31, "vga_gain up\r\n" );
-      send_cmd( (const char *) cmd,strlen(cmd));
+      if( gain_select == 0 ) snprintf( cmd, 31, "lna_gain up\r\n" );
+      if( gain_select == 1 ) snprintf( cmd, 31, "mix_gain up\r\n" );
+      if( gain_select == 2 ) snprintf( cmd, 31, "vga_gain up\r\n" );
+      send_cmd( ( const char * ) cmd, strlen( cmd ) );
 
-      delay(25);
+      delay( 25 );
     }
     //pressed and released
     //if (left_but_pressed && left_but == 0x00) {
-    if (left_but_pressed ) {
+    if( left_but_pressed ) {
       left_but_pressed = 0;
 
       char cmd[32];
-      if(gain_select==0) snprintf(cmd, 31, "lna_gain down\r\n" );
-      if(gain_select==1) snprintf(cmd, 31, "mix_gain down\r\n" );
-      if(gain_select==2) snprintf(cmd, 31, "vga_gain down\r\n" );
-      send_cmd( (const char *) cmd,strlen(cmd));
+      if( gain_select == 0 ) snprintf( cmd, 31, "lna_gain down\r\n" );
+      if( gain_select == 1 ) snprintf( cmd, 31, "mix_gain down\r\n" );
+      if( gain_select == 2 ) snprintf( cmd, 31, "vga_gain down\r\n" );
+      send_cmd( ( const char * ) cmd, strlen( cmd ) );
 
-      delay(25);
+      delay( 25 );
     }
     //pressed, released
     //left-most button
-    if (C_but_pressed && C_but == 0x00) { //lna_gain
+    if( C_but_pressed && C_but == 0x00 ) { //lna_gain
       C_but_pressed = 0;
-      c_button_press_time=0;
+      c_button_press_time = 0;
 
-      FNT=4;
+      FNT = 4;
       force_scan ^= 0x01;
-      if(force_scan) sprintf(disp_buf, "SCANNING ENABLE    ");
-        else sprintf(disp_buf, "SCANNING DISABLE    ");
-      tft.drawString(disp_buf, 5, 210, FNT);
-      delay(250);
+      if( force_scan ) sprintf( disp_buf, "SCANNING ENABLE    " );
+      else sprintf( disp_buf, "SCANNING DISABLE    " );
+      tft.drawString( disp_buf, 5, 210, FNT );
+      delay( 250 );
     }
     //middle-most button
-    if(B_but_pressed && B_but == 0x00) { //mix gain
+    if( B_but_pressed && B_but == 0x00 ) { //mix gain
       B_but_pressed = 0;
-      b_button_press_time=0;
+      b_button_press_time = 0;
 
       char cmd_str[32];
       metainfo *mptr = &minfo_verified;
 
-      is_vga_auto = ( (mptr->vga_gain&0x80) !=0 );
-      if(is_vga_auto) {
-        sprintf(cmd_str,"update_gains %05X %03X %03u %03u %u %u 16\r\n", mptr->wacn_id, mptr->sys_id, mptr->site_id, mptr->rf_id, _lna_gain, _mixer_gain);  
+      is_vga_auto = ( ( mptr->vga_gain & 0x80 ) != 0 );
+      if( is_vga_auto ) {
+        sprintf( cmd_str, "update_gains %05X %03X %03u %03u %u %u 16\r\n", mptr->wacn_id, mptr->sys_id, mptr->site_id, mptr->rf_id, _lna_gain, _mixer_gain );
 
+      } else {
+        sprintf( cmd_str, "update_gains %05X %03X %03u %03u %u %u %u\r\n", mptr->wacn_id, mptr->sys_id, mptr->site_id, mptr->rf_id, _lna_gain, _mixer_gain, _vga_gain );
       }
-      else {
-        sprintf(cmd_str,"update_gains %05X %03X %03u %03u %u %u %u\r\n", mptr->wacn_id, mptr->sys_id, mptr->site_id, mptr->rf_id, _lna_gain, _mixer_gain, _vga_gain);  
-      }
 
-      FNT=4;
-      tft.setFreeFont(NULL);
-      tft.setTextColor(TFT_WHITE, TFT_BLACK);
+      FNT = 4;
+      tft.setFreeFont( NULL );
+      tft.setTextColor( TFT_WHITE, TFT_BLACK );
 
 
-      int len = strlen(cmd_str);
-      send_cmd(cmd_str,len);  //next primary/active frequency
+      int len = strlen( cmd_str );
+      send_cmd( cmd_str, len ); //next primary/active frequency
 
-      sprintf(disp_buf, "CONFIGURATION SAVED           ");
-      tft.drawString(disp_buf, 5, 210, FNT);
-      delay(250);
+      sprintf( disp_buf, "CONFIGURATION SAVED           " );
+      tft.drawString( disp_buf, 5, 210, FNT );
+      delay( 250 );
 
     }
     //right-most button
-    if (A_but_pressed && A_but == 0x00) { //vga gain
+    if( A_but_pressed && A_but == 0x00 ) { //vga gain
       A_but_pressed = 0;
       metainfo *mptr = &minfo_verified;
       char cmd[32];
-      snprintf(cmd, 31, "demod %d\r\n", (mptr->use_demod^0x01) );
-      send_cmd( (const char *) cmd,strlen(cmd));
+      snprintf( cmd, 31, "demod %d\r\n", ( mptr->use_demod ^ 0x01 ) );
+      send_cmd( ( const char * ) cmd, strlen( cmd ) );
     }
   }
 
-	///////////////////////////////////////////////////////////////////////
-	// We received a new metainfo structure. Time to redraw the screen
-	///////////////////////////////////////////////////////////////////////
-  if (do_draw_rx) {
+  ///////////////////////////////////////////////////////////////////////
+  // We received a new metainfo structure. Time to redraw the screen
+  ///////////////////////////////////////////////////////////////////////
+  if( do_draw_rx ) {
 
     __disable_irq();
     do_draw_rx = 0;
-    memcpy( (uint8_t *) &minfo, (uint8_t *) buf, sizeof(metainfo) );
+    memcpy( ( uint8_t * ) &minfo, ( uint8_t * ) buf, sizeof( metainfo ) );
     __enable_irq();
 
-    metainfo *mptr = (metainfo *) &minfo;
+    metainfo *mptr = ( metainfo * ) &minfo;
     crc32_val = ~0L;
-    uint32_t mi_crc = crc32_range( (unsigned char *) &minfo, sizeof(metainfo) - 8 );
+    uint32_t mi_crc = crc32_range( ( unsigned char * ) &minfo, sizeof( metainfo ) - 8 );
 
     //validate the structure with 32-bit crc
-    if (  mptr->crc_val == mi_crc && mptr->port==8893 ) { //8893=metainfo structure
+    if( mptr->crc_val == mi_crc && mptr->port == 8893 ) { //8893=metainfo structure
       rx_count++;
 
       tgzone = mptr->tgzone;
 
-      if( mptr->data_type == META_DATA_TYPE_ZONEINFO) { 
-        memcpy( &tg_zones[0][0], &mptr->data[0], 112); //tg zones 7 x 16
+      if( mptr->data_type == META_DATA_TYPE_ZONEINFO ) {
+        memcpy( &tg_zones[0][0], &mptr->data[0], 112 ); //tg zones 7 x 16
       }
-      if( mptr->data_type == META_DATA_TYPE_META_CONFIG_INFO) { 
-        memcpy( (char *) &minfo_config, (char *) &mptr->data[0], sizeof(meta_config_info) );
+      if( mptr->data_type == META_DATA_TYPE_META_CONFIG_INFO ) {
+        memcpy( ( char * ) &minfo_config, ( char * ) &mptr->data[0], sizeof( meta_config_info ) );
       }
 
-      memcpy((void *)&minfo_verified, (void *)&minfo, sizeof(metainfo));
+      memcpy( ( void * )&minfo_verified, ( void * )&minfo, sizeof( metainfo ) );
 
-			demod = mptr->use_demod;
+      demod = mptr->use_demod;
       follow = mptr->follow;
       mute = mptr->audio_mute;
       learn = mptr->learn_mode;
@@ -772,22 +773,22 @@ void loop()
         //sent with send_cmd( *str, int len)
 
         __disable_irq();
-        cmd_acked=0;
+        cmd_acked = 0;
         clr_cmd(); //clear the command buffer
         __enable_irq();
       }
 
 
 
-      if( current_button_mode != WIO_BUTTON_MODE_RF_GAIN) {
-        force_scan=0;
+      if( current_button_mode != WIO_BUTTON_MODE_RF_GAIN ) {
+        force_scan = 0;
       }
-       
+
 
       //////////////////////////////////////////////////////////////////////////////////////////////
       // SCANNING/ROAMING CONTROL via the 'nfreq' command.
       // only send nfreq command if the following:
-      // - current button mode is WIO_BUTTON_MODE_MONITOR 
+      // - current button mode is WIO_BUTTON_MODE_MONITOR
       // - TG HOLD / follow is not active
       // - pending commands have been acked
       // - roaming is enabled
@@ -795,44 +796,43 @@ void loop()
       // - time since last channel change is >250ms
       //////////////////////////////////////////////////////////////////////////////////////////////
       //ROAMING MODE 1
-      if(cmd_acked==0 && (force_scan || current_button_mode==WIO_BUTTON_MODE_MONITOR) && follow==0 && 
-        mptr->roaming==1 && mptr->voice_tg_timeout==0 && (millis()-roam_time > mptr->roaming_timeout) ) { //ROAMING=1 // scanning
+      if( cmd_acked == 0 && ( force_scan || current_button_mode == WIO_BUTTON_MODE_MONITOR ) && follow == 0 &&
+          mptr->roaming == 1 && mptr->voice_tg_timeout == 0 && ( millis() - roam_time > mptr->roaming_timeout ) ) { //ROAMING=1 // scanning
 
-        roam_time=millis();
-        send_cmd("nfreq",15);
+        roam_time = millis();
+        send_cmd( "nfreq", 15 );
       }
       //ROAMING MODE 2
-      else if(cmd_acked==0 && (force_scan || current_button_mode==WIO_BUTTON_MODE_MONITOR) && follow==0 && (millis()-roam_time > mptr->roaming_timeout) &&
-        mptr->roaming==2 && (mptr->evm_p>10 || mptr->rssi_f<-115) ) { //ROAMING=2 // auto-switch-over-on-lost-sig, P+S ALL systems
+      else if( cmd_acked == 0 && ( force_scan || current_button_mode == WIO_BUTTON_MODE_MONITOR ) && follow == 0 && ( millis() - roam_time > mptr->roaming_timeout ) &&
+               mptr->roaming == 2 && ( mptr->evm_p > 10 || mptr->rssi_f < -115 ) ) { //ROAMING=2 // auto-switch-over-on-lost-sig, P+S ALL systems
 
-        roam_time=millis();
-        send_cmd("nfreq",15);
+        roam_time = millis();
+        send_cmd( "nfreq", 15 );
       }
       //ROAMING MODE 3
-      else if(cmd_acked==0 && (force_scan || current_button_mode==WIO_BUTTON_MODE_MONITOR) && follow==0 && (millis()-roam_time > mptr->roaming_timeout) &&
-        mptr->roaming==3 && (mptr->evm_p>10 || mptr->rssi_f<-115) ) { //ROAMING=3 // P+S auto-switch-over-on-lost-sig, SINGLE SYSTEM 
+      else if( cmd_acked == 0 && ( force_scan || current_button_mode == WIO_BUTTON_MODE_MONITOR ) && follow == 0 && ( millis() - roam_time > mptr->roaming_timeout ) &&
+               mptr->roaming == 3 && ( mptr->evm_p > 10 || mptr->rssi_f < -115 ) ) { //ROAMING=3 // P+S auto-switch-over-on-lost-sig, SINGLE SYSTEM
 
-        roam_time=millis();
+        roam_time = millis();
         char cmd_str[32];
-        sprintf(cmd_str,"nfreq %05X %03X\r\n", mptr->roam_wacn, mptr->roam_sysid);  //roam mode=3 needs wacn and sysid arguments
-        send_cmd(cmd_str,15);
+        sprintf( cmd_str, "nfreq %05X %03X\r\n", mptr->roam_wacn, mptr->roam_sysid ); //roam mode=3 needs wacn and sysid arguments
+        send_cmd( cmd_str, 15 );
       }
       //ROAMING MODE 4
-      else if(cmd_acked==0 && (force_scan || current_button_mode==WIO_BUTTON_MODE_MONITOR) && follow==0 && (millis()-roam_time > mptr->roaming_timeout) &&
-        mptr->roaming==4 && (mptr->evm_p>10 || mptr->rssi_f<-115) ) { //ROAMING=4 // auto-switch-over-on-lost-sig, P+S+A ALL systems
+      else if( cmd_acked == 0 && ( force_scan || current_button_mode == WIO_BUTTON_MODE_MONITOR ) && follow == 0 && ( millis() - roam_time > mptr->roaming_timeout ) &&
+               mptr->roaming == 4 && ( mptr->evm_p > 10 || mptr->rssi_f < -115 ) ) { //ROAMING=4 // auto-switch-over-on-lost-sig, P+S+A ALL systems
 
-        roam_time=millis();
-        send_cmd("nfreq",15);
+        roam_time = millis();
+        send_cmd( "nfreq", 15 );
       }
       //ROAMING MODE 5
-      else if(cmd_acked==0 && (force_scan || current_button_mode==WIO_BUTTON_MODE_MONITOR) && follow==0 && 
-        mptr->roaming==5 && mptr->voice_tg_timeout==0 && (millis()-roam_time > mptr->roaming_timeout) ) { //ROAMING=5 // scanning, INC_IN_SCAN=1
+      else if( cmd_acked == 0 && ( force_scan || current_button_mode == WIO_BUTTON_MODE_MONITOR ) && follow == 0 &&
+               mptr->roaming == 5 && mptr->voice_tg_timeout == 0 && ( millis() - roam_time > mptr->roaming_timeout ) ) { //ROAMING=5 // scanning, INC_IN_SCAN=1
 
-        roam_time=millis();
-        send_cmd("nfreq",15);
-      }
-      else if(mptr->voice_tg_timeout) {
-        roam_time=millis(); //hang around ater the conversation too
+        roam_time = millis();
+        send_cmd( "nfreq", 15 );
+      } else if( mptr->voice_tg_timeout ) {
+        roam_time = millis(); //hang around ater the conversation too
       }
 
 
@@ -844,9 +844,9 @@ void loop()
         clr_screen();
         clr_buttons();
 
-        did_save=0;
-        b_button_press_time=0;
-        c_button_press_time=0;
+        did_save = 0;
+        b_button_press_time = 0;
+        c_button_press_time = 0;
       }
 
       prev_button_mode = current_button_mode;
@@ -854,522 +854,503 @@ void loop()
 
 
 
-      if( current_button_mode == WIO_BUTTON_MODE_TG_ZONE) {
+      if( current_button_mode == WIO_BUTTON_MODE_TG_ZONE ) {
+        __disable_irq();
+        do_draw_rx = 0;
+        memcpy( ( uint8_t * ) &minfo, ( uint8_t * ) buf, sizeof( metainfo ) );
+        __enable_irq();
+
+        draw_tg_zones();
+        goto draw_end;  //it really is ok to use goto. don't worry about it.
+      } else if( current_button_mode == WIO_BUTTON_MODE_RF_GAIN ) {
+
+        __disable_irq();
+        do_draw_rx = 0;
+        memcpy( ( uint8_t * ) fft_data, ( uint8_t * ) mptr->data, FFT_M );
+        __enable_irq();
+
+        if( mptr->data_type == META_DATA_TYPE_FFT ) {
+          //draw_fft();
+          init_sprites(); //best to re-init
+          spr.createSprite( 128, 110 ); //allocate sprite memory
+          spr.fillSprite( TFT_BLACK ); //clear to black bground
+
+          spr.fillSprite( TFT_BLACK );
+          for( int i = 0; i < 128; i++ ) {
+            if( i > 0 ) {
+              spr.drawLine( i, ( 110 - ( int )fft_data[i] ) + 90, i + 1, ( 110 - ( int )fft_data[i + 1] ) + 90, TFT_GREEN );
+            }
+          }
+          spr.pushSprite( 5, 90 ); //send to lcd. upper left corner of sprite
+          spr.deleteSprite();  //free memory
+        }
+#if 1
+        //////////////////////////////////////////////////////////
+        //Draw IQ Constellation
+        //////////////////////////////////////////////////////////
+        int idx = 0;
+        int ii;
+        int qq;
+        int8_t *ptr;
+
+        if( mptr->data_type == META_DATA_TYPE_CONST ) { //incoming data is symbol constellation?
+
+          ptr = ( int8_t * ) &mptr->data[0]; //pointer to incoming data 128 bytes
+          spr.createSprite( 80, 80 ); //allocate memory for 80 x 80 sprite
+          spr.fillSprite( TFT_BLACK );
+          //grid lines
+          spr.drawLine( 40, 0, 40, 80, TFT_DARKGREY );
+          spr.drawLine( 0, 40, 80, 40, TFT_DARKGREY );
+          //draw 64-symbol constellation
+          idx = 0;
+          for( int i = 0; i < 64; i++ ) {
+            ii = *ptr++ / 2; //scale to +/- 32 range
+            qq = *ptr++ / 2;
+
+            spr.fillCircle( 40 + ii, 40 + qq, 1, TFT_YELLOW ); //symbols
+          }
+          spr.pushSprite( 220, 115 ); //send to lcd. upper left corner of sprite
+          spr.deleteSprite();  //free memory
+        }
+#endif
+
+#if 1
+        //////////////////////////////////////////////////////////
+        //Draw IQ / XY
+        //////////////////////////////////////////////////////////
+
+        if( mptr->data_type == META_DATA_TYPE_IQ8 ) { //incoming data is symbol constellation?
+
+          iq8_idx++;
+          iq8_idx &= 0x03;
+
           __disable_irq();
           do_draw_rx = 0;
-          memcpy( (uint8_t *) &minfo, (uint8_t *) buf, sizeof(metainfo) );
+          //if(iq8_idx==0) {
+          memcpy( ( uint8_t * ) &iq8_data[0], ( uint8_t * ) mptr->data, FFT_M );
+          //}
+#if 0
+          else if( iq8_idx == 1 ) {
+            memcpy( ( uint8_t * ) &iq8_data[128], ( uint8_t * ) mptr->data, FFT_M );
+          } else if( iq8_idx == 2 ) {
+            memcpy( ( uint8_t * ) &iq8_data[256], ( uint8_t * ) mptr->data, FFT_M );
+          } else if( iq8_idx == 3 ) {
+            memcpy( ( uint8_t * ) &iq8_data[384], ( uint8_t * ) mptr->data, FFT_M );
+          }
+#endif
           __enable_irq();
 
-          draw_tg_zones();
-          goto draw_end;  //it really is ok to use goto. don't worry about it.
-      }
-      else if( current_button_mode == WIO_BUTTON_MODE_RF_GAIN) {
+          //if(iq8_idx==3) {
+          spr.createSprite( 80, 80 ); //allocate memory for 80 x 80 sprite
+          spr.fillSprite( TFT_BLACK );
 
-          __disable_irq();
-          do_draw_rx = 0;
-          memcpy( (uint8_t *) fft_data, (uint8_t *) mptr->data, FFT_M);
-          __enable_irq();
+          for( int i = 0; i < 128 - 2; i += 2 ) {
+            spr.drawLine( 40 + iq8_data[i], 40 + iq8_data[i + 1], 40 + iq8_data[i + 2], 40 + iq8_data[i + 3], TFT_CYAN );
+          }
 
-          if( mptr->data_type == META_DATA_TYPE_FFT) { 
-            //draw_fft();
-           init_sprites(); //best to re-init
-           spr.createSprite(128,110);   //allocate sprite memory
-           spr.fillSprite(TFT_BLACK); //clear to black bground
+          spr.pushSprite( 30, 8 ); //send to lcd. upper left corner of sprite
+          //}
+          spr.deleteSprite();  //free memory
+        }
+#endif
 
-           spr.fillSprite(TFT_BLACK);
-           for (int i = 0; i < 128; i++) {
-             if(i>0) {
-               spr.drawLine(i, (110-(int)fft_data[i])+90, i+1, (110-(int)fft_data[i+1])+90, TFT_GREEN);
-             }
-           }
-           spr.pushSprite(5,90);  //send to lcd. upper left corner of sprite
-           spr.deleteSprite();  //free memory
-         }
-         #if 1
-         //////////////////////////////////////////////////////////
-         //Draw IQ Constellation
-         //////////////////////////////////////////////////////////
-         int idx = 0;
-         int ii;
-         int qq;
-         int8_t *ptr;
+        FNT = 2;
+        spr.createSprite( 170, 20 ); //allocate memory for 80 x 80 sprite
+        spr.fillSprite( TFT_BLACK );
+        _lna_gain = mptr->lna_gain;
+        if( _lna_gain < 0 ) _lna_gain = 0;
+        if( _lna_gain > 16 ) _lna_gain = 16;
 
-         if( mptr->data_type == META_DATA_TYPE_CONST) { //incoming data is symbol constellation? 
+        if( _lna_gain < 16 ) {
+          spr.setTextColor( TFT_WHITE, TFT_BLACK );
+          if( gain_select == 0 ) sprintf( disp_buf, "> %02d LNA", _lna_gain );
+          else sprintf( disp_buf, "%02d LNA", _lna_gain );
+          spr.drawString( disp_buf, 0, 0, FNT );
+          spr.fillRect( 60, 3, 7 * _lna_gain, 7, TFT_WHITE );
+        } else {
+          spr.setTextColor( TFT_GREEN, TFT_BLACK );
+          if( gain_select == 0 ) sprintf( disp_buf, "> LNA AUTO" );
+          else sprintf( disp_buf, "LNA AUTO" );
+          spr.drawString( disp_buf, 0, 0, FNT );
+        }
+        spr.pushSprite( 140, 50 ); //send to lcd. upper left corner of sprite
+        spr.deleteSprite();  //free memory
 
-           ptr = (int8_t *) &mptr->data[0];  //pointer to incoming data 128 bytes
-           spr.createSprite(80,80);  //allocate memory for 80 x 80 sprite
-           spr.fillSprite(TFT_BLACK);
-           //grid lines
-           spr.drawLine(40, 0, 40, 80, TFT_DARKGREY);
-           spr.drawLine(0, 40, 80, 40, TFT_DARKGREY);
-           //draw 64-symbol constellation
-           idx = 0;
-           for (int i = 0; i < 64; i++) {
-             ii = *ptr++/2; //scale to +/- 32 range
-             qq = *ptr++/2;
+        spr.createSprite( 170, 20 ); //allocate memory for 80 x 80 sprite
+        _mixer_gain = mptr->mixer_gain;
+        if( _mixer_gain < 0 ) _mixer_gain = 0;
+        if( _mixer_gain > 16 ) _mixer_gain = 16;
+        if( _mixer_gain < 16 ) {
+          spr.setTextColor( TFT_WHITE, TFT_BLACK );
+          if( gain_select == 1 ) sprintf( disp_buf, "> %02d MIX", _mixer_gain );
+          else sprintf( disp_buf, "%02d MIX", _mixer_gain );
+          spr.drawString( disp_buf, 0, 0, FNT );
+          spr.fillRect( 60, 3, 7 * _mixer_gain, 7, TFT_WHITE );
+        } else {
+          spr.setTextColor( TFT_GREEN, TFT_BLACK );
+          if( gain_select == 1 ) sprintf( disp_buf, "> MIX AUTO" );
+          else sprintf( disp_buf, "MIX AUTO" );
+          spr.drawString( disp_buf, 0, 0, FNT );
+        }
+        spr.pushSprite( 140, 70 ); //send to lcd. upper left corner of sprite
+        spr.deleteSprite();  //free memory
 
-             spr.fillCircle(40+ii, 40+qq, 1, TFT_YELLOW);  //symbols
-           }
-           spr.pushSprite(220,115);  //send to lcd. upper left corner of sprite
-           spr.deleteSprite();  //free memory
-         }
-         #endif
+        spr.createSprite( 170, 20 ); //allocate memory for 80 x 80 sprite
+        _vga_gain = mptr->vga_gain;
+        if( _vga_gain < 0 ) _vga_gain = 0;
 
-         #if 1
-         //////////////////////////////////////////////////////////
-         //Draw IQ / XY 
-         //////////////////////////////////////////////////////////
+        is_vga_auto = ( ( _vga_gain & 0x80 ) != 0 );
+        _vga_gain &= 0x0f;
 
-         if( mptr->data_type == META_DATA_TYPE_IQ8) { //incoming data is symbol constellation? 
-
-            iq8_idx++;
-            iq8_idx &= 0x03;
-
-            __disable_irq();
-            do_draw_rx = 0;
-            //if(iq8_idx==0) {
-              memcpy( (uint8_t *) &iq8_data[0], (uint8_t *) mptr->data, FFT_M);
-            //}
-           #if 0
-            else if(iq8_idx==1) {
-              memcpy( (uint8_t *) &iq8_data[128], (uint8_t *) mptr->data, FFT_M);
-            }
-            else if(iq8_idx==2) {
-              memcpy( (uint8_t *) &iq8_data[256], (uint8_t *) mptr->data, FFT_M);
-            }
-            else if(iq8_idx==3) {
-              memcpy( (uint8_t *) &iq8_data[384], (uint8_t *) mptr->data, FFT_M);
-            }
-           #endif
-            __enable_irq();
-
-           //if(iq8_idx==3) {
-           spr.createSprite(80,80);  //allocate memory for 80 x 80 sprite
-             spr.fillSprite(TFT_BLACK);
-
-             for (int i = 0; i < 128-2; i+=2) {
-               spr.drawLine(40+iq8_data[i], 40+iq8_data[i+1], 40+iq8_data[i+2], 40+iq8_data[i+3], TFT_CYAN);
-             }
-
-             spr.pushSprite(30,8);  //send to lcd. upper left corner of sprite
-           //}
-           spr.deleteSprite();  //free memory
-         }
-         #endif
-
-         FNT=2;
-         spr.createSprite(170,20);  //allocate memory for 80 x 80 sprite
-         spr.fillSprite(TFT_BLACK);
-         _lna_gain = mptr->lna_gain;
-         if(_lna_gain<0) _lna_gain=0;
-         if(_lna_gain>16) _lna_gain=16;
-
-         if(_lna_gain<16) {
-           spr.setTextColor(TFT_WHITE, TFT_BLACK);
-           if(gain_select==0) sprintf(disp_buf,"> %02d LNA", _lna_gain);
-            else sprintf(disp_buf,"%02d LNA", _lna_gain);
-           spr.drawString(disp_buf, 0, 0, FNT);
-           spr.fillRect(60, 3, 7*_lna_gain, 7, TFT_WHITE);
-         }
-         else {
-           spr.setTextColor(TFT_GREEN, TFT_BLACK);
-           if(gain_select==0) sprintf(disp_buf,"> LNA AUTO");
-            else sprintf(disp_buf,"LNA AUTO");
-           spr.drawString(disp_buf, 0, 0, FNT);
-         }
-         spr.pushSprite(140,50);  //send to lcd. upper left corner of sprite
-         spr.deleteSprite();  //free memory
-
-         spr.createSprite(170,20);  //allocate memory for 80 x 80 sprite
-         _mixer_gain = mptr->mixer_gain;
-         if(_mixer_gain<0) _mixer_gain=0;
-         if(_mixer_gain>16) _mixer_gain=16;
-         if(_mixer_gain<16) {
-           spr.setTextColor(TFT_WHITE, TFT_BLACK);
-           if(gain_select==1) sprintf(disp_buf,"> %02d MIX", _mixer_gain);
-            else sprintf(disp_buf,"%02d MIX", _mixer_gain);
-           spr.drawString(disp_buf, 0, 0, FNT);
-           spr.fillRect(60, 3, 7*_mixer_gain, 7, TFT_WHITE);
-         }
-         else {
-           spr.setTextColor(TFT_GREEN, TFT_BLACK);
-           if(gain_select==1) sprintf(disp_buf,"> MIX AUTO");
-            else sprintf(disp_buf,"MIX AUTO");
-           spr.drawString(disp_buf, 0, 0, FNT);
-         }
-         spr.pushSprite(140,70);  //send to lcd. upper left corner of sprite
-         spr.deleteSprite();  //free memory
-
-         spr.createSprite(170,20);  //allocate memory for 80 x 80 sprite
-         _vga_gain = mptr->vga_gain;
-         if(_vga_gain<0) _vga_gain=0;
-
-         is_vga_auto = ( (_vga_gain&0x80) !=0 );
-         _vga_gain &= 0x0f;
-
-         if(!is_vga_auto) {
-           spr.setTextColor(TFT_WHITE, TFT_BLACK);
-           if(gain_select==2) sprintf(disp_buf,"> %02d VGA", _vga_gain);
-            else sprintf(disp_buf,"%02d VGA", _vga_gain);
-           spr.drawString(disp_buf, 0, 0, FNT);
-           spr.fillRect(60, 3, 7*_vga_gain, 7, TFT_WHITE);
-         }
-         else {
-           spr.setTextColor(TFT_GREEN, TFT_BLACK);
-           //if(gain_select==2) sprintf(disp_buf,"> VGA AUTO %d dB", _vga_gain*3);
-            //else sprintf(disp_buf,"VGA AUTO %d dB", _vga_gain*3);
-           if(gain_select==2) sprintf(disp_buf,"> VGA AUTO %d  ", _vga_gain);
-            else sprintf(disp_buf,"VGA AUTO %d  ", _vga_gain);
-           spr.drawString(disp_buf, 0, 0, FNT);
-         }
-         spr.pushSprite(140,90);  //send to lcd. upper left corner of sprite
-         spr.deleteSprite();  //free memory
+        if( !is_vga_auto ) {
+          spr.setTextColor( TFT_WHITE, TFT_BLACK );
+          if( gain_select == 2 ) sprintf( disp_buf, "> %02d VGA", _vga_gain );
+          else sprintf( disp_buf, "%02d VGA", _vga_gain );
+          spr.drawString( disp_buf, 0, 0, FNT );
+          spr.fillRect( 60, 3, 7 * _vga_gain, 7, TFT_WHITE );
+        } else {
+          spr.setTextColor( TFT_GREEN, TFT_BLACK );
+          //if(gain_select==2) sprintf(disp_buf,"> VGA AUTO %d dB", _vga_gain*3);
+          //else sprintf(disp_buf,"VGA AUTO %d dB", _vga_gain*3);
+          if( gain_select == 2 ) sprintf( disp_buf, "> VGA AUTO %d  ", _vga_gain );
+          else sprintf( disp_buf, "VGA AUTO %d  ", _vga_gain );
+          spr.drawString( disp_buf, 0, 0, FNT );
+        }
+        spr.pushSprite( 140, 90 ); //send to lcd. upper left corner of sprite
+        spr.deleteSprite();  //free memory
 
 
 
-         #if 0
-         spr.createSprite(90,20);  //allocate memory for 80 x 80 sprite
-         if(gain_select==3) sprintf(disp_buf,"> SAVE GAINS");
-          else sprintf(disp_buf,"SAVE GAINS");
-         spr.drawString(disp_buf, 0, 0, FNT);
-         spr.pushSprite(140,110);  //send to lcd. upper left corner of sprite
-         spr.deleteSprite();  //free memory
-         #endif
+#if 0
+        spr.createSprite( 90, 20 ); //allocate memory for 80 x 80 sprite
+        if( gain_select == 3 ) sprintf( disp_buf, "> SAVE GAINS" );
+        else sprintf( disp_buf, "SAVE GAINS" );
+        spr.drawString( disp_buf, 0, 0, FNT );
+        spr.pushSprite( 140, 110 ); //send to lcd. upper left corner of sprite
+        spr.deleteSprite();  //free memory
+#endif
 
-        FNT=2;
-        tft.setTextColor(TFT_LIGHTGREY, TFT_BLACK);
+        FNT = 2;
+        tft.setTextColor( TFT_LIGHTGREY, TFT_BLACK );
         char demod_str[8];
-        demod_str[0]=0;
-        if( mptr->use_demod==0) strcpy(demod_str,"LSM");
-        if( mptr->use_demod==1) strcpy(demod_str,"FM");
-        
-        sprintf(disp_buf, "DEMOD %s   ", demod_str );
-        tft.drawString(disp_buf, 140, 110, FNT);
+        demod_str[0] = 0;
+        if( mptr->use_demod == 0 ) strcpy( demod_str, "LSM" );
+        if( mptr->use_demod == 1 ) strcpy( demod_str, "FM" );
+
+        sprintf( disp_buf, "DEMOD %s   ", demod_str );
+        tft.drawString( disp_buf, 140, 110, FNT );
 
 
-        FNT=4;
-        tft.setFreeFont(NULL);
-        tft.setTextColor(TFT_WHITE, TFT_BLACK);
+        FNT = 4;
+        tft.setFreeFont( NULL );
+        tft.setTextColor( TFT_WHITE, TFT_BLACK );
 
-        sprintf(disp_buf, "EVM %3.1f  RSSI %3.1f dBm    ", mptr->evm_p, mptr->rssi_f );
-        tft.drawString(disp_buf, 5, 210, FNT);
+        sprintf( disp_buf, "EVM %3.1f  RSSI %3.1f dBm    ", mptr->evm_p, mptr->rssi_f );
+        tft.drawString( disp_buf, 5, 210, FNT );
 
-        FNT=2;
-        snprintf(disp_buf, 32, "FREQ: %3.6f MHz", mptr->current_freq );
-        tft.drawString(disp_buf, 140, 0, FNT);
+        FNT = 2;
+        snprintf( disp_buf, 32, "FREQ: %3.6f MHz", mptr->current_freq );
+        tft.drawString( disp_buf, 140, 0, FNT );
 
-        if(mptr->on_control_b && mptr->total_session_time>1500) {
-          sprintf(disp_buf, "TSBK/SEC %u      ", mptr->tsbk_sec);
+        if( mptr->on_control_b && mptr->total_session_time > 1500 ) {
+          sprintf( disp_buf, "TSBK/SEC %u      ", mptr->tsbk_sec );
+        } else {
+          sprintf( disp_buf, "ERATE %1.3f      ", mptr->erate );
         }
-        else {
-          sprintf(disp_buf, "ERATE %1.3f      ", mptr->erate );
-        }
-        tft.drawString(disp_buf, 140, 15, FNT);
+        tft.drawString( disp_buf, 140, 15, FNT );
 
-        sprintf(disp_buf, "SITE %d, RFSS %d     ", mptr->site_id, mptr->rf_id);
-        tft.drawString(disp_buf, 140, 30, FNT);
+        sprintf( disp_buf, "SITE %d, RFSS %d     ", mptr->site_id, mptr->rf_id );
+        tft.drawString( disp_buf, 140, 30, FNT );
 
-         goto draw_end;  //it really is ok to use goto. don't worry about it.
+        goto draw_end;  //it really is ok to use goto. don't worry about it.
       }
 
 
       //FONT SIZE 1,2,4,8
-      FNT=4;
+      FNT = 4;
 
-      tft.setFreeFont(NULL);
-      tft.setTextColor(TFT_WHITE, TFT_BLACK);
+      tft.setFreeFont( NULL );
+      tft.setTextColor( TFT_WHITE, TFT_BLACK );
 
       if( prev_freq != mptr->current_freq ) {
-        freq_changed=1;
+        freq_changed = 1;
       }
-      prev_freq=mptr->current_freq;
+      prev_freq = mptr->current_freq;
 
 
-      tft.setTextColor(TFT_YELLOW, TFT_BLACK);
+      tft.setTextColor( TFT_YELLOW, TFT_BLACK );
 
       //if( !mptr->do_wio_lines ) {
-        if(mptr->tg_s!=prev_tgs) {
-          clear_line2();
+      if( mptr->tg_s != prev_tgs ) {
+        clear_line2();
+      }
+      prev_tgs = mptr->tg_s;
+
+
+      if( mptr->tg_s <= 0 ) {
+        snprintf( disp_buf2, 32, "FREQ: %3.6f MHz", mptr->current_freq );
+
+        if( strncmp( ( char * )disp_buf2, ( char * )line3_str, 31 ) != 0 ) clear_line3();
+        strncpy( line3_str, disp_buf2, 31 );
+
+        if( !mptr->do_wio_lines && follow > 0 ) {
+          snprintf( disp_buf, 32, "HOLDING ON TG %d", follow );
+          if( strncmp( ( char * )disp_buf, ( char * )line2_str, 31 ) != 0 ) clear_line2();
+          strncpy( line2_str, disp_buf, 31 );
+          tft.drawString( disp_buf, 5, 40, FNT );
         }
-        prev_tgs = mptr->tg_s;
-
-
-        if (mptr->tg_s <= 0) {
-          snprintf(disp_buf2, 32, "FREQ: %3.6f MHz", mptr->current_freq );
-
-          if( strncmp((char *)disp_buf2,(char *)line3_str, 31)!=0 ) clear_line3();
-          strncpy(line3_str,disp_buf2,31);
-
-          if( !mptr->do_wio_lines && follow>0 ) {
-            snprintf(disp_buf,32, "HOLDING ON TG %d", follow);
-            if( strncmp((char *)disp_buf,(char *)line2_str, 31)!=0 ) clear_line2();
-            strncpy(line2_str,disp_buf,31);
-            tft.drawString(disp_buf, 5, 40, FNT);
-          }
-          if(!mptr->do_wio_lines && follow==0) {
-            snprintf(disp_buf,32, "   ");
-            mptr->desc[19]=0;
-            if( strncmp((char *)disp_buf,(char *)line2_str, 31)!=0 ) clear_line2();
-            strncpy(line2_str,disp_buf,31);
-          }
+        if( !mptr->do_wio_lines && follow == 0 ) {
+          snprintf( disp_buf, 32, "   " );
+          mptr->desc[19] = 0;
+          if( strncmp( ( char * )disp_buf, ( char * )line2_str, 31 ) != 0 ) clear_line2();
+          strncpy( line2_str, disp_buf, 31 );
         }
-        else {
+      } else {
 
-          if(!mptr->do_wio_lines) {
-            snprintf(disp_buf,32, "TG: %d, %s", mptr->tg_s, mptr->alpha );
-            mptr->desc[19]=0;
-            if( strncmp((char *)disp_buf,(char *)line2_str, 31)!=0 ) clear_line2();
-            strncpy(line2_str,disp_buf,31);
-          }
-
-          snprintf(disp_buf2,45, "%s", mptr->desc );
-          if( strncmp((char *)disp_buf2,(char *)line3_str, 31)!=0 ) clear_line3();
-          strncpy(line3_str,disp_buf2,31);
-
-          if(!mptr->do_wio_lines) {
-            tft.drawString(disp_buf, 5, 40, FNT);
-          }
+        if( !mptr->do_wio_lines ) {
+          snprintf( disp_buf, 32, "TG: %d, %s", mptr->tg_s, mptr->alpha );
+          mptr->desc[19] = 0;
+          if( strncmp( ( char * )disp_buf, ( char * )line2_str, 31 ) != 0 ) clear_line2();
+          strncpy( line2_str, disp_buf, 31 );
         }
-        tft.setTextColor(TFT_ORANGE, TFT_BLACK);
-        tft.drawString(disp_buf2, 5, 70, FNT);
+
+        snprintf( disp_buf2, 45, "%s", mptr->desc );
+        if( strncmp( ( char * )disp_buf2, ( char * )line3_str, 31 ) != 0 ) clear_line3();
+        strncpy( line3_str, disp_buf2, 31 );
+
+        if( !mptr->do_wio_lines ) {
+          tft.drawString( disp_buf, 5, 40, FNT );
+        }
+      }
+      tft.setTextColor( TFT_ORANGE, TFT_BLACK );
+      tft.drawString( disp_buf2, 5, 70, FNT );
       //}
 
-      FNT=2;
-      tft.setTextColor(TFT_CYAN, TFT_BLACK);
+      FNT = 2;
+      tft.setTextColor( TFT_CYAN, TFT_BLACK );
 
       uint8_t nac_lock_str = 'U';
-      if(mptr->lock_nac) nac_lock_str='L';
-      
-      sprintf(disp_buf, "%05X-%03X-%03X%c  RSSI %3.1f dBm    ", mptr->wacn_id, mptr->sys_id, mptr->p25_sys_nac, nac_lock_str, mptr->rssi_f);
-      if( strcmp(disp_buf,line4_str)!=0 ) { 
+      if( mptr->lock_nac ) nac_lock_str = 'L';
+
+      sprintf( disp_buf, "%05X-%03X-%03X%c  RSSI %3.1f dBm    ", mptr->wacn_id, mptr->sys_id, mptr->p25_sys_nac, nac_lock_str, mptr->rssi_f );
+      if( strcmp( disp_buf, line4_str ) != 0 ) {
         //clear_line4(); //space at the end of this line is better solution
-        tft.drawString(disp_buf, 5, 100, FNT);
+        tft.drawString( disp_buf, 5, 100, FNT );
       }
-      strcpy(line4_str, disp_buf);
+      strcpy( line4_str, disp_buf );
 
-      FNT=2;
-      tft.setTextColor(TFT_LIGHTGREY, TFT_BLACK);
+      FNT = 2;
+      tft.setTextColor( TFT_LIGHTGREY, TFT_BLACK );
       char demod_str[8];
-      demod_str[0]=0;
-      if( mptr->use_demod==0) strcpy(demod_str,"LSM");
-      if( mptr->use_demod==1) strcpy(demod_str,"FM");
-      
-      sprintf(disp_buf, "SITE %d, RFSS %d  DEMOD %s", mptr->site_id, mptr->rf_id, demod_str );
-      if( strcmp(disp_buf,line5_str)!=0 ) { 
-        clear_line5();
-        tft.drawString(disp_buf, 5, 130, FNT);
-      }
-      strcpy(line5_str, disp_buf);
+      demod_str[0] = 0;
+      if( mptr->use_demod == 0 ) strcpy( demod_str, "LSM" );
+      if( mptr->use_demod == 1 ) strcpy( demod_str, "FM" );
 
-      sprintf(disp_buf, "NCO1 %3.3f, NCO2 %3.2f, EVM %3.1f    ", mptr->nco_offset, mptr->loop_freq, mptr->evm_p );
-      if( strcmp(disp_buf,line6_str)!=0 ) { 
-        //clear_line6(); //space at the end of this line is better solution
-        tft.drawString(disp_buf, 5, 160, FNT);
+      sprintf( disp_buf, "SITE %d, RFSS %d  DEMOD %s", mptr->site_id, mptr->rf_id, demod_str );
+      if( strcmp( disp_buf, line5_str ) != 0 ) {
+        clear_line5();
+        tft.drawString( disp_buf, 5, 130, FNT );
       }
-      strcpy(line6_str, disp_buf);
+      strcpy( line5_str, disp_buf );
+
+      sprintf( disp_buf, "NCO1 %3.3f, NCO2 %3.2f, EVM %3.1f    ", mptr->nco_offset, mptr->loop_freq, mptr->evm_p );
+      if( strcmp( disp_buf, line6_str ) != 0 ) {
+        //clear_line6(); //space at the end of this line is better solution
+        tft.drawString( disp_buf, 5, 160, FNT );
+      }
+      strcpy( line6_str, disp_buf );
 
       //if(mptr->on_control_b && mptr->total_session_time>1500) {
-      if(mptr->on_control_b ) {
-        sprintf(disp_buf, "TSBK/SEC %u    REF %u        ", mptr->tsbk_sec, mptr->ref_freq_cal );
+      if( mptr->on_control_b ) {
+        sprintf( disp_buf, "TSBK/SEC %u    REF %u        ", mptr->tsbk_sec, mptr->ref_freq_cal );
+      } else {
+        sprintf( disp_buf, "FREQ %3.6f MHz  ERATE %1.3f       ", mptr->current_freq, mptr->erate );
       }
-      else {
-        sprintf(disp_buf, "FREQ %3.6f MHz  ERATE %1.3f       ", mptr->current_freq, mptr->erate );
-      }
-      if( strcmp(disp_buf,line7_str)!=0 ) { 
+      if( strcmp( disp_buf, line7_str ) != 0 ) {
         //clear_line7(); //space at the end of this line is better solution
-        tft.drawString(disp_buf, 5, 190, FNT);
+        tft.drawString( disp_buf, 5, 190, FNT );
       }
-      strcpy(line7_str, disp_buf);
-      
-      FNT=2;
-      memset(disp_buf,0x00,sizeof(disp_buf));
-      tft.setTextColor(TFT_ORANGE, TFT_BLACK);
-      if(mptr->on_control_b==0 && mptr->RID!=0 && mptr->alias!=NULL) {
-        sprintf(disp_buf, "RID %u, %s", mptr->RID, mptr->alias );
-      }
-      else {
-        if( current_button_mode==WIO_BUTTON_MODE_CONFIG ) {
-          if(mptr->roaming) {
-            sprintf(disp_buf, "CONFIG  ROAM-PAUSE" );
+      strcpy( line7_str, disp_buf );
+
+      FNT = 2;
+      memset( disp_buf, 0x00, sizeof( disp_buf ) );
+      tft.setTextColor( TFT_ORANGE, TFT_BLACK );
+      if( mptr->on_control_b == 0 && mptr->RID != 0 && mptr->alias != NULL ) {
+        sprintf( disp_buf, "RID %u, %s", mptr->RID, mptr->alias );
+      } else {
+        if( current_button_mode == WIO_BUTTON_MODE_CONFIG ) {
+          if( mptr->roaming ) {
+            sprintf( disp_buf, "CONFIG  ROAM-PAUSE" );
+          } else {
+            sprintf( disp_buf, "MODE: CONFIG          " );
           }
-          else {
-              sprintf(disp_buf, "MODE: CONFIG          " );
+        } else if( current_button_mode == WIO_BUTTON_MODE_MONITOR ) {
+          if( mptr->roaming ) {
+            sprintf( disp_buf, "MONITOR ROAM-ON-%u Free %u", mptr->roaming, freeMemory() );
+          } else {
+            sprintf( disp_buf, "MONITOR ROAM-OFF" );
           }
-        }
-        else if( current_button_mode==WIO_BUTTON_MODE_MONITOR ) {
-          if(mptr->roaming) {
-            sprintf(disp_buf, "MONITOR ROAM-ON-%u Free %u",mptr->roaming, freeMemory() );
-          }
-          else {
-            sprintf(disp_buf, "MONITOR ROAM-OFF" );
-          }
-        }
-        else {
-            sprintf(disp_buf, " " );
+        } else {
+          sprintf( disp_buf, " " );
         }
       }
-      if( strcmp(disp_buf,line8_str)!=0 ) { 
-        strcpy(line8_str,disp_buf);
+      if( strcmp( disp_buf, line8_str ) != 0 ) {
+        strcpy( line8_str, disp_buf );
         clear_line8();
-        tft.drawString(disp_buf, 5, 220, FNT);
+        tft.drawString( disp_buf, 5, 220, FNT );
       }
 
       //start of sprites
-       init_sprites(); //best to re-init
-       #if 1
-       //////////////////////////////////////////////////////////
-       //Draw STATUS INDICATORS HOLD, MUTE,  
-       //////////////////////////////////////////////////////////
-       spr.createSprite(60,30);   //allocate sprite memory
-       spr.fillSprite(TFT_BLACK); //clear to black bground
+      init_sprites(); //best to re-init
+#if 1
+      //////////////////////////////////////////////////////////
+      //Draw STATUS INDICATORS HOLD, MUTE,
+      //////////////////////////////////////////////////////////
+      spr.createSprite( 60, 30 ); //allocate sprite memory
+      spr.fillSprite( TFT_BLACK ); //clear to black bground
 
-       spr.setTextColor(TFT_BLACK, TFT_GREEN); 
+      spr.setTextColor( TFT_BLACK, TFT_GREEN );
 
-       memset(disp_buf,0x00,sizeof(disp_buf));
-       if(follow || mute || inc_in_scan) strcat(disp_buf, " ");
+      memset( disp_buf, 0x00, sizeof( disp_buf ) );
+      if( follow || mute || inc_in_scan ) strcat( disp_buf, " " );
 
-       if( follow>0) strcat(disp_buf, "H ");
-       if( mute>0 ) strcat(disp_buf, "M ");
-       if( inc_in_scan>0 ) strcat(disp_buf, "S ");
-       
-       spr.drawString(disp_buf, 0, 0, FNT);
-       
+      if( follow > 0 ) strcat( disp_buf, "H " );
+      if( mute > 0 ) strcat( disp_buf, "M " );
+      if( inc_in_scan > 0 ) strcat( disp_buf, "S " );
 
-       spr.pushSprite(265,185); //transfer to lcd, x,y = 240,210 
-       spr.deleteSprite(); //free memory
-       #endif
-
-       #if 1
-       //////////////////////////////////////////////////////////
-       //Draw Status LEDS  / P1-P2 indicator
-       //////////////////////////////////////////////////////////
-       spr.createSprite(80,40);   //allocate sprite memory
-       spr.fillSprite(TFT_BLACK); //clear to black bground
-
-       spr.setTextColor(TFT_GREEN, TFT_BLACK); 
-       if(mptr->phase2) {
-        spr.drawString("P2", 0, 8, FNT); //p25 p2   
-       }
-       else {
-        spr.drawString("P1", 0, 8, FNT); //p25 p1
-       }
-      
-			//status led
-       if ( mptr->status_led ) {
-				 spr.fillCircle( 35, 12, 10, TFT_GREEN);
-			 }
-       else {
-				 spr.fillCircle( 35, 12, 10, TFT_DARKGREY);
-			 }
-
-			//TG led
-       if ( mptr->tg_led ) {
-          spr.fillCircle( 60, 12, 10, TFT_YELLOW);
-       } else {
-          spr.fillCircle( 60, 12, 10, TFT_DARKGREY);
-       }
-       spr.pushSprite(240,212); //transfer to lcd, x,y = 240,210 
-       spr.deleteSprite(); //free memory
-       #endif
-
-       #if 1
-       //////////////////////////////////////////////////////////
-       //Draw IQ Constellation
-       //////////////////////////////////////////////////////////
-       int idx = 0;
-       int ii;
-       int qq;
-       int8_t *ptr;
-
-       if( mptr->data_type == META_DATA_TYPE_CONST) { //incoming data is symbol constellation? 
-
-         ptr = (int8_t *) &mptr->data[0];  //pointer to incoming data 128 bytes
-         spr.createSprite(80,80);  //allocate memory for 80 x 80 sprite
-         spr.fillSprite(TFT_BLACK);
-         //grid lines
-         spr.drawLine(40, 0, 40, 80, TFT_DARKGREY);
-         spr.drawLine(0, 40, 80, 40, TFT_DARKGREY);
-         //draw 64-symbol constellation
-         idx = 0;
-         for (int i = 0; i < 64; i++) {
-           ii = *ptr++/2; //scale to +/- 32 range
-           qq = *ptr++/2;
-
-           spr.fillCircle(40+ii, 40+qq, 1, TFT_YELLOW);  //symbols
-         }
-         spr.pushSprite(233,98);  //send to lcd. upper left corner of sprite
-         spr.deleteSprite();  //free memory
-       }
-       #endif
-        
-      tft.setTextColor(TFT_GREEN, TFT_BLACK); 
-
-			if( mptr->do_wio_lines ) {
+      spr.drawString( disp_buf, 0, 0, FNT );
 
 
-				if(mptr->wio_line1[0]!=0) {
-					snprintf(disp_buf,25, "%s", mptr->wio_line1);
-					FNT=4;
+      spr.pushSprite( 265, 185 ); //transfer to lcd, x,y = 240,210
+      spr.deleteSprite(); //free memory
+#endif
 
-          if(strncmp((char *)line1_str,(char *)disp_buf,31)!=0) clear_line1();
-          strncpy(line1_str,disp_buf,31);
+#if 1
+      //////////////////////////////////////////////////////////
+      //Draw Status LEDS  / P1-P2 indicator
+      //////////////////////////////////////////////////////////
+      spr.createSprite( 80, 40 ); //allocate sprite memory
+      spr.fillSprite( TFT_BLACK ); //clear to black bground
 
-					tft.drawString(disp_buf, 5, 10, FNT);
-				}
-        else {
-					FNT=4;
-          mptr->sys_name[18]=0;
-          snprintf(disp_buf, 25,"%s");
+      spr.setTextColor( TFT_GREEN, TFT_BLACK );
+      if( mptr->phase2 ) {
+        spr.drawString( "P2", 0, 8, FNT ); //p25 p2
+      } else {
+        spr.drawString( "P1", 0, 8, FNT ); //p25 p1
+      }
 
-          if(strncmp((char *)line1_str,(char *)disp_buf,31)!=0) clear_line1();
-          strncpy(line1_str,disp_buf,31);
+      //status led
+      if( mptr->status_led ) {
+        spr.fillCircle( 35, 12, 10, TFT_GREEN );
+      } else {
+        spr.fillCircle( 35, 12, 10, TFT_DARKGREY );
+      }
 
-					tft.drawString(disp_buf, 5, 10, FNT);
+      //TG led
+      if( mptr->tg_led ) {
+        spr.fillCircle( 60, 12, 10, TFT_YELLOW );
+      } else {
+        spr.fillCircle( 60, 12, 10, TFT_DARKGREY );
+      }
+      spr.pushSprite( 240, 212 ); //transfer to lcd, x,y = 240,210
+      spr.deleteSprite(); //free memory
+#endif
+
+#if 1
+      //////////////////////////////////////////////////////////
+      //Draw IQ Constellation
+      //////////////////////////////////////////////////////////
+      int idx = 0;
+      int ii;
+      int qq;
+      int8_t *ptr;
+
+      if( mptr->data_type == META_DATA_TYPE_CONST ) { //incoming data is symbol constellation?
+
+        ptr = ( int8_t * ) &mptr->data[0]; //pointer to incoming data 128 bytes
+        spr.createSprite( 80, 80 ); //allocate memory for 80 x 80 sprite
+        spr.fillSprite( TFT_BLACK );
+        //grid lines
+        spr.drawLine( 40, 0, 40, 80, TFT_DARKGREY );
+        spr.drawLine( 0, 40, 80, 40, TFT_DARKGREY );
+        //draw 64-symbol constellation
+        idx = 0;
+        for( int i = 0; i < 64; i++ ) {
+          ii = *ptr++ / 2; //scale to +/- 32 range
+          qq = *ptr++ / 2;
+
+          spr.fillCircle( 40 + ii, 40 + qq, 1, TFT_YELLOW ); //symbols
+        }
+        spr.pushSprite( 233, 98 ); //send to lcd. upper left corner of sprite
+        spr.deleteSprite();  //free memory
+      }
+#endif
+
+      tft.setTextColor( TFT_GREEN, TFT_BLACK );
+
+      if( mptr->do_wio_lines ) {
+
+
+        if( mptr->wio_line1[0] != 0 ) {
+          snprintf( disp_buf, 25, "%s", mptr->wio_line1 );
+          FNT = 4;
+
+          if( strncmp( ( char * )line1_str, ( char * )disp_buf, 31 ) != 0 ) clear_line1();
+          strncpy( line1_str, disp_buf, 31 );
+
+          tft.drawString( disp_buf, 5, 10, FNT );
+        } else {
+          FNT = 4;
+          mptr->sys_name[18] = 0;
+          snprintf( disp_buf, 25, "%s" );
+
+          if( strncmp( ( char * )line1_str, ( char * )disp_buf, 31 ) != 0 ) clear_line1();
+          strncpy( line1_str, disp_buf, 31 );
+
+          tft.drawString( disp_buf, 5, 10, FNT );
         }
 
 
-				if(mptr->wio_line2[0]!=0) {
-					FNT=2;
-					snprintf(disp_buf,63,  "%s", mptr->wio_line2);
-          if(strncmp((char *)line2_str,(char *)disp_buf,63)!=0) clear_line2();
-          strncpy(line2_str,disp_buf,63);
+        if( mptr->wio_line2[0] != 0 ) {
+          FNT = 2;
+          snprintf( disp_buf, 63,  "%s", mptr->wio_line2 );
+          if( strncmp( ( char * )line2_str, ( char * )disp_buf, 63 ) != 0 ) clear_line2();
+          strncpy( line2_str, disp_buf, 63 );
 
-					tft.drawString(disp_buf, 5, 40, FNT);
-				}
-        else {
-					FNT=2;
+          tft.drawString( disp_buf, 5, 40, FNT );
+        } else {
+          FNT = 2;
           //mptr->sys_name[18]=0;
           //mptr->site_name[18]=0;
           //snprintf(disp_buf, 63,"%s / %s",mptr->sys_name,mptr->site_name);
-          snprintf(disp_buf, 63,"   ");
+          snprintf( disp_buf, 63, "   " );
 
-          if(strncmp((char *)line2_str,(char *)disp_buf,63)!=0) clear_line2();
-          strncpy(line2_str,disp_buf,63);
+          if( strncmp( ( char * )line2_str, ( char * )disp_buf, 63 ) != 0 ) clear_line2();
+          strncpy( line2_str, disp_buf, 63 );
 
-					tft.drawString(disp_buf, 5, 40, FNT);
+          tft.drawString( disp_buf, 5, 40, FNT );
         }
-			}
-      else {
-        FNT=4;
-        mptr->sys_name[18]=0;
-        mptr->site_name[18]=0;
-        snprintf(disp_buf, 50,"%s / %s",mptr->sys_name,mptr->site_name);
+      } else {
+        FNT = 4;
+        mptr->sys_name[18] = 0;
+        mptr->site_name[18] = 0;
+        snprintf( disp_buf, 50, "%s / %s", mptr->sys_name, mptr->site_name );
 
-        if(strncmp((char *)line1_str,(char *)disp_buf,31)!=0) clear_line1();
-        strncpy(line1_str,disp_buf,31);
+        if( strncmp( ( char * )line1_str, ( char * )disp_buf, 31 ) != 0 ) clear_line1();
+        strncpy( line1_str, disp_buf, 31 );
 
-        tft.drawString(disp_buf, 5, 10, FNT);
+        tft.drawString( disp_buf, 5, 10, FNT );
       }
 
-      freq_changed=0; //keep this at the end within valid crc check
+      freq_changed = 0; //keep this at the end within valid crc check
     }
 
-draw_end: 
+draw_end:
     status_timer = millis();
 
   }
 
-  if (status_timer > 0 && millis() - status_timer > 1000) {
+  if( status_timer > 0 && millis() - status_timer > 1000 ) {
     status_timer = 0;
 
     __disable_irq();
@@ -1381,35 +1362,36 @@ draw_end:
 }
 ////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////
-void change_freq(int freq, int is_inc) {
+void change_freq( int freq, int is_inc )
+{
 
   clr_screen();
 
   int i;
 
-  for (i = 0; i < 8; i++) { //try all 8 until we find a valid one
+  for( i = 0; i < 8; i++ ) { //try all 8 until we find a valid one
     freq_idx &= 0x07; //limit from 0-7
     double next_freq = freq_table[freq_idx];
 
 
-    if (is_valid_freq(next_freq)) { //only send new frequency if it is in a valid ranage
+    if( is_valid_freq( next_freq ) ) { //only send new frequency if it is in a valid ranage
       //give it a chance to catch up after a freq change
       init_wdog1 = millis(); //voice
       init_wdog2 = millis(); //const
 
-      sprintf(disp_buf, "freq %3.6f\r\n", next_freq);
-      tft.setFreeFont(FS18);
-      tft.setTextColor(TFT_WHITE, TFT_BLACK);
+      sprintf( disp_buf, "freq %3.6f\r\n", next_freq );
+      tft.setFreeFont( FS18 );
+      tft.setTextColor( TFT_WHITE, TFT_BLACK );
 
       //send frequency command
-   
 
-      memcpy(disp_buf, "FREQ", 4); //keep this after the command. P25RX wants lower case for the command.
-      tft.drawString(disp_buf, 10, 10);
+
+      memcpy( disp_buf, "FREQ", 4 ); //keep this after the command. P25RX wants lower case for the command.
+      tft.drawString( disp_buf, 10, 10 );
       return;
     }
 
-    if (is_inc) freq_idx++; //last one wasn't valid, so try the next one
+    if( is_inc ) freq_idx++; //last one wasn't valid, so try the next one
     else freq_idx--;
   }
 }
@@ -1434,11 +1416,11 @@ int is_valid_freq( double freq )
 
   int band = 0;
 
-  if ( freq >= 25.0 && freq <= 512.0 ) band = 1; //band 1
-  if ( freq >= 758.0 && freq <= 824.0 ) band = 2; //band 2
-  if ( freq >= 849.0 && freq <= 869.0 ) band = 3; //band 3
-  if ( freq >= 894.0 && freq <= 960.0 ) band = 4; //band 4
-  if ( freq >= 1240.0 && freq <= 1300.0 ) band = 5; //band 5
+  if( freq >= 25.0 && freq <= 512.0 ) band = 1;  //band 1
+  if( freq >= 758.0 && freq <= 824.0 ) band = 2;  //band 2
+  if( freq >= 849.0 && freq <= 869.0 ) band = 3;  //band 3
+  if( freq >= 894.0 && freq <= 960.0 ) band = 4;  //band 4
+  if( freq >= 1240.0 && freq <= 1300.0 ) band = 5;  //band 5
 
 
   return band;

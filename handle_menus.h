@@ -24,4 +24,4 @@
 
 
 #include "metainfo.h"
-void handle_main_menu(metainfo *m);
+void handle_main_menu( metainfo *m );

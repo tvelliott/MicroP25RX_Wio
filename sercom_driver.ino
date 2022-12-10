@@ -25,7 +25,8 @@
 
 #include "wiring_private.h"
 
-void initSPI() {
+void initSPI()
+{
   //SERCOM5->SPI.CTRLA.bit.ENABLE = 0; //disable
   //while (SERCOM5->SPI.SYNCBUSY.bit.ENABLE==1);
 
@@ -33,24 +34,24 @@ void initSPI() {
   //while (SERCOM5->SPI.CTRLA.bit.SWRST);
 
 
-	//detachInterrupt(digitalPinToInterrupt(PIN_SPI_SCK));
+  //detachInterrupt(digitalPinToInterrupt(PIN_SPI_SCK));
 
   //see wio_terminal/variant.h
   //pinPeripheral(PIN_SPI_MISO, PIO_SERCOM_ALT);
-  pinPeripheral(PIN_SPI_MOSI, PIO_SERCOM_ALT);
-  pinPeripheral(PIN_SPI_SCK, PIO_SERCOM_ALT);
-  pinPeripheral(PIN_SPI_SS, PIO_SERCOM_ALT);
+  pinPeripheral( PIN_SPI_MOSI, PIO_SERCOM_ALT );
+  pinPeripheral( PIN_SPI_SCK, PIO_SERCOM_ALT );
+  pinPeripheral( PIN_SPI_SS, PIO_SERCOM_ALT );
 
-/*
-  PORT->Group[PORTB].PINCFG[0].bit.PMUXEN = 0x1; //Enable Peripheral Multiplexing for SERCOM5 SPI PB00
-  PORT->Group[PORTB].PMUX[0].bit.PMUXE = 0x3; //SERCOM 5 is selected for peripheral use of this pad (0x3 selects peripheral function D: SERCOM)
-  PORT->Group[PORTB].PINCFG[1].bit.PMUXEN = 0x1;
-  PORT->Group[PORTB].PMUX[0].bit.PMUXO = 0x3;
-  PORT->Group[PORTB].PINCFG[2].bit.PMUXEN = 0x1;
-  PORT->Group[PORTB].PMUX[1].bit.PMUXE = 0x3;
-  PORT->Group[PORTB].PINCFG[3].bit.PMUXEN = 0x1;
-  PORT->Group[PORTB].PMUX[1].bit.PMUXO = 0x3;
-  */
+  /*
+    PORT->Group[PORTB].PINCFG[0].bit.PMUXEN = 0x1; //Enable Peripheral Multiplexing for SERCOM5 SPI PB00
+    PORT->Group[PORTB].PMUX[0].bit.PMUXE = 0x3; //SERCOM 5 is selected for peripheral use of this pad (0x3 selects peripheral function D: SERCOM)
+    PORT->Group[PORTB].PINCFG[1].bit.PMUXEN = 0x1;
+    PORT->Group[PORTB].PMUX[0].bit.PMUXO = 0x3;
+    PORT->Group[PORTB].PINCFG[2].bit.PMUXEN = 0x1;
+    PORT->Group[PORTB].PMUX[1].bit.PMUXE = 0x3;
+    PORT->Group[PORTB].PINCFG[3].bit.PMUXEN = 0x1;
+    PORT->Group[PORTB].PMUX[1].bit.PMUXO = 0x3;
+    */
 
 
 
@@ -81,14 +82,14 @@ void initSPI() {
   //NVIC_EnableIRQ(SERCOM5_0_IRQn);
   //NVIC_SetPriority(SERCOM5_0_IRQn,2);
 
-  NVIC_EnableIRQ(SERCOM5_1_IRQn);
-  NVIC_SetPriority(SERCOM5_1_IRQn, 2);
+  NVIC_EnableIRQ( SERCOM5_1_IRQn );
+  NVIC_SetPriority( SERCOM5_1_IRQn, 2 );
 
-  NVIC_EnableIRQ(SERCOM5_2_IRQn);
-  NVIC_SetPriority(SERCOM5_2_IRQn, 2);
+  NVIC_EnableIRQ( SERCOM5_2_IRQn );
+  NVIC_SetPriority( SERCOM5_2_IRQn, 2 );
 
-  NVIC_EnableIRQ(SERCOM5_3_IRQn);
-  NVIC_SetPriority(SERCOM5_3_IRQn, 2);
+  NVIC_EnableIRQ( SERCOM5_3_IRQn );
+  NVIC_SetPriority( SERCOM5_3_IRQn, 2 );
 
 
 
@@ -100,23 +101,24 @@ void initSPI() {
   //while (SERCOM5->SPI.SYNCBUSY.bit.CTRLB); //wait until receiver is enabled
 }
 
-void deInitSPI() {
+void deInitSPI()
+{
 
   SERCOM5->SPI.CTRLB.bit.RXEN = 0; //disable
   return;
 
   SERCOM5->SPI.CTRLA.bit.ENABLE = 0; //disable
-  while (!SERCOM5->SPI.SYNCBUSY.bit.ENABLE);
+  while( !SERCOM5->SPI.SYNCBUSY.bit.ENABLE );
 
-  
+
   SERCOM5->SPI.CTRLB.bit.RXEN = 0; //disable
 
-  NVIC_DisableIRQ(SERCOM5_0_IRQn);
-  NVIC_DisableIRQ(SERCOM5_1_IRQn);
-  NVIC_DisableIRQ(SERCOM5_2_IRQn);
-  NVIC_DisableIRQ(SERCOM5_3_IRQn);
+  NVIC_DisableIRQ( SERCOM5_0_IRQn );
+  NVIC_DisableIRQ( SERCOM5_1_IRQn );
+  NVIC_DisableIRQ( SERCOM5_2_IRQn );
+  NVIC_DisableIRQ( SERCOM5_3_IRQn );
 
-  
+
   PORT->Group[PORTB].PINCFG[0].bit.PMUXEN = 0x0; //Enable Peripheral Multiplexing for SERCOM5 SPI PB00
   PORT->Group[PORTB].PMUX[0].bit.PMUXE = 0x0; //SERCOM 5 is selected for peripheral use of this pad (0x3 selects peripheral function D: SERCOM)
   PORT->Group[PORTB].PINCFG[1].bit.PMUXEN = 0x0;
@@ -139,9 +141,9 @@ void deInitSPI() {
   SERCOM5->SPI.INTENSET.bit.DRE = 0;
 
 
-      spi_state = 0;
-      buf_idx = 0;
-      do_draw_rx = 0;
+  spi_state = 0;
+  buf_idx = 0;
+  do_draw_rx = 0;
 
   /*
   SERCOM5->SPI.INTFLAG.bit.TXC=1;
@@ -150,7 +152,7 @@ void deInitSPI() {
   SERCOM5->SPI.INTFLAG.bit.ERROR=1;
   SERCOM5->SPI.INTFLAG.bit.DRE=1;
   */
-  
 
-	//attachInterrupt(digitalPinToInterrupt(PIN_SPI_SCK), spi_miso_int, FALLING);
+
+  //attachInterrupt(digitalPinToInterrupt(PIN_SPI_SCK), spi_miso_int, FALLING);
 }

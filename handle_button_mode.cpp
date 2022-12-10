@@ -33,27 +33,27 @@
 
 extern TFT_eSPI tft;
 extern int current_button_mode;
-extern int gen_screencaps; 
-extern void do_screencap(void);        
+extern int gen_screencaps;
+extern void do_screencap( void );
 
-void clr_screen(void);
-void send_cmd(const char *str, int len);
-static int FNT=4;
+void clr_screen( void );
+void send_cmd( const char *str, int len );
+static int FNT = 4;
 extern int do_refresh;
 extern Keybord mykey; // Cleate a keybord
 
-int handle_button_mode(void) 
+int handle_button_mode( void )
 {
-  int ret = get_menu_choice(4,"MONITOR  MODE","CONFIG  MODE","TG  ZONE MODE", "SIGNALS / GAIN  MODE",NULL,NULL,NULL,NULL);
-  if(ret==-1) return -1;
+  int ret = get_menu_choice( 4, "MONITOR  MODE", "CONFIG  MODE", "TG  ZONE MODE", "SIGNALS / GAIN  MODE", NULL, NULL, NULL, NULL );
+  if( ret == -1 ) return -1;
 
   current_button_mode = ret;
   char cmd[64];
-  snprintf(cmd,63,"wio_but_mode %u\r\n", ret);
+  snprintf( cmd, 63, "wio_but_mode %u\r\n", ret );
 
-  if(gen_screencaps) do_screencap();
+  if( gen_screencaps ) do_screencap();
 
-  send_cmd(cmd,strlen(cmd));
+  send_cmd( cmd, strlen( cmd ) );
   clr_screen();
 
   return current_button_mode;
