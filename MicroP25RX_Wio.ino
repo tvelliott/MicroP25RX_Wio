@@ -58,6 +58,10 @@ uint8_t fft_data[FFT_M];
 int8_t iq8_data[512];
 uint8_t iq8_idx;
 
+static char two_tone_vals[64];
+static int two_tone_timeout;
+static int prev_tone_idx;
+
 static int force_scan;
 static int gain_select;
 static int _lna_gain;
@@ -1389,12 +1393,29 @@ void loop()
         FNT = 4;
         mptr->sys_name[18] = 0;
         mptr->site_name[18] = 0;
-        snprintf( disp_buf, 50, "%s / %s", mptr->sys_name, mptr->site_name );
 
-        if( strncmp( ( char * )line1_str, ( char * )disp_buf, 31 ) != 0 ) clear_line1();
-        strncpy( line1_str, disp_buf, 31 );
+        //do we have a new constant tone value? add it to the display
+        if( mptr->tone_cnt > 7 && prev_tone_idx != mptr->tone_idx) {
+          prev_tone_idx = mptr->tone_idx;
+          two_tone_timeout = 50;
+          snprintf(disp_buf, 50, "%02u,", mptr->tone_idx); 
+          strcat(two_tone_vals, disp_buf);
 
-        tft.drawString( disp_buf, 5, 10, FNT );
+          if( strncmp( ( char * )line1_str, ( char * )two_tone_vals, 63 ) != 0 ) clear_line1();
+          strncpy( line1_str, two_tone_vals, 63 );
+          tft.drawString( two_tone_vals, 5, 10, FNT );
+        }
+        else if(two_tone_timeout==0) {
+          snprintf( disp_buf, 50, "%s / %s", mptr->sys_name, mptr->site_name );
+          if( strncmp( ( char * )line1_str, ( char * )disp_buf, 31 ) != 0 ) clear_line1();
+          strncpy( line1_str, disp_buf, 31 );
+          tft.drawString( disp_buf, 5, 10, FNT );
+        }
+
+        if(two_tone_timeout) {
+          two_tone_timeout--;
+          if(two_tone_timeout==0) memset(two_tone_vals,0x00,sizeof(two_tone_vals));
+        }
       }
 
       freq_changed = 0; //keep this at the end within valid crc check
