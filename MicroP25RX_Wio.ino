@@ -1419,9 +1419,11 @@ void loop()
           if(two_tone_cnt>4) {
             if( two_tone_A==0 ) {
               two_tone_A=freq_idx;
+              two_tone_cnt=0;
             }
             else if( two_tone_B==0 && freq_idx!=two_tone_A) {
               two_tone_B=freq_idx;
+              two_tone_cnt=0;
             }
           }
         }
