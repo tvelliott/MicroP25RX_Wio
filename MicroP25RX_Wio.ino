@@ -369,19 +369,22 @@ void loop()
   check_buttons();
 
 
-  //middle-top button held for more than 3 seconds?
-  if( !did_edit && C_but_pressed && ( millis() - c_button_press_time > 1000 ) && C_but == 0xff ) {
-    //do edit here
+  //check for edit menu shortcut. must be in monitor mode
+  if( current_button_mode == WIO_BUTTON_MODE_MONITOR || current_button_mode==WIO_BUTTON_MODE_CONFIG) {
+    //middle-top button held for more than 3 seconds?
+    if( !did_edit && C_but_pressed && ( millis() - c_button_press_time > 1000 ) && C_but == 0xff ) {
+      //do edit here
 
-    memcpy( ( void * )&minfo_copy, ( void * )&minfo_verified, sizeof( metainfo ) );
-    metainfo *m = &minfo_copy;
-    do_edit( m );
-    clr_screen();
-    did_edit = 1;
-  } else if( did_edit && C_but == 0x00 ) {
-    did_edit = 0;
-    c_button_press_time = 0;
-    C_but_pressed = 0;
+      memcpy( ( void * )&minfo_copy, ( void * )&minfo_verified, sizeof( metainfo ) );
+      metainfo *m = &minfo_copy;
+      do_edit( m );
+      clr_screen();
+      did_edit = 1;
+    } else if( did_edit && C_but == 0x00 ) {
+      did_edit = 0;
+      c_button_press_time = 0;
+      C_but_pressed = 0;
+    }
   }
 
 
@@ -1423,7 +1426,7 @@ void loop()
               two_tone_cnt=0;
             }
             else if( two_tone_B==0) {
-              if( freq_idx!=two_tone_A && abs(freq_idx-two_tone_A)>2 ) {
+              if( freq_idx!=two_tone_A ) {
                 two_tone_B=freq_idx;
               }
               two_tone_cnt=0;
