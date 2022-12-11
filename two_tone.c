@@ -1,4 +1,6 @@
-two_tone_table two_tones[] = {
+#include "two_tone.h"
+
+const two_tone_table two_tones[] = {
   1, 283.0f,
   2, 310.75f,
   3, 344.25f,
@@ -71,4 +73,31 @@ two_tone_table two_tones[] = {
   70, 2941.25f,
   71, 3010.0f,
   72, 3082.25f
+};
+
+
+
+/////////////////////////////////////////////////////////////////
+// find closest idx value for the measured frequency
+/////////////////////////////////////////////////////////////////
+int two_tone_get_idx( int zero_cross ) {
+
+  if( zero_cross < 19 ) return -1;
+  if( zero_cross > 250 ) return -1;
+
+  float measured_freq_hz = (float) zero_cross * 12.5f;
+
+  two_tone_table *rec;
+
+  int idx=-1;
+  float min_diff = 9999.0f;
+  for(int i=0;i<72;i++) {
+    rec = (two_tone_table *) &two_tones[i];
+    if( fabs( rec->tone_freq_hz - measured_freq_hz ) < min_diff ) {
+      min_diff = fabs( rec->tone_freq_hz - measured_freq_hz );
+      idx = rec->tone_idx;
+    }
+  }
+
+  return idx;
 }

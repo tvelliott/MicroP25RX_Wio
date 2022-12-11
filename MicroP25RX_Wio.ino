@@ -28,6 +28,7 @@
 #include "handle_menus.h"
 #include "handle_button_mode.h"
 #include "meta_config_info.h"
+#include "two_tone.h"
 
 TFT_eSPI tft;
 TFT_eSprite spr = TFT_eSprite( &tft );
@@ -46,6 +47,11 @@ Keybord mykey; // Cleate a keybord
 #include <Seeed_FS.h>
 #include <SD/Seeed_SD.h>
 
+static int two_tone_prev;
+static int two_tone_cnt;
+static int two_tone_A;
+static int two_tone_B;
+static int prev_zero_cross_cnt;
 
 meta_config_info minfo_config;
 
@@ -1084,6 +1090,7 @@ void loop()
 
       if( prev_freq != mptr->current_freq ) {
         freq_changed = 1;
+
       }
       prev_freq = mptr->current_freq;
 
@@ -1389,7 +1396,44 @@ void loop()
         FNT = 4;
         mptr->sys_name[18] = 0;
         mptr->site_name[18] = 0;
-        snprintf( disp_buf, 50, "%s / %s", mptr->sys_name, mptr->site_name );
+
+        //clear values
+        if(freq_changed) {
+          two_tone_prev=0;
+          two_tone_cnt=0;
+          two_tone_A=0;
+          two_tone_B=0;
+        }
+
+        int freq_idx=-1;
+
+        //we wait for a value update before processing
+        if( prev_zero_cross_cnt != mptr->zero_cross_cnt) {
+          freq_idx = two_tone_get_idx(mptr->zero_cross);
+        }
+        prev_zero_cross_cnt = mptr->zero_cross_cnt;
+
+        //do we have a consecutive non-zero value for the idx?
+        if( freq_idx > 0 && freq_idx == two_tone_prev ) {
+          two_tone_cnt++;
+          if(two_tone_cnt>4) {
+            if( two_tone_A==0 ) {
+              two_tone_A=freq_idx;
+            }
+            else if( two_tone_B==0 && freq_idx!=two_tone_A) {
+              two_tone_B=freq_idx;
+            }
+          }
+        }
+        two_tone_prev = freq_idx;
+
+
+        if(two_tone_A>0 || two_tone_B>0) {
+          snprintf( disp_buf, 50, "TWO-TONE A:%u  B:%u", two_tone_A, two_tone_B);
+        }
+        else {
+          snprintf( disp_buf, 50, "%s / %s", mptr->sys_name, mptr->site_name );
+        }
 
         if( strncmp( ( char * )line1_str, ( char * )disp_buf, 31 ) != 0 ) clear_line1();
         strncpy( line1_str, disp_buf, 31 );
