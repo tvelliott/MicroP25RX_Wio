@@ -1417,12 +1417,12 @@ void loop()
         //do we have a consecutive non-zero value for the idx?
         if( freq_idx > 0 && freq_idx == two_tone_prev ) {
           two_tone_cnt++;
-          if(two_tone_cnt>2) {
+          if(two_tone_cnt>0) {  //80ms detect time
             if( two_tone_A==0 ) {
               two_tone_A=freq_idx;
               two_tone_cnt=0;
             }
-            else if( two_tone_B==0 && freq_idx!=two_tone_A) {
+            else if( two_tone_B==0 && freq_idx!=two_tone_A && abs(freq_idx-two_tone_A)>2 ) {
               two_tone_B=freq_idx;
               two_tone_cnt=0;
             }
@@ -1432,7 +1432,8 @@ void loop()
 
 
         if(two_tone_A>0 || two_tone_B>0) {
-          snprintf( disp_buf, 50, "TWO-TONE A:%u  B:%u", two_tone_A, two_tone_B);
+          if(two_tone_A && two_tone_B) snprintf( disp_buf, 50, "TWO-TONE A:%u  B:%u", two_tone_A, two_tone_B);
+              else snprintf( disp_buf, 50, "TWO-TONE A:%u", two_tone_A);
         }
         else {
           snprintf( disp_buf, 50, "%s / %s", mptr->sys_name, mptr->site_name );
