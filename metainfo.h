@@ -102,7 +102,7 @@ typedef struct __attribute__( ( packed ) )
 
   float sgain;
   int agcmode;
-  int chflt;
+  int zero_cross;
   uint16_t cc_lcn_s;
   uint8_t mode_b;
   uint8_t slot_b;
