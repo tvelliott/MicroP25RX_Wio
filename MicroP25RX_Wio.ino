@@ -1399,6 +1399,7 @@ void loop()
 
         //clear values
         if(freq_changed) {
+          freq_changed = 0; //keep this at the end within valid crc check
           two_tone_prev=0;
           two_tone_cnt=0;
           two_tone_A=0;
@@ -1416,7 +1417,7 @@ void loop()
         //do we have a consecutive non-zero value for the idx?
         if( freq_idx > 0 && freq_idx == two_tone_prev ) {
           two_tone_cnt++;
-          if(two_tone_cnt>4) {
+          if(two_tone_cnt>2) {
             if( two_tone_A==0 ) {
               two_tone_A=freq_idx;
               two_tone_cnt=0;
@@ -1443,7 +1444,6 @@ void loop()
         tft.drawString( disp_buf, 5, 10, FNT );
       }
 
-      freq_changed = 0; //keep this at the end within valid crc check
     }
 
 draw_end:
