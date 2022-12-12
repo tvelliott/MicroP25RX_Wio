@@ -351,7 +351,7 @@ void setup()
   //interrupt handler for Wio -> to -> Teensy
   attachInterrupt( digitalPinToInterrupt( PIN_SPI_SS ), spi_miso_int, FALLING );
 
-  delay( 100 ); //let button-inputs settle after power-up
+  delay( 500 ); //let button-inputs settle after power-up
 
   clr_buttons();
   did_save = 0;
