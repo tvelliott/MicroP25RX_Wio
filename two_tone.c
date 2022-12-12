@@ -82,10 +82,10 @@ const two_tone_table two_tones[] = {
 /////////////////////////////////////////////////////////////////
 int two_tone_get_idx( int zero_cross ) {
 
-  if( zero_cross < 10 ) return -1;
-  if( zero_cross > 125 ) return -1;
+  if( zero_cross < 40 ) return -1;
+  if( zero_cross > 512 ) return -1;
 
-  float measured_freq_hz = (float) zero_cross * 25.0f;
+  float measured_freq_hz = (float) zero_cross * 6.25f;
 
   two_tone_table *rec;
 
