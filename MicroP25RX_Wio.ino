@@ -1417,10 +1417,11 @@ void loop()
         }
         prev_zero_cross_cnt = mptr->zero_cross_cnt;
 
+     #if 1
         //do we have a consecutive non-zero value for the idx?
         if( freq_idx > 0 && freq_idx == two_tone_prev ) {
           two_tone_cnt++;
-          if(two_tone_cnt>6) {  //need to see two consecutive 80ms frames, for 160ms detect time
+          if(two_tone_cnt>5) {  //need to see two consecutive 80ms frames, for 160ms detect time
             if( two_tone_A==0 ) {
               two_tone_A=freq_idx;
               two_tone_cnt=0;
@@ -1433,7 +1434,7 @@ void loop()
             }
           }
         }
-        else {
+        else if(freq_idx>0) { //make sure it is a valid index
           two_tone_cnt=0;
         }
         two_tone_prev = freq_idx;
@@ -1446,11 +1447,18 @@ void loop()
         else {
           snprintf( disp_buf, 50, "%s / %s", mptr->sys_name, mptr->site_name );
         }
-
         if( strncmp( ( char * )line1_str, ( char * )disp_buf, 31 ) != 0 ) clear_line1();
         strncpy( line1_str, disp_buf, 31 );
-
         tft.drawString( disp_buf, 5, 10, FNT );
+     #else
+       if(freq_idx>0) {
+        snprintf( disp_buf, 50, "%u", freq_idx);
+        if( strncmp( ( char * )line1_str, ( char * )disp_buf, 31 ) != 0 ) clear_line1();
+        strncpy( line1_str, disp_buf, 31 );
+        tft.drawString( disp_buf, 5, 10, FNT );
+       }
+     #endif
+
       }
 
     }
