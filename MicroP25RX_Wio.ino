@@ -1420,7 +1420,7 @@ void loop()
         //do we have a consecutive non-zero value for the idx?
         if( freq_idx > 0 && freq_idx == two_tone_prev ) {
           two_tone_cnt++;
-          if(two_tone_cnt>0) {  //need to see two consecutive 80ms frames, for 160ms detect time
+          if(two_tone_cnt>6) {  //need to see two consecutive 80ms frames, for 160ms detect time
             if( two_tone_A==0 ) {
               two_tone_A=freq_idx;
               two_tone_cnt=0;
@@ -1432,6 +1432,9 @@ void loop()
               two_tone_cnt=0;
             }
           }
+        }
+        else {
+          two_tone_cnt=0;
         }
         two_tone_prev = freq_idx;
 
