@@ -149,7 +149,7 @@ void draw_config_summary()
   sprintf( ( char * )str13, "AUD AGC %u", mi->do_audio_agc );
   sprintf( ( char * )str14, "LEARN MODE %u", mi->learn_mode );
   sprintf( ( char * )str15, "RX FW %u", mi->fw_version );
-  sprintf( ( char * )str16, "WIO FW 2022121201" );
+  sprintf( ( char * )str16, "WIO FW 2022121202" );
 
   //////////////////////////////////////////////////////////
   //////////////////////////////////////////////////////////
