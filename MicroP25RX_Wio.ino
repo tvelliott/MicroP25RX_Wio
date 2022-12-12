@@ -1401,7 +1401,7 @@ void loop()
         mptr->site_name[18] = 0;
 
         //clear values
-        if(freq_changed) {
+        if(freq_changed ) {
           freq_changed = 0; //keep this at the end within valid crc check
           two_tone_prev=0;
           two_tone_cnt=0;
@@ -1414,6 +1414,13 @@ void loop()
         //we wait for a value update before processing
         if( prev_zero_cross_cnt != mptr->zero_cross_cnt) {
           freq_idx = two_tone_get_idx(mptr->zero_cross);
+
+          if(mptr->zero_cross < 3 && two_tone_cnt<3) {
+            two_tone_prev=0;
+            two_tone_cnt=0;
+            two_tone_A=0;
+            two_tone_B=0;
+          }
         }
         prev_zero_cross_cnt = mptr->zero_cross_cnt;
 
