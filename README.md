@@ -7,7 +7,7 @@ Firmware source for the Wio-terminal portion of the MicroP25RX product
 Build Instructions:
 
 Install Arduino IDE For Your Platform
-https://www.arduino.cc/en/software/
+https://www.arduino.cc/en/software/  (DO NOT use versions newer than 1.8.xxx. They don't work as of 12-12-22)
 
 1) Open The Arduino IDE, click on File > Preferences, and copy below url to Additional Boards Manager URLs:
 https://files.seeedstudio.com/arduino/package_seeeduino_boards_index.json
