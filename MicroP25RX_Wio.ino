@@ -1415,12 +1415,14 @@ void loop()
         if( prev_zero_cross_cnt != mptr->zero_cross_cnt) {
           freq_idx = two_tone_get_idx(mptr->zero_cross);
 
+          #if 0
           if(mptr->zero_cross < 2 && two_tone_cnt==0) {
             two_tone_prev=0;
             two_tone_cnt=0;
             two_tone_A=0;
             two_tone_B=0;
           }
+          #endif
         }
         prev_zero_cross_cnt = mptr->zero_cross_cnt;
 
@@ -1428,7 +1430,7 @@ void loop()
         //do we have a consecutive non-zero value for the idx?
         if( freq_idx > 0 && freq_idx == two_tone_prev ) {
           two_tone_cnt++;
-          if(two_tone_cnt>2) {  //need to see two consecutive 80ms frames, for 160ms detect time
+          if(two_tone_cnt>1) {  //need to see two consecutive 80ms frames, for 160ms detect time
             if( two_tone_A==0 ) {
               two_tone_A=freq_idx;
               two_tone_cnt=0;
