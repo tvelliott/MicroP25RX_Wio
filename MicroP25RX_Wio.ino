@@ -1435,7 +1435,7 @@ void loop()
           }
         }
         else if(freq_idx>0) { //make sure it is a valid index
-          two_tone_cnt=0;
+          if(two_tone_cnt) two_tone_cnt--;
         }
         two_tone_prev = freq_idx;
 
