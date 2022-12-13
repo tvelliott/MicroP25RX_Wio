@@ -14,7 +14,8 @@ https://files.seeedstudio.com/arduino/package_seeeduino_boards_index.json
 2) Click on Tools > Board > Board Manager and Search Wio Terminal in the Boards Manager.
 3) Select your board and port. You'll need to select the entry in the Tools > Board menu that corresponds to your Arduino. Selecting the Wio Terminal.
 4) Load the MicroP25RX_Wio file.  File->Open
-5) Upload the program. Click the Upload button in the environment. Wait a few seconds and if the upload is successful, the message "Done uploading." will appear in the status bar.
+5) Go to Tool Menu -> Manage Libraries. Search for Seeed FS, Install the Seeed Arduino FS library.
+6) Upload the program. Click the Upload button in the environment. Wait a few seconds and if the upload is successful, the message "Done uploading." will appear in the status bar.
 
 
 Resources For The Wio Terminal
