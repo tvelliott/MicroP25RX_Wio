@@ -1415,8 +1415,9 @@ void loop()
         if( prev_zero_cross_cnt != mptr->zero_cross_cnt) {
           freq_idx = two_tone_get_idx(mptr->zero_cross);
 
-          #if 0
-          if(mptr->zero_cross < 2 && two_tone_cnt==0) {
+          #if 1
+          //if(mptr->zero_cross < 2 && two_tone_cnt==0) {
+          if(mptr->zero_cross < 2 ) {
             two_tone_prev=0;
             two_tone_cnt=0;
             two_tone_A=0;
