@@ -112,7 +112,7 @@ typedef struct __attribute__( ( packed ) )
   uint32_t global_sync_count;
   uint16_t tgzone_s;
   uint32_t lsm_std;
-  uint8_t cc_pause;
+  uint8_t adc_clip;
 
   uint8_t wio_packet_id;
 

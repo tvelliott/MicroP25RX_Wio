@@ -721,7 +721,7 @@ void loop()
 
       is_vga_auto = ( ( mptr->vga_gain & 0x80 ) != 0 );
       if( is_vga_auto ) {
-        sprintf( cmd_str, "update_gains %05X %03X %03u %03u %u %u 16\r\n", mptr->wacn_id, mptr->sys_id, mptr->site_id, mptr->rf_id, _lna_gain, _mixer_gain );
+        sprintf( cmd_str, "update_gains %05X %03X %03u %03u %u %u %u\r\n", mptr->wacn_id, mptr->sys_id, mptr->site_id, mptr->rf_id, _lna_gain, _mixer_gain, _vga_gain );
 
       } else {
         sprintf( cmd_str, "update_gains %05X %03X %03u %03u %u %u %u\r\n", mptr->wacn_id, mptr->sys_id, mptr->site_id, mptr->rf_id, _lna_gain, _mixer_gain, _vga_gain );
