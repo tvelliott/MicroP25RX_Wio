@@ -47,6 +47,8 @@ static char *s8;
 
 static int FNT = 4;
 
+extern metainfo *mptr;
+
 #define ST 5
 #define INC 30
 
@@ -71,9 +73,11 @@ static int FNT = 4;
 #define ILI9341_PINK        0xF81F
 
 #define TFT_DARKBLUE        0x000F      /*   0,   0, 255 */
-#define BG_COLOR TFT_DARKBLUE
-#define FG_COLOR TFT_WHITE
-#define HL_COLOR TFT_WHITE
+
+
+#define BG_COLOR mptr->col_menu_bg 
+#define FG_COLOR  mptr->col_menu_fg
+#define HL_COLOR  mptr->col_menu_fg
 
 void menu_set_font_size( int size )
 {

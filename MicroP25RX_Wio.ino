@@ -1306,7 +1306,7 @@ void loop()
       spr.createSprite( 60, 30 ); //allocate sprite memory
       spr.fillSprite( mptr->col_def_bg ); //clear to black bground
 
-      spr.setTextColor( mptr->col_def_bg, mptr->col_def_indicator );
+      spr.setTextColor( mptr->col9, mptr->col10 );
 
       memset( disp_buf, 0x00, sizeof( disp_buf ) );
       if( follow || mute || inc_in_scan ) strcat( disp_buf, " " );
@@ -1329,7 +1329,7 @@ void loop()
       spr.createSprite( 80, 40 ); //allocate sprite memory
       spr.fillSprite( mptr->col_def_bg ); //clear to black bground
 
-      spr.setTextColor( mptr->col10, mptr->col_def_bg );
+      spr.setTextColor( mptr->col_def_indicator, mptr->col_def_bg );
       if( mptr->phase2 ) {
         spr.drawString( "P2", 0, 8, FNT ); //p25 p2
       } else {
