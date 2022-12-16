@@ -1184,7 +1184,7 @@ void loop()
 
 
           if( TGLogScreen == true ) {
-            tft.setTextColor( mptr->col9, mptr->col_def_bg ); // set tg log to blue
+            tft.setTextColor( mptr->col5, mptr->col_def_bg ); // set tg log to blue
             tft.fillRect( 0, 118, 235, 70, mptr->col_def_bg ); //
             tft.drawString( TGlog1, 5, 116, 2 ); //
             tft.drawString( TGlog2, 5, 130, 2 ); //
