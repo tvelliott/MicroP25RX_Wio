@@ -51,7 +51,7 @@ void meta_set_wioline2( char *str );
 extern int8_t sym_const[];
 extern uint32_t RID;
 
-typedef struct __attribute__( ( packed ) )
+typedef struct 
 {
 
   uint32_t magic;
@@ -148,8 +148,33 @@ typedef struct __attribute__( ( packed ) )
   uint8_t inc_in_scan;
   uint8_t lock_nac;
 
+  uint16_t col1;
+  uint16_t col2;
+  uint16_t col3;
+  uint16_t col4;
+  uint16_t col5;
+  uint16_t col6;
+  uint16_t col7;
+  uint16_t col8;
+  uint16_t col9;
+  uint16_t col10;
+  uint16_t col11;
+  uint16_t col12;
+  uint16_t col13;
+  uint16_t col14;
+  uint16_t col_menu_fg;
+  uint16_t col_menu_bg;
+  uint16_t col_def_bg;
+  uint16_t col_def_fg;
+  uint16_t col_def_led1_on;
+  uint16_t col_def_led2_on;
+  uint16_t col_def_led1_off;
+  uint16_t col_def_led2_off;
+  uint16_t col_def_indicator;
+  uint16_t col_def_const;
+
+  uint8_t padd1;
   uint32_t crc_val;
-  uint32_t padding;
 }
 metainfo;
 

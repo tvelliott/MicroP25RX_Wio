@@ -83,6 +83,8 @@ metainfo minfo_verified;
 metainfo minfo_copy;
 static int clean_wio_line2;
 
+metainfo *mptr;
+
 extern uint32_t b_button_press_time;
 extern uint32_t c_button_press_time;
 static int did_save;
@@ -248,7 +250,7 @@ void init_sprites()
 //////////////////////////////////////////////////////////////////////////
 void clr_screen()
 {
-  tft.fillScreen( TFT_BLACK ); //background
+  tft.fillScreen( mptr->col_def_bg ); //background
   memset( line1_str, 0x00, 32 );
   memset( line2_str, 0x00, 32 );
   memset( line3_str, 0x00, 32 );
@@ -259,63 +261,93 @@ void clr_screen()
   memset( line8_str, 0x00, 32 );
 }
 
+#if 0
+  uint16_t col1;
+  uint16_t col2;
+  uint16_t col3;
+  uint16_t col4;
+  uint16_t col5;
+  uint16_t col6;
+  uint16_t col7;
+  uint16_t col8;
+  uint16_t col9;
+  uint16_t col10;
+  uint16_t col11;
+  uint16_t col12;
+  uint16_t col13;
+  uint16_t col14;
+  uint16_t col_menu_fg;
+  uint16_t col_menu_bg;
+  uint16_t col_def_bg;
+  uint16_t col_def_fg;
+  uint16_t col_def_led1_on;
+  uint16_t col_def_led2_on;
+  uint16_t col_def_led1_off;
+  uint16_t col_def_led2_off;
+  uint16_t col_def_indicator;
+  uint16_t col_def_const;
+#endif
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
 void clear_line1()
 {
-  tft.fillRect( 0, 0, 320, 30, TFT_BLACK );
+  tft.fillRect( 0, 0, 320, 30, mptr->col_def_bg );
 }
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
 void clear_line2()
 {
-  tft.fillRect( 0, 30, 320, 30, TFT_BLACK );
+  tft.fillRect( 0, 30, 320, 30, mptr->col_def_bg );
 }
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
 void clear_line3()
 {
-  tft.fillRect( 0, 60, 320, 35, TFT_BLACK ); // height 30 to 35 (desc sometimes leaves 'marks' below line 3 with h 30
+  tft.fillRect( 0, 60, 320, 35, mptr->col_def_bg ); // height 30 to 35 (desc sometimes leaves 'marks' below line 3 with h 30
 }
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
 void clear_line4()
 {
-  tft.fillRect( 0, 90, 320, 30, TFT_BLACK );
+  tft.fillRect( 0, 90, 320, 30, mptr->col_def_bg );
 }
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
 void clear_line5()
 {
-  tft.fillRect( 0, 120, 320, 30, TFT_BLACK );
+  tft.fillRect( 0, 120, 320, 30, mptr->col_def_bg );
 }
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
 void clear_line6()
 {
-  tft.fillRect( 0, 150, 320, 30, TFT_BLACK );
+  tft.fillRect( 0, 150, 320, 30, mptr->col_def_bg );
 }
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
 void clear_line7()
 {
-  tft.fillRect( 0, 180, 320, 30, TFT_BLACK );
+  tft.fillRect( 0, 180, 320, 30, mptr->col_def_bg );
 }
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
 void clear_line8()
 {
-  tft.fillRect( 0, 210, 235, 30, TFT_BLACK );
+  tft.fillRect( 0, 210, 235, 30, mptr->col_def_bg );
 }
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
 void setup()
 {
+
+
+  mptr = &minfo_verified;
+
   tft.begin();
   tft.setRotation( 3 );
-  tft.fillScreen( TFT_BLACK ); //background
+  tft.fillScreen( mptr->col_def_bg ); //background
   tft.setFreeFont( FS18 );
-  tft.fillScreen( TFT_BLACK ); //background
+  tft.fillScreen( mptr->col_def_bg ); //background
 
 
   init_sprites();
@@ -334,7 +366,7 @@ void setup()
 
 
   tft.setFreeFont( NULL );
-  tft.setTextColor( TFT_WHITE, TFT_BLACK );
+  tft.setTextColor( mptr->col_def_fg, mptr->col_def_bg );
 
   sprintf( disp_buf, "%s", "BlueTail    MicroP25RX" );
   FNT = 4;
@@ -434,7 +466,6 @@ void loop()
     if( up_but_pressed && up_but == 0x00 ) {
       up_but_pressed = 0;
       char cmd_str[32];
-      metainfo *mptr = &minfo_verified;
       sprintf( cmd_str, "nsfreq %05X %03X\r\n", mptr->wacn_id, mptr->sys_id ); //roam mode=3 needs wacn and sysid arguments
       int len = strlen( cmd_str );
       send_cmd( cmd_str, len ); //next primary/active frequency
@@ -443,7 +474,6 @@ void loop()
     if( down_but_pressed && down_but == 0x00 ) {
       down_but_pressed = 0;
       char cmd_str[32];
-      metainfo *mptr = &minfo_verified;
       sprintf( cmd_str, "psfreq %05X %03X\r\n", mptr->wacn_id, mptr->sys_id ); //roam mode=3 needs wacn and sysid arguments
       int len = strlen( cmd_str );
       send_cmd( cmd_str, len ); //next primary/active frequency
@@ -456,7 +486,6 @@ void loop()
       C_but_pressed = 0;
       c_button_press_time = 0;
 
-      metainfo *mptr = &minfo_verified;
       char cmd[32];
       if( mptr->roaming == 5 ) {
         snprintf( cmd, 31, "inc_scan %05X %03X %u %u 1\r\n", mptr->wacn_id, mptr->sys_id, mptr->site_id, mptr->rf_id );
@@ -481,7 +510,6 @@ void loop()
     //right-most button
     if( A_but_pressed && A_but == 0x00 ) { //demod mode LSM/FM
       A_but_pressed = 0;
-      metainfo *mptr = &minfo_verified;
       char cmd[32];
       if( mptr->roaming == 5 ) {
         snprintf( cmd, 31, "inc_scan %05X %03X %u %u 0\r\n", mptr->wacn_id, mptr->sys_id, mptr->site_id, mptr->rf_id );
@@ -545,7 +573,7 @@ void loop()
       B_but_pressed = 0;
       int zone = get_sel_zone();
 
-      tft.setTextColor( TFT_GREEN, TFT_BLACK );
+      tft.setTextColor( mptr->col_def_fg, mptr->col_def_bg );
       clr_screen();
       FNT = 4;
       tft.drawString( "Zone Name", 5, 10, FNT );
@@ -717,7 +745,6 @@ void loop()
       b_button_press_time = 0;
 
       char cmd_str[32];
-      metainfo *mptr = &minfo_verified;
 
       is_vga_auto = ( ( mptr->vga_gain & 0x80 ) != 0 );
       if( is_vga_auto ) {
@@ -729,7 +756,7 @@ void loop()
 
       FNT = 4;
       tft.setFreeFont( NULL );
-      tft.setTextColor( TFT_WHITE, TFT_BLACK );
+      tft.setTextColor( mptr->col_def_fg, mptr->col_def_bg );
 
 
       int len = strlen( cmd_str );
@@ -743,7 +770,6 @@ void loop()
     //right-most button
     if( A_but_pressed && A_but == 0x00 ) { //vga gain
       A_but_pressed = 0;
-      metainfo *mptr = &minfo_verified;
       char cmd[32];
       snprintf( cmd, 31, "demod %d\r\n", ( mptr->use_demod ^ 0x01 ) );
       send_cmd( ( const char * ) cmd, strlen( cmd ) );
@@ -762,6 +788,8 @@ void loop()
 
     metainfo *mptr = ( metainfo * ) &minfo;
     crc32_val = ~0L;
+
+
     uint32_t mi_crc = crc32_range( ( unsigned char * ) &minfo, sizeof( metainfo ) - 8 );
 
     //validate the structure with 32-bit crc
@@ -892,9 +920,9 @@ void loop()
           //draw_fft();
           init_sprites(); //best to re-init
           spr.createSprite( 128, 110 ); //allocate sprite memory
-          spr.fillSprite( TFT_BLACK ); //clear to black bground
+          spr.fillSprite( mptr->col_def_bg ); //clear to black bground
 
-          spr.fillSprite( TFT_BLACK );
+          spr.fillSprite( mptr->col_def_bg );
           for( int i = 0; i < 128; i++ ) {
             if( i > 0 ) {
               spr.drawLine( i, ( 110 - ( int )fft_data[i] ) + 90, i + 1, ( 110 - ( int )fft_data[i + 1] ) + 90, TFT_GREEN );
@@ -916,7 +944,7 @@ void loop()
 
           ptr = ( int8_t * ) &mptr->data[0]; //pointer to incoming data 128 bytes
           spr.createSprite( 80, 80 ); //allocate memory for 80 x 80 sprite
-          spr.fillSprite( TFT_BLACK );
+          spr.fillSprite( mptr->col_def_bg );
           //grid lines
           spr.drawLine( 40, 0, 40, 80, TFT_DARKGREY );
           spr.drawLine( 0, 40, 80, 40, TFT_DARKGREY );
@@ -926,7 +954,7 @@ void loop()
             ii = *ptr++ / 2; //scale to +/- 32 range
             qq = *ptr++ / 2;
 
-            spr.fillCircle( 40 + ii, 40 + qq, 1, TFT_YELLOW ); //symbols
+            spr.fillCircle( 40 + ii, 40 + qq, 1, mptr->col_def_const ); //symbols
           }
           spr.pushSprite( 220, 115 ); //send to lcd. upper left corner of sprite
           spr.deleteSprite();  //free memory
@@ -1089,7 +1117,7 @@ void loop()
       FNT = 4;
 
       tft.setFreeFont( NULL );
-      tft.setTextColor( TFT_WHITE, TFT_BLACK );
+      tft.setTextColor( mptr->col_def_fg, mptr->col_def_bg );
 
       if( prev_freq != mptr->current_freq ) {
         freq_changed = 1;
@@ -1098,7 +1126,7 @@ void loop()
       prev_freq = mptr->current_freq;
 
 
-      tft.setTextColor( TFT_YELLOW, TFT_BLACK );
+      tft.setTextColor( mptr->col2, mptr->col_def_bg );
 
       //if( !mptr->do_wio_lines ) {
       if( mptr->tg_s != prev_tgs ) {
@@ -1156,15 +1184,15 @@ void loop()
 
 
           if( TGLogScreen == true ) {
-            tft.setTextColor( TFT_BLUE, TFT_BLACK ); // set tg log to blue
-            tft.fillRect( 0, 118, 235, 70, TFT_BLACK ); //
+            tft.setTextColor( mptr->col9, mptr->col_def_bg ); // set tg log to blue
+            tft.fillRect( 0, 118, 235, 70, mptr->col_def_bg ); //
             tft.drawString( TGlog1, 5, 116, 2 ); //
             tft.drawString( TGlog2, 5, 130, 2 ); //
             tft.drawString( TGlog3, 5, 144, 2 ); //
             tft.drawString( TGlog4, 5, 158, 2 ); //
             tft.drawString( TGlog5, 5, 172, 2 ); //
 
-            tft.setTextColor( TFT_YELLOW, TFT_BLACK ); // return to yellow
+            tft.setTextColor( mptr->col3, mptr->col_def_bg ); // return to yellow
           } //
 
         } //
@@ -1180,12 +1208,12 @@ void loop()
           tft.drawString( disp_buf, 5, 40, FNT );
         }
       }
-      tft.setTextColor( TFT_YELLOW, TFT_BLACK ); // was orange
+      tft.setTextColor( mptr->col3, mptr->col_def_bg ); // was orange
       tft.drawString( disp_buf2, 5, 70, FNT );
       //}
 
       FNT = 2;
-      tft.setTextColor( TFT_CYAN, TFT_BLACK );
+      tft.setTextColor( mptr->col4, mptr->col_def_bg );
 
       uint8_t nac_lock_str = 'U';
       if( mptr->lock_nac ) nac_lock_str = 'L';
@@ -1198,7 +1226,7 @@ void loop()
       strcpy( line4_str, disp_buf );
 
       FNT = 2;
-      tft.setTextColor( TFT_LIGHTGREY, TFT_BLACK );
+      tft.setTextColor( mptr->col5, mptr->col_def_bg );
       char demod_str[8];
       demod_str[0] = 0;
       if( mptr->use_demod == 0 ) strcpy( demod_str, "LSM" );
@@ -1215,6 +1243,7 @@ void loop()
       }
       strcpy( line5_str, disp_buf );
 
+      tft.setTextColor( mptr->col6, mptr->col_def_bg );
       sprintf( disp_buf, "NCO1 %3.3f, NCO2 %3.2f, EVM %3.1f    ", mptr->nco_offset, mptr->loop_freq, mptr->evm_p );
       if( strcmp( disp_buf, line6_str ) != 0 ) {
         //clear_line6(); //space at the end of this line is better solution
@@ -1225,6 +1254,8 @@ void loop()
       }
       strcpy( line6_str, disp_buf );
 
+      tft.setTextColor( mptr->col7, mptr->col_def_bg );
+      sprintf( disp_buf, "NCO1 %3.3f, NCO2 %3.2f, EVM %3.1f    ", mptr->nco_offset, mptr->loop_freq, mptr->evm_p );
       //if(mptr->on_control_b && mptr->total_session_time>1500) {
       if( mptr->on_control_b ) {
         sprintf( disp_buf, "TSBK/SEC %u    REF %u        ", mptr->tsbk_sec, mptr->ref_freq_cal );
@@ -1239,7 +1270,8 @@ void loop()
 
       FNT = 2;
       memset( disp_buf, 0x00, sizeof( disp_buf ) );
-      tft.setTextColor( TFT_YELLOW, TFT_BLACK ); // was orange
+      tft.setTextColor( mptr->col8, mptr->col_def_bg );
+      sprintf( disp_buf, "NCO1 %3.3f, NCO2 %3.2f, EVM %3.1f    ", mptr->nco_offset, mptr->loop_freq, mptr->evm_p );
       if( mptr->on_control_b == 0 && mptr->RID != 0 && mptr->alias != NULL ) {
         sprintf( disp_buf, "RID %u, %s", mptr->RID, mptr->alias );
       } else {
@@ -1272,9 +1304,9 @@ void loop()
       //Draw STATUS INDICATORS HOLD, MUTE,
       //////////////////////////////////////////////////////////
       spr.createSprite( 60, 30 ); //allocate sprite memory
-      spr.fillSprite( TFT_BLACK ); //clear to black bground
+      spr.fillSprite( mptr->col_def_bg ); //clear to black bground
 
-      spr.setTextColor( TFT_BLACK, TFT_GREEN );
+      spr.setTextColor( mptr->col_def_bg, mptr->col_def_indicator );
 
       memset( disp_buf, 0x00, sizeof( disp_buf ) );
       if( follow || mute || inc_in_scan ) strcat( disp_buf, " " );
@@ -1295,9 +1327,9 @@ void loop()
       //Draw Status LEDS  / P1-P2 indicator
       //////////////////////////////////////////////////////////
       spr.createSprite( 80, 40 ); //allocate sprite memory
-      spr.fillSprite( TFT_BLACK ); //clear to black bground
+      spr.fillSprite( mptr->col_def_bg ); //clear to black bground
 
-      spr.setTextColor( TFT_GREEN, TFT_BLACK );
+      spr.setTextColor( mptr->col10, mptr->col_def_bg );
       if( mptr->phase2 ) {
         spr.drawString( "P2", 0, 8, FNT ); //p25 p2
       } else {
@@ -1306,16 +1338,16 @@ void loop()
 
       //status led
       if( mptr->status_led ) {
-        spr.fillCircle( 35, 12, 10, TFT_GREEN );
+        spr.fillCircle( 35, 12, 10, mptr->col_def_led1_on );
       } else {
-        spr.fillCircle( 35, 12, 10, TFT_DARKGREY );
+        spr.fillCircle( 35, 12, 10, mptr->col_def_led1_off );
       }
 
       //TG led
       if( mptr->tg_led ) {
-        spr.fillCircle( 60, 12, 10, TFT_YELLOW );
+        spr.fillCircle( 60, 12, 10, mptr->col_def_led2_on );
       } else {
-        spr.fillCircle( 60, 12, 10, TFT_DARKGREY );
+        spr.fillCircle( 60, 12, 10, mptr->col_def_led2_off );
       }
       spr.pushSprite( 240, 212 ); //transfer to lcd, x,y = 240,210
       spr.deleteSprite(); //free memory
@@ -1344,14 +1376,14 @@ void loop()
           ii = *ptr++ / 2; //scale to +/- 32 range
           qq = *ptr++ / 2;
 
-          spr.fillCircle( 40 + ii, 40 + qq, 1, TFT_YELLOW ); //symbols
+          spr.fillCircle( 40 + ii, 40 + qq, 1, mptr->col_def_const ); //symbols
         }
         spr.pushSprite( 233, 98 ); //send to lcd. upper left corner of sprite
         spr.deleteSprite();  //free memory
       }
 #endif
 
-      tft.setTextColor( TFT_GREEN, TFT_BLACK );
+      tft.setTextColor( mptr->col1, mptr->col_def_bg );
 
       if( mptr->do_wio_lines ) {
 
