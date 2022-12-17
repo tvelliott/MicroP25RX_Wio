@@ -47,11 +47,9 @@ Keybord mykey; // Cleate a keybord
 #include <Seeed_FS.h>
 #include <SD/Seeed_SD.h>
 
-static int two_tone_prev;
-static int two_tone_cnt;
 static int two_tone_A;
 static int two_tone_B;
-static int prev_zero_cross_cnt;
+static int prev_max_freq_cnt;
 
 meta_config_info minfo_config;
 
@@ -1435,8 +1433,6 @@ void loop()
         //clear values
         if(freq_changed ) {
           freq_changed = 0; //keep this at the end within valid crc check
-          two_tone_prev=0;
-          two_tone_cnt=0;
           two_tone_A=0;
           two_tone_B=0;
         }
@@ -1444,43 +1440,30 @@ void loop()
         int freq_idx=-1;
 
         //we wait for a value update before processing
-        if( prev_zero_cross_cnt != mptr->zero_cross_cnt) {
-          freq_idx = two_tone_get_idx(mptr->zero_cross);
+        //if( prev_max_freq_cnt != mptr->max_freq_cnt) {
+          //freq_idx = two_tone_get_idx((int) mptr->max_freq_hz);
+          float fm = mptr->max_freq_hz;
 
-          #if 1
-          //if(mptr->zero_cross < 2 && two_tone_cnt==0) {
-          if(mptr->zero_cross < 2 ) {
-            two_tone_prev=0;
-            two_tone_cnt=0;
+          #if 0
+          if(mptr->max_freq_cnt==0 ) {
             two_tone_A=0;
             two_tone_B=0;
           }
           #endif
-        }
-        prev_zero_cross_cnt = mptr->zero_cross_cnt;
+        //}
+        prev_max_freq_cnt = mptr->max_freq_cnt;
 
-     #if 1
-        //do we have a consecutive non-zero value for the idx?
-        if( freq_idx > 0 && freq_idx == two_tone_prev ) {
-          two_tone_cnt++;
-          if(two_tone_cnt>0) {  //need to see two consecutive 80ms frames, for 160ms detect time
-            if( two_tone_A==0 ) {
-              two_tone_A=freq_idx;
-              two_tone_cnt=0;
-            }
-            else if( two_tone_B==0) {
-              if( freq_idx!=two_tone_A ) {
-                two_tone_B=freq_idx;
-              }
-              two_tone_cnt=0;
+     #if 0
+        if( freq_idx > 0 ) {  //valid frequency from table?
+          if( two_tone_A==0 ) {
+            two_tone_A=freq_idx;
+          }
+          else if( two_tone_B==0) {
+            if( freq_idx!=two_tone_A ) {
+              two_tone_B=freq_idx;
             }
           }
         }
-        else if(freq_idx>0) { //make sure it is a valid index
-          if(two_tone_cnt) two_tone_cnt--;
-        }
-        two_tone_prev = freq_idx;
-
 
         if(two_tone_A>0 || two_tone_B>0) {
           if(two_tone_A && two_tone_B) snprintf( disp_buf, 50, "TWO-TONE A:%u  B:%u", two_tone_A, two_tone_B);
@@ -1493,12 +1476,12 @@ void loop()
         strncpy( line1_str, disp_buf, 31 );
         tft.drawString( disp_buf, 5, 10, FNT );
      #else
-       if(freq_idx>0) {
-        snprintf( disp_buf, 50, "%u", freq_idx);
+       //if(freq_idx>0) {
+        snprintf( disp_buf, 50, "Freq: %3.1f Hz, CNT: %u", fm, mptr->max_freq_cnt);
         if( strncmp( ( char * )line1_str, ( char * )disp_buf, 31 ) != 0 ) clear_line1();
         strncpy( line1_str, disp_buf, 31 );
         tft.drawString( disp_buf, 5, 10, FNT );
-       }
+       //}
      #endif
 
       }

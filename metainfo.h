@@ -102,8 +102,8 @@ typedef struct
 
   float sgain;
   int agcmode;
-  int zero_cross;
-  uint16_t zero_cross_cnt;
+  float max_freq_hz;
+  uint16_t max_freq_cnt;
   uint8_t mode_b;
   uint8_t slot_b;
   uint32_t send_const_count;
