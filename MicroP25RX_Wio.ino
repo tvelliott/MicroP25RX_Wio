@@ -1439,28 +1439,28 @@ void loop()
 
         int freq_idx=-1;
 
+        float fm = -1.0f;
         //we wait for a value update before processing
-        //if( prev_max_freq_cnt != mptr->max_freq_cnt) {
+        if( mptr->max_freq_cnt > 4) { 
           //freq_idx = two_tone_get_idx((int) mptr->max_freq_hz);
-          float fm = mptr->max_freq_hz;
+          fm = mptr->max_freq_hz;
 
+        }
           #if 0
           if(mptr->max_freq_cnt==0 ) {
             two_tone_A=0;
             two_tone_B=0;
           }
           #endif
-        //}
-        prev_max_freq_cnt = mptr->max_freq_cnt;
 
-     #if 0
-        if( freq_idx > 0 ) {  //valid frequency from table?
+     #if 1
+        if( fm > 0 ) {  //valid frequency from table?
           if( two_tone_A==0 ) {
-            two_tone_A=freq_idx;
+            two_tone_A= (int) fm;
           }
           else if( two_tone_B==0) {
-            if( freq_idx!=two_tone_A ) {
-              two_tone_B=freq_idx;
+            if( (int) fm!=two_tone_A ) {
+              two_tone_B= (int) fm;
             }
           }
         }
