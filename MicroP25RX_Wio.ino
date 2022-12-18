@@ -1441,7 +1441,7 @@ void loop()
 
         float fm = -1.0f;
         //we wait for a value update before processing
-        if( mptr->max_freq_cnt > 4) { 
+        if( mptr->max_freq_cnt > 8) { 
           //freq_idx = two_tone_get_idx((int) mptr->max_freq_hz);
           fm = mptr->max_freq_hz;
 
