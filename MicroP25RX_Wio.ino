@@ -30,6 +30,8 @@
 #include "meta_config_info.h"
 #include "two_tone.h"
 
+#include "lcd_backlight.hpp" //<<<<backlight
+
 TFT_eSPI tft;
 TFT_eSprite spr = TFT_eSprite( &tft );
 Keybord mykey; // Cleate a keybord
@@ -46,6 +48,10 @@ Keybord mykey; // Cleate a keybord
 
 #include <Seeed_FS.h>
 #include <SD/Seeed_SD.h>
+
+static LCDBackLight backLight; //<<<<backlight
+static uint8_t brightness = 5; //<<<<backlight low startup value
+static uint8_t maxBrightness = 100; //<<<<backlight max
 
 static int two_tone_A;
 static int two_tone_B;
@@ -347,6 +353,8 @@ void setup()
   tft.setFreeFont( FS18 );
   tft.fillScreen( mptr->col_def_bg ); //background
 
+ backLight.initialize(); //<<<<<<<backlight
+ backLight.setBrightness(brightness); //<<<<<<backlight
 
   init_sprites();
 
@@ -598,6 +606,19 @@ void loop()
   // MONITOR MODE
   /////////////////////////////////////////////////////////////////////////
   else if( current_button_mode == WIO_BUTTON_MODE_MONITOR ) {
+
+    if(up_but_pressed && up_but == 0x00) { //<<<<backlight
+      up_but_pressed = 0; // Joystick Up
+      brightness += 5; // step up by 5 (range 5 to 100)
+      if(brightness >= maxBrightness) brightness = 5; // At Max cycle back to 5
+      backLight.setBrightness(brightness); } //change backlight
+    if(down_but_pressed && down_but == 0x00) { //<<<<<<<<<<backlight
+      down_but_pressed = 0; // Joystick Down
+      brightness -= 5; // step down by 5 (range 5 to 100)
+      if(brightness >= maxBrightness) brightness = 5; // low set at 5
+      if(brightness <= 0 ) brightness = maxBrightness; // At 0 cycle back to Max
+      backLight.setBrightness(brightness);} //change backlight
+    
     //pressed and released
     if( press_but_pressed && press_but == 0x00 ) { //select button mode menu
       press_but_pressed = 0;
