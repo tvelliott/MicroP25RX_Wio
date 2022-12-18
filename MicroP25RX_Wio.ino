@@ -1158,10 +1158,9 @@ void loop()
           mptr->desc[19] = 0;
           if( strncmp( ( char * )disp_buf, ( char * )line2_str, 31 ) != 0 ) clear_line2();
           strncpy( line2_str, disp_buf, 31 );
+          tft.drawString( disp_buf, 5, 40, FNT );
         }
-// >>>>>>>>>>>>>>>>> TGLogScreen <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-        //    snprintf(disp_buf2,45, "%s", mptr->desc ); //changed for TG log
-        //    if( strncmp((char *)disp_buf2,(char *)line3_str, 31)!=0 ) clear_line3(); //changed for TG log
+
         snprintf( disp_buf2, 24, "%s", mptr->desc );
         if( strncmp( ( char * )disp_buf2, ( char * )line3_str, 31 ) != 0 )
 
@@ -1189,22 +1188,13 @@ void loop()
             tft.drawString( TGlog3, 5, 144, 2 ); //
             tft.drawString( TGlog4, 5, 158, 2 ); //
             tft.drawString( TGlog5, 5, 172, 2 ); //
-
-            tft.setTextColor( mptr->col3, mptr->col_def_bg ); // return to yellow
           } //
 
         } //
 
-//<<<<<<<<<<<<<<<<<<<<<^^^ TG LOG SCREEN ^^ <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-
 
         strncpy( line3_str, disp_buf2, 31 );
 
-        if( !mptr->do_wio_lines ) {
-          tft.drawString( disp_buf, 5, 40, FNT );
-        }
       }
       tft.setTextColor( mptr->col3, mptr->col_def_bg ); // was orange
       tft.drawString( disp_buf2, 5, 70, FNT );
