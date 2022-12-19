@@ -21,6 +21,7 @@
 //OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 //SOFTWARE.
 
+#include <FlashAsEEPROM.h>
 #include "TFT_eSPI.h"
 #include "Free_Fonts.h"
 #include "Free_Keybord.h"
@@ -353,8 +354,12 @@ void setup()
   tft.setFreeFont( FS18 );
   tft.fillScreen( mptr->col_def_bg ); //background
 
- backLight.initialize(); //<<<<<<<backlight
- backLight.setBrightness(brightness); //<<<<<<backlight
+
+  brightness = EEPROM.read(0); 
+  if(brightness<5) brightness=5;
+  if(brightness>100) brightness=100;
+  backLight.initialize(); //<<<<<<<backlight
+  backLight.setBrightness(brightness); //<<<<<<backlight
 
   init_sprites();
 
@@ -430,6 +435,7 @@ void loop()
   if( !did_save && B_but_pressed && ( millis() - b_button_press_time > 3000 ) && B_but == 0xff ) {
     send_cmd( "save", 4 ); //save config
     did_save = 1;
+    EEPROM.commit();  //save brightness
   } else if( did_save && B_but == 0x00 ) {
     did_save = 0;
     b_button_press_time = 0;
@@ -611,13 +617,17 @@ void loop()
       up_but_pressed = 0; // Joystick Up
       brightness += 5; // step up by 5 (range 5 to 100)
       if(brightness >= maxBrightness) brightness = 5; // At Max cycle back to 5
-      backLight.setBrightness(brightness); } //change backlight
+      backLight.setBrightness(brightness); 
+      EEPROM.write(0,brightness);
+    } //change backlight
     if(down_but_pressed && down_but == 0x00) { //<<<<<<<<<<backlight
       down_but_pressed = 0; // Joystick Down
       brightness -= 5; // step down by 5 (range 5 to 100)
       if(brightness >= maxBrightness) brightness = 5; // low set at 5
       if(brightness <= 0 ) brightness = maxBrightness; // At 0 cycle back to Max
-      backLight.setBrightness(brightness);} //change backlight
+      backLight.setBrightness(brightness);
+      EEPROM.write(0,brightness);
+    } //change backlight
     
     //pressed and released
     if( press_but_pressed && press_but == 0x00 ) { //select button mode menu
