@@ -1505,6 +1505,11 @@ void loop()
         tft.drawString( disp_buf, 5, 10, FNT );
        //}
      #endif
+#else
+        snprintf( disp_buf, 50, "%s / %s", mptr->sys_name, mptr->site_name );
+        if( strncmp( ( char * )line1_str, ( char * )disp_buf, 31 ) != 0 ) clear_line1();
+        strncpy( line1_str, disp_buf, 31 );
+        tft.drawString( disp_buf, 5, 10, FNT );
 #endif
       }
 
