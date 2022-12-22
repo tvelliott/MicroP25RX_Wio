@@ -100,7 +100,7 @@ typedef struct
 
   float rssi_f;
 
-  float sgain;
+  float squelch;
   int agcmode;
   float max_freq_hz;
   uint16_t max_freq_cnt;

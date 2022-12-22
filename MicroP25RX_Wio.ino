@@ -1506,7 +1506,12 @@ void loop()
        //}
      #endif
 #else
-        snprintf( disp_buf, 50, "%s / %s", mptr->sys_name, mptr->site_name );
+        if(demod==0 || demod==1) {
+          snprintf( disp_buf, 50, "%s / %s", mptr->sys_name, mptr->site_name );
+        }
+        else if(demod==2) {
+          snprintf( disp_buf, 50, "FMNB     ");
+        }
         if( strncmp( ( char * )line1_str, ( char * )disp_buf, 31 ) != 0 ) clear_line1();
         strncpy( line1_str, disp_buf, 31 );
         tft.drawString( disp_buf, 5, 10, FNT );
