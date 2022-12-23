@@ -80,11 +80,11 @@ static const two_tone_table two_tones[] = {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 float two_tone_get_freq(int idx) {
 
-  if(idx<0) return 0.0f; 
-  if(idx>71) return 0.0f; 
+  if(idx<1) return 0.0f; 
+  if(idx>72) return 0.0f; 
 
   two_tone_table *rec;
-  rec = (two_tone_table *) &two_tones[idx];
+  rec = (two_tone_table *) &two_tones[idx-1];
   return rec->tone_freq_hz; 
 }
 
