@@ -392,7 +392,7 @@ void handle_main_menu( metainfo *m )
     clr_buttons();
     clr_screen();
   } else if( ret == 5 ) { //AUDIO
-    int ret2 = get_menu_choice( 5, "CANCEL", "VOLUME", "AUDIO  AGC", "KEEP  SPEAKER  AWAKE", "MUTE P1/P2 TONES", NULL, NULL, NULL );
+    int ret2 = get_menu_choice( 6, "CANCEL", "VOLUME", "AUDIO  AGC", "KEEP  SPEAKER  AWAKE", "MUTE P1/P2 TONES", "LOW VOLUME", NULL, NULL );
     if( ret2 == -1 ) return;
 
     if( ret2 == 1 ) { //volume
@@ -441,7 +441,25 @@ void handle_main_menu( metainfo *m )
       snprintf( cmd, 63, "skip_tones %u\r\n", ret3 );
       send_cmd( cmd, strlen( cmd ) );
     }
+    
+ if( ret2 == 5 ) { //low volume
+      int ret3 = get_menu_choice( 8, "OFF", "-30dB", "-24dB", "-18dB", "-12dB", "-6dB", "0dB", "+6dB" );
+      if( ret3 == -1 ) return;
 
+      float v = 0.00f;
+      if( ret3 == 0 ) v = 0.00f;
+      if( ret3 == 1 ) v = 0.03f;
+      if( ret3 == 2 ) v = 0.06f;
+      if( ret3 == 3 ) v = 0.12f;
+      if( ret3 == 4 ) v = 0.25f;
+      if( ret3 == 5 ) v = 0.50f;
+      if( ret3 == 6 ) v = 1.00f;
+      if( ret3 == 7 ) v = 2.00f;
+
+      char cmd[64];
+      snprintf( cmd, 63, "vol %4.2f\r\n", v );
+      send_cmd( cmd, strlen( cmd ) );
+    }
     clr_buttons();
     clr_screen();
   }
