@@ -169,7 +169,7 @@ void draw_tg_zones()
 
   //////////////////////////////////////////////////////////
   //////////////////////////////////////////////////////////
-  spr.createSprite( 160, 32 ); //allocate sprite memory
+  spr.createSprite( 160, 29 ); //allocate sprite memory
   spr.fillSprite( TFT_BLACK ); //clear to black bground
 
   if( x == 0 && y == 0 ) {
@@ -193,7 +193,7 @@ void draw_tg_zones()
 #if 1
   //////////////////////////////////////////////////////////
   //////////////////////////////////////////////////////////
-  spr.createSprite( 160, 32 ); //allocate sprite memory
+  spr.createSprite( 160, 29 ); //allocate sprite memory
   spr.fillSprite( TFT_BLACK ); //clear to black bground
   if( x == 1 && y == 0 ) {
     spr.setTextColor( TFT_BLACK, TFT_WHITE );
@@ -215,7 +215,7 @@ void draw_tg_zones()
 #if 1
   //////////////////////////////////////////////////////////
   //////////////////////////////////////////////////////////
-  spr.createSprite( 160, 32 ); //allocate sprite memory
+  spr.createSprite( 160, 29 ); //allocate sprite memory
   spr.fillSprite( TFT_BLACK ); //clear to black bground
   if( x == 0 && y == 1 ) {
     spr.setTextColor( TFT_BLACK, TFT_WHITE );
@@ -237,7 +237,7 @@ void draw_tg_zones()
 #if 1
   //////////////////////////////////////////////////////////
   //////////////////////////////////////////////////////////
-  spr.createSprite( 160, 32 ); //allocate sprite memory
+  spr.createSprite( 160, 29 ); //allocate sprite memory
   spr.fillSprite( TFT_BLACK ); //clear to black bground
   if( x == 1 && y == 1 ) {
     spr.setTextColor( TFT_BLACK, TFT_WHITE );
@@ -260,7 +260,7 @@ void draw_tg_zones()
 #if 1
   //////////////////////////////////////////////////////////
   //////////////////////////////////////////////////////////
-  spr.createSprite( 160, 32 ); //allocate sprite memory
+  spr.createSprite( 160, 29 ); //allocate sprite memory
   spr.fillSprite( TFT_BLACK ); //clear to black bground
   if( x == 0 && y == 2 ) {
     spr.setTextColor( TFT_BLACK, TFT_WHITE );
@@ -283,7 +283,7 @@ void draw_tg_zones()
 #if 1
   //////////////////////////////////////////////////////////
   //////////////////////////////////////////////////////////
-  spr.createSprite( 160, 32 ); //allocate sprite memory
+  spr.createSprite( 160, 29 ); //allocate sprite memory
   spr.fillSprite( TFT_BLACK ); //clear to black bground
   if( x == 1 && y == 2 ) {
     spr.setTextColor( TFT_BLACK, TFT_WHITE );
@@ -305,7 +305,7 @@ void draw_tg_zones()
 #if 1
   //////////////////////////////////////////////////////////
   //////////////////////////////////////////////////////////
-  spr.createSprite( 160, 32 ); //allocate sprite memory
+  spr.createSprite( 160, 29 ); //allocate sprite memory
   spr.fillSprite( TFT_BLACK ); //clear to black bground
   if( x == 0 && y == 3 ) {
     spr.setTextColor( TFT_BLACK, TFT_WHITE );
@@ -327,7 +327,7 @@ void draw_tg_zones()
 #if 1
   //////////////////////////////////////////////////////////
   //////////////////////////////////////////////////////////
-  spr.createSprite( 160, 32 ); //allocate sprite memory
+  spr.createSprite( 160, 29 ); //allocate sprite memory
   spr.fillSprite( TFT_BLACK ); //clear to black bground
   if( x == 1 && y == 3 ) {
     spr.setTextColor( TFT_BLACK, TFT_WHITE );
@@ -349,7 +349,7 @@ void draw_tg_zones()
 #if 1
   //////////////////////////////////////////////////////////
   //////////////////////////////////////////////////////////
-  spr.createSprite( 160, 32 ); //allocate sprite memory
+  spr.createSprite( 160, 29 ); //allocate sprite memory
   spr.fillSprite( TFT_BLACK ); //clear to black bground
   if( x == 0 && y == 4 ) {
     spr.setTextColor( TFT_BLACK, TFT_WHITE );
@@ -371,7 +371,7 @@ void draw_tg_zones()
 #if 1
   //////////////////////////////////////////////////////////
   //////////////////////////////////////////////////////////
-  spr.createSprite( 160, 32 ); //allocate sprite memory
+  spr.createSprite( 160, 29 ); //allocate sprite memory
   spr.fillSprite( TFT_BLACK ); //clear to black bground
   if( x == 1 && y == 4 ) {
     spr.setTextColor( TFT_BLACK, TFT_WHITE );
@@ -393,7 +393,7 @@ void draw_tg_zones()
 #if 1
   //////////////////////////////////////////////////////////
   //////////////////////////////////////////////////////////
-  spr.createSprite( 160, 32 ); //allocate sprite memory
+  spr.createSprite( 160, 29 ); //allocate sprite memory
   spr.fillSprite( TFT_BLACK ); //clear to black bground
   if( x == 0 && y == 5 ) {
     spr.setTextColor( TFT_BLACK, TFT_WHITE );
@@ -415,7 +415,7 @@ void draw_tg_zones()
 #if 1
   //////////////////////////////////////////////////////////
   //////////////////////////////////////////////////////////
-  spr.createSprite( 160, 32 ); //allocate sprite memory
+  spr.createSprite( 160, 29 ); //allocate sprite memory
   spr.fillSprite( TFT_BLACK ); //clear to black bground
   if( x == 1 && y == 5 ) {
     spr.setTextColor( TFT_BLACK, TFT_WHITE );
@@ -437,7 +437,7 @@ void draw_tg_zones()
 #if 1
   //////////////////////////////////////////////////////////
   //////////////////////////////////////////////////////////
-  spr.createSprite( 160, 32 ); //allocate sprite memory
+  spr.createSprite( 160, 29 ); //allocate sprite memory
   spr.fillSprite( TFT_BLACK ); //clear to black bground
   if( x == 0 && y == 6 ) {
     spr.setTextColor( TFT_BLACK, TFT_WHITE );
@@ -459,7 +459,7 @@ void draw_tg_zones()
 #if 1
   //////////////////////////////////////////////////////////
   //////////////////////////////////////////////////////////
-  spr.createSprite( 160, 32 ); //allocate sprite memory
+  spr.createSprite( 160, 29 ); //allocate sprite memory
   spr.fillSprite( TFT_BLACK ); //clear to black bground
   if( x == 1 && y == 6 ) {
     spr.setTextColor( TFT_BLACK, TFT_WHITE );
@@ -481,7 +481,7 @@ void draw_tg_zones()
 #if 1
   //////////////////////////////////////////////////////////
   //////////////////////////////////////////////////////////
-  spr.createSprite( 160, 32 ); //allocate sprite memory
+  spr.createSprite( 160, 29 ); //allocate sprite memory
   spr.fillSprite( TFT_BLACK ); //clear to black bground
   if( x == 0 && y == 7 ) {
     spr.setTextColor( TFT_BLACK, TFT_WHITE );
@@ -503,7 +503,7 @@ void draw_tg_zones()
 #if 1
   //////////////////////////////////////////////////////////
   //////////////////////////////////////////////////////////
-  spr.createSprite( 160, 32 ); //allocate sprite memory
+  spr.createSprite( 160, 29 ); //allocate sprite memory
   spr.fillSprite( TFT_BLACK ); //clear to black bground
   if( x == 1 && y == 7 ) {
     spr.setTextColor( TFT_BLACK, TFT_WHITE );
