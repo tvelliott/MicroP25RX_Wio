@@ -124,6 +124,7 @@ void change_freq( int freq, int is_inc );
 int is_valid_freq( double freq );
 char disp_buf[256];
 char disp_buf2[256];
+char line0_str[64];
 char line1_str[64];
 char line2_str[64];
 char line3_str[64];
@@ -256,7 +257,8 @@ void init_sprites()
 void clr_screen()
 {
   tft.fillScreen( mptr->col_def_bg ); //background
-  memset( line1_str, 0x00, 32 );
+  memset( line0_str, 0x00, 64 );
+  memset( line1_str, 0x00, 64 );
   memset( line2_str, 0x00, 32 );
   memset( line3_str, 0x00, 32 );
   memset( line4_str, 0x00, 32 );
@@ -294,9 +296,15 @@ void clr_screen()
 #endif
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
+void clear_line0()
+{
+  tft.fillRect( 0, 0, 320, 15, mptr->col_def_fg );
+}
+//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
 void clear_line1()
 {
-  tft.fillRect( 0, 0, 320, 30, mptr->col_def_bg );
+  tft.fillRect( 0, 15, 320, 15, mptr->col_def_bg );
 }
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
@@ -403,7 +411,47 @@ void setup()
 
 }
 
+///////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////
+void draw_button_modes() 
+{
+  FNT = 2;
 
+  tft.setTextColor( mptr->col_def_bg, mptr->col_def_fg );
+
+  if( strncmp( ( char * )line0_str, ( char * )disp_buf, 63 ) != 0 ) {
+    clear_line0();
+    strncpy( line0_str, disp_buf, 63 );
+
+    switch(current_button_mode) {
+      case    WIO_BUTTON_MODE_MONITOR :
+        snprintf( disp_buf, 63, "TG HOLD        AUDIO MUTE        TG SKIP");
+        tft.drawString( disp_buf, 5, 0, FNT );
+      break;
+
+      case    WIO_BUTTON_MODE_CONFIG :
+        if( mptr->roaming == 5 ) {
+          snprintf( disp_buf, 63, "INC SCAN     CONFIG MENU   EXC SCAN   ");
+        } else {
+          snprintf( disp_buf, 63, "LEARN ON/OFF CONFIG MENU   DEMOD MODE ");
+        }
+        tft.drawString( disp_buf, 5, 0, FNT );
+      break;
+
+      case    WIO_BUTTON_MODE_TG_ZONE :
+        snprintf( disp_buf, 63, "TOGGLE EN    EDIT Z-NAME   MONITOR MODE   ");
+        tft.drawString( disp_buf, 5, 0, FNT );
+      break;
+
+      case    WIO_BUTTON_MODE_RF_GAIN :
+        snprintf( disp_buf, 63, "TOGGLE SCAN  SAVE GAINS    DEMOD MODE   ");
+        tft.drawString( disp_buf, 5, 0, FNT );
+      break;
+    }
+  }
+
+
+}
 ///////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////
 void loop()
@@ -936,9 +984,14 @@ void loop()
         memcpy( ( uint8_t * ) &minfo, ( uint8_t * ) buf, sizeof( metainfo ) );
         __enable_irq();
 
+        draw_button_modes();
         draw_tg_zones();
         goto draw_end;  //it really is ok to use goto. don't worry about it.
       } else if( current_button_mode == WIO_BUTTON_MODE_RF_GAIN ) {
+
+        int y_offset=15;
+
+        draw_button_modes();
 
         __disable_irq();
         do_draw_rx = 0;
@@ -948,7 +1001,7 @@ void loop()
         if( mptr->data_type == META_DATA_TYPE_FFT ) {
           //draw_fft();
           init_sprites(); //best to re-init
-          spr.createSprite( 128, 110 ); //allocate sprite memory
+          spr.createSprite( 128, 95 ); //allocate sprite memory
           spr.fillSprite( mptr->col_def_bg ); //clear to black bground
 
           spr.fillSprite( mptr->col_def_bg );
@@ -957,7 +1010,7 @@ void loop()
               spr.drawLine( i, ( 110 - ( int )fft_data[i] ) + 90, i + 1, ( 110 - ( int )fft_data[i + 1] ) + 90, TFT_GREEN );
             }
           }
-          spr.pushSprite( 5, 90 ); //send to lcd. upper left corner of sprite
+          spr.pushSprite( 5, 90+y_offset ); //send to lcd. upper left corner of sprite
           spr.deleteSprite();  //free memory
         }
 #if 1
@@ -985,7 +1038,7 @@ void loop()
 
             spr.fillCircle( 40 + ii, 40 + qq, 1, mptr->col_def_const ); //symbols
           }
-          spr.pushSprite( 220, 115 ); //send to lcd. upper left corner of sprite
+          spr.pushSprite( 220, 115+y_offset ); //send to lcd. upper left corner of sprite
           spr.deleteSprite();  //free memory
         }
 #endif
@@ -1024,7 +1077,7 @@ void loop()
             spr.drawLine( 40 + iq8_data[i], 40 + iq8_data[i + 1], 40 + iq8_data[i + 2], 40 + iq8_data[i + 3], TFT_CYAN );
           }
 
-          spr.pushSprite( 30, 8 ); //send to lcd. upper left corner of sprite
+          spr.pushSprite( 30, 8+y_offset ); //send to lcd. upper left corner of sprite
           //}
           spr.deleteSprite();  //free memory
         }
@@ -1049,7 +1102,7 @@ void loop()
           else sprintf( disp_buf, "LNA AUTO" );
           spr.drawString( disp_buf, 0, 0, FNT );
         }
-        spr.pushSprite( 140, 50 ); //send to lcd. upper left corner of sprite
+        spr.pushSprite( 140, 50+y_offset ); //send to lcd. upper left corner of sprite
         spr.deleteSprite();  //free memory
 
         spr.createSprite( 170, 20 ); //allocate memory for 80 x 80 sprite
@@ -1068,7 +1121,7 @@ void loop()
           else sprintf( disp_buf, "MIX AUTO" );
           spr.drawString( disp_buf, 0, 0, FNT );
         }
-        spr.pushSprite( 140, 70 ); //send to lcd. upper left corner of sprite
+        spr.pushSprite( 140, 70+y_offset ); //send to lcd. upper left corner of sprite
         spr.deleteSprite();  //free memory
 
         spr.createSprite( 170, 20 ); //allocate memory for 80 x 80 sprite
@@ -1092,7 +1145,7 @@ void loop()
           else sprintf( disp_buf, "VGA AUTO %d  ", _vga_gain );
           spr.drawString( disp_buf, 0, 0, FNT );
         }
-        spr.pushSprite( 140, 90 ); //send to lcd. upper left corner of sprite
+        spr.pushSprite( 140, 90+y_offset ); //send to lcd. upper left corner of sprite
         spr.deleteSprite();  //free memory
 
 
@@ -1102,7 +1155,7 @@ void loop()
         if( gain_select == 3 ) sprintf( disp_buf, "> SAVE GAINS" );
         else sprintf( disp_buf, "SAVE GAINS" );
         spr.drawString( disp_buf, 0, 0, FNT );
-        spr.pushSprite( 140, 110 ); //send to lcd. upper left corner of sprite
+        spr.pushSprite( 140, 110+y_offset ); //send to lcd. upper left corner of sprite
         spr.deleteSprite();  //free memory
 #endif
 
@@ -1114,7 +1167,7 @@ void loop()
         if( mptr->use_demod == 1 ) strcpy( demod_str, "FM" );
 
         sprintf( disp_buf, "DEMOD %s   ", demod_str );
-        tft.drawString( disp_buf, 140, 110, FNT );
+        tft.drawString( disp_buf, 140, 110+y_offset, FNT );
 
 
         FNT = 4;
@@ -1126,17 +1179,17 @@ void loop()
 
         FNT = 2;
         snprintf( disp_buf, 32, "FREQ: %3.6f MHz", mptr->current_freq );
-        tft.drawString( disp_buf, 140, 0, FNT );
+        tft.drawString( disp_buf, 140, 0+y_offset, FNT );
 
         if( mptr->on_control_b && mptr->total_session_time > 1500 ) {
           sprintf( disp_buf, "TSBK/SEC %u      ", mptr->tsbk_sec );
         } else {
           sprintf( disp_buf, "ERATE %1.3f      ", mptr->erate );
         }
-        tft.drawString( disp_buf, 140, 15, FNT );
+        tft.drawString( disp_buf, 140, 15+y_offset, FNT );
 
         sprintf( disp_buf, "SITE %d, RFSS %d     ", mptr->site_id, mptr->rf_id );
-        tft.drawString( disp_buf, 140, 30, FNT );
+        tft.drawString( disp_buf, 140, 30+y_offset, FNT );
 
         goto draw_end;  //it really is ok to use goto. don't worry about it.
       }
@@ -1401,29 +1454,31 @@ void loop()
         spr.deleteSprite();  //free memory
       }
 #endif
+      draw_button_modes();
 
       tft.setTextColor( mptr->col1, mptr->col_def_bg );
+
 
       if( mptr->do_wio_lines ) {
 
 
         if( mptr->wio_line1[0] != 0 ) {
           snprintf( disp_buf, 25, "%s", mptr->wio_line1 );
-          FNT = 4;
+          FNT = 2;
 
-          if( strncmp( ( char * )line1_str, ( char * )disp_buf, 31 ) != 0 ) clear_line1();
-          strncpy( line1_str, disp_buf, 31 );
+          if( strncmp( ( char * )line1_str, ( char * )disp_buf, 63 ) != 0 ) clear_line1();
+          strncpy( line1_str, disp_buf, 63 );
 
-          tft.drawString( disp_buf, 5, 10, FNT );
+          tft.drawString( disp_buf, 20, 20, FNT );
         } else {
-          FNT = 4;
+          FNT = 2;
           mptr->sys_name[18] = 0;
-          snprintf( disp_buf, 25, "%s" );
+          snprintf( disp_buf, 50, "%s" );
 
-          if( strncmp( ( char * )line1_str, ( char * )disp_buf, 31 ) != 0 ) clear_line1();
-          strncpy( line1_str, disp_buf, 31 );
+          if( strncmp( ( char * )line1_str, ( char * )disp_buf, 63 ) != 0 ) clear_line1();
+          strncpy( line1_str, disp_buf, 63 );
 
-          tft.drawString( disp_buf, 5, 10, FNT );
+          tft.drawString( disp_buf, 20, 20, FNT );
         }
 
 
@@ -1447,7 +1502,7 @@ void loop()
           tft.drawString( disp_buf, 5, 40, FNT );
         }
       } else {
-        FNT = 4;
+        FNT = 2;
         mptr->sys_name[18] = 0;
         mptr->site_name[18] = 0;
 
@@ -1507,14 +1562,14 @@ void loop()
      #endif
 #else
         if(demod==0 || demod==1) {
-          snprintf( disp_buf, 50, "%s / %s", mptr->sys_name, mptr->site_name );
+          snprintf( disp_buf, 50, "%s / %s    ", mptr->sys_name, mptr->site_name );
         }
         else if(demod==2) {
           snprintf( disp_buf, 50, "FMNB     ");
         }
-        if( strncmp( ( char * )line1_str, ( char * )disp_buf, 31 ) != 0 ) clear_line1();
-        strncpy( line1_str, disp_buf, 31 );
-        tft.drawString( disp_buf, 5, 10, FNT );
+        if( strncmp( ( char * )line1_str, ( char * )disp_buf, 63 ) != 0 ) clear_line1();
+        strncpy( line1_str, disp_buf, 63 );
+        tft.drawString( disp_buf, 5, 20, FNT );
 #endif
       }
 
