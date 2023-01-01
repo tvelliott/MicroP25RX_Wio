@@ -160,8 +160,8 @@ typedef struct
   uint16_t col10;
   uint16_t col11;
   uint16_t col12;
-  uint16_t col13;
-  uint16_t col14;
+  uint16_t line0_bg;
+  uint16_t line0_fg;
   uint16_t col_menu_fg;
   uint16_t col_menu_bg;
   uint16_t col_def_bg;

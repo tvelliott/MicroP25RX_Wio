@@ -281,8 +281,8 @@ void clr_screen()
   uint16_t col10;
   uint16_t col11;
   uint16_t col12;
-  uint16_t col13;
-  uint16_t col14;
+  uint16_t line0_bg;
+  uint16_t line0_fg;
   uint16_t col_menu_fg;
   uint16_t col_menu_bg;
   uint16_t col_def_bg;
@@ -298,7 +298,7 @@ void clr_screen()
 //////////////////////////////////////////////////////////////////////////
 void clear_line0()
 {
-  tft.fillRect( 0, 0, 320, 15, mptr->col_def_fg );
+  tft.fillRect( 0, 0, 320, 15, mptr->line0_bg );
 }
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
@@ -417,7 +417,7 @@ void draw_button_modes()
 {
   FNT = 2;
 
-  tft.setTextColor( mptr->col_def_bg, mptr->col_def_fg );
+  tft.setTextColor( mptr->line0_fg, mptr->line0_bg );
 
   if( strncmp( ( char * )line0_str, ( char * )disp_buf, 63 ) != 0 ) {
     clear_line0();
