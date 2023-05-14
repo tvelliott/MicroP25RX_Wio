@@ -384,6 +384,14 @@ void setup()
   pinMode( WIO_KEY_C, INPUT_PULLUP );
 
 
+
+  pinMode(OUTPUT_CTR_5V, OUTPUT);
+  digitalWrite(OUTPUT_CTR_5V, LOW);  //high=on
+
+  pinMode(OUTPUT_CTR_3V3, OUTPUT);
+  digitalWrite(OUTPUT_CTR_3V3, HIGH); //high=off
+
+
   tft.setFreeFont( NULL );
   tft.setTextColor( mptr->col_def_fg, mptr->col_def_bg );
 
