@@ -75,7 +75,7 @@ extern metainfo *mptr;
 #define TFT_DARKBLUE        0x000F      /*   0,   0, 255 */
 
 
-#define BG_COLOR mptr->col_menu_bg 
+#define BG_COLOR mptr->col_menu_bg
 #define FG_COLOR  mptr->col_menu_fg
 #define HL_COLOR  mptr->col_menu_fg
 

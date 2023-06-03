@@ -51,8 +51,7 @@ void meta_set_wioline2( char *str );
 extern int8_t sym_const[];
 extern uint32_t RID;
 
-typedef struct 
-{
+typedef struct {
 
   uint32_t magic;
   uint16_t port;

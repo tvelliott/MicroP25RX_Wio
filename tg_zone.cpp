@@ -165,7 +165,7 @@ void draw_tg_zones()
   memcpy( str15, &tg_zones[14][0], 7 );
   memcpy( str16, &tg_zones[15][0], 7 );
 
-  int y_offset=15;
+  int y_offset = 15;
 
   //////////////////////////////////////////////////////////
   //////////////////////////////////////////////////////////
@@ -185,7 +185,7 @@ void draw_tg_zones()
   }
   spr.drawString( ( const char * )str1, 27, 5, FNT );
 
-  spr.pushSprite( 5, 0+y_offset ); //transfer to lcd, x,y = 240,210
+  spr.pushSprite( 5, 0 + y_offset ); //transfer to lcd, x,y = 240,210
   spr.deleteSprite(); //free memory
 #endif
 
@@ -208,7 +208,7 @@ void draw_tg_zones()
   }
   spr.drawString( ( const char * )str2, 27, 5, FNT );
 
-  spr.pushSprite( 165, 0+y_offset ); //transfer to lcd, x,y = 240,210
+  spr.pushSprite( 165, 0 + y_offset ); //transfer to lcd, x,y = 240,210
   spr.deleteSprite(); //free memory
 #endif
 
@@ -230,7 +230,7 @@ void draw_tg_zones()
   }
   spr.drawString( ( const char * )str3, 27, 5, FNT );
 
-  spr.pushSprite( 5, 28+y_offset ); //transfer to lcd, x,y = 240,210
+  spr.pushSprite( 5, 28 + y_offset ); //transfer to lcd, x,y = 240,210
   spr.deleteSprite(); //free memory
 #endif
 
@@ -253,7 +253,7 @@ void draw_tg_zones()
   }
   spr.drawString( ( const char * )str4, 27, 5, FNT );
 
-  spr.pushSprite( 165, 28+y_offset ); //transfer to lcd, x,y = 240,210
+  spr.pushSprite( 165, 28 + y_offset ); //transfer to lcd, x,y = 240,210
   spr.deleteSprite(); //free memory
 #endif
 
@@ -276,7 +276,7 @@ void draw_tg_zones()
   }
   spr.drawString( ( const char * )str5, 27, 5, FNT );
 
-  spr.pushSprite( 5, 56+y_offset ); //transfer to lcd, x,y = 240,210
+  spr.pushSprite( 5, 56 + y_offset ); //transfer to lcd, x,y = 240,210
   spr.deleteSprite(); //free memory
 #endif
 
@@ -298,7 +298,7 @@ void draw_tg_zones()
   }
   spr.drawString( ( const char * )str6, 27, 5, FNT );
 
-  spr.pushSprite( 165, 56+y_offset ); //transfer to lcd, x,y = 240,210
+  spr.pushSprite( 165, 56 + y_offset ); //transfer to lcd, x,y = 240,210
   spr.deleteSprite(); //free memory
 #endif
 
@@ -320,7 +320,7 @@ void draw_tg_zones()
   }
   spr.drawString( ( const char * )str7, 27, 5, FNT );
 
-  spr.pushSprite( 5, 84+y_offset ); //transfer to lcd, x,y = 240,210
+  spr.pushSprite( 5, 84 + y_offset ); //transfer to lcd, x,y = 240,210
   spr.deleteSprite(); //free memory
 #endif
 
@@ -342,7 +342,7 @@ void draw_tg_zones()
   }
   spr.drawString( ( const char * )str8, 27, 5, FNT );
 
-  spr.pushSprite( 165, 84+y_offset ); //transfer to lcd, x,y = 240,210
+  spr.pushSprite( 165, 84 + y_offset ); //transfer to lcd, x,y = 240,210
   spr.deleteSprite(); //free memory
 #endif
 
@@ -364,7 +364,7 @@ void draw_tg_zones()
   }
   spr.drawString( ( const char * )str9, 27, 5, FNT );
 
-  spr.pushSprite( 5, 112+y_offset ); //transfer to lcd, x,y = 240,210
+  spr.pushSprite( 5, 112 + y_offset ); //transfer to lcd, x,y = 240,210
   spr.deleteSprite(); //free memory
 #endif
 
@@ -386,7 +386,7 @@ void draw_tg_zones()
   }
   spr.drawString( ( const char * )str10, 27, 5, FNT );
 
-  spr.pushSprite( 165, 112+y_offset ); //transfer to lcd, x,y = 240,210
+  spr.pushSprite( 165, 112 + y_offset ); //transfer to lcd, x,y = 240,210
   spr.deleteSprite(); //free memory
 #endif
 
@@ -408,7 +408,7 @@ void draw_tg_zones()
   }
   spr.drawString( ( const char * )str11, 27, 5, FNT );
 
-  spr.pushSprite( 5, 140+y_offset ); //transfer to lcd, x,y = 240,210
+  spr.pushSprite( 5, 140 + y_offset ); //transfer to lcd, x,y = 240,210
   spr.deleteSprite(); //free memory
 #endif
 
@@ -430,7 +430,7 @@ void draw_tg_zones()
   }
   spr.drawString( ( const char * )str12, 27, 5, FNT );
 
-  spr.pushSprite( 165, 140+y_offset ); //transfer to lcd, x,y = 240,210
+  spr.pushSprite( 165, 140 + y_offset ); //transfer to lcd, x,y = 240,210
   spr.deleteSprite(); //free memory
 #endif
 
@@ -452,7 +452,7 @@ void draw_tg_zones()
   }
   spr.drawString( ( const char * )str13, 27, 5, FNT );
 
-  spr.pushSprite( 5, 168+y_offset ); //transfer to lcd, x,y = 240,210
+  spr.pushSprite( 5, 168 + y_offset ); //transfer to lcd, x,y = 240,210
   spr.deleteSprite(); //free memory
 #endif
 
@@ -474,7 +474,7 @@ void draw_tg_zones()
   }
   spr.drawString( ( const char * )str14, 27, 5, FNT );
 
-  spr.pushSprite( 165, 168+y_offset ); //transfer to lcd, x,y = 240,210
+  spr.pushSprite( 165, 168 + y_offset ); //transfer to lcd, x,y = 240,210
   spr.deleteSprite(); //free memory
 #endif
 
@@ -496,7 +496,7 @@ void draw_tg_zones()
   }
   spr.drawString( ( const char * )str15, 27, 5, FNT );
 
-  spr.pushSprite( 5, 196+y_offset ); //transfer to lcd, x,y = 240,210
+  spr.pushSprite( 5, 196 + y_offset ); //transfer to lcd, x,y = 240,210
   spr.deleteSprite(); //free memory
 #endif
 
@@ -518,9 +518,8 @@ void draw_tg_zones()
   }
   spr.drawString( ( const char * )str16, 27, 5, FNT );
 
-  spr.pushSprite( 165, 196+y_offset ); //transfer to lcd, x,y = 240,210
+  spr.pushSprite( 165, 196 + y_offset ); //transfer to lcd, x,y = 240,210
   spr.deleteSprite(); //free memory
 #endif
 
 }
-

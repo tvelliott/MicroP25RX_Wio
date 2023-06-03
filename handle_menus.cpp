@@ -396,7 +396,7 @@ void handle_main_menu( metainfo *m )
     if( ret2 == -1 ) return;
 
     if( ret2 == 1 ) { //volume
-      int ret3 = get_menu_choice( 8, "OFF", "VERY LOW", "LOW", "NORMAL", "LOUD1", "LOUD2", "LOUD3", "VERY LOUD" );
+      int ret3 = get_menu_choice( 8, "OFF", "VERY LOW 0.5", "LOW 1.0", "NORMAL 2.0", "LOUD 4.0", "LOUD 5.0", "LOUD 6.0", "VERY LOUD 8.0" );
       if( ret3 == -1 ) return;
 
       float v = 0.0f;
@@ -441,20 +441,20 @@ void handle_main_menu( metainfo *m )
       snprintf( cmd, 63, "skip_tones %u\r\n", ret3 );
       send_cmd( cmd, strlen( cmd ) );
     }
-    
- if( ret2 == 5 ) { //low volume
-      int ret3 = get_menu_choice( 8, "OFF", "-30dB", "-24dB", "-18dB", "-12dB", "-6dB", "0dB", "+6dB" );
+
+    if( ret2 == 5 ) { //low volume
+      int ret3 = get_menu_choice( 8, "  0.01", "  0.02", "  0.03", "  0.04", "  0.05", "  0.10", "  0.25", "  0.50" );
       if( ret3 == -1 ) return;
 
       float v = 0.00f;
-      if( ret3 == 0 ) v = 0.00f;
-      if( ret3 == 1 ) v = 0.03f;
-      if( ret3 == 2 ) v = 0.06f;
-      if( ret3 == 3 ) v = 0.12f;
-      if( ret3 == 4 ) v = 0.25f;
-      if( ret3 == 5 ) v = 0.50f;
-      if( ret3 == 6 ) v = 1.00f;
-      if( ret3 == 7 ) v = 2.00f;
+      if( ret3 == 0 ) v = 0.01f;
+      if( ret3 == 1 ) v = 0.02f;
+      if( ret3 == 2 ) v = 0.03f;
+      if( ret3 == 3 ) v = 0.04f;
+      if( ret3 == 4 ) v = 0.05f;
+      if( ret3 == 5 ) v = 0.10f;
+      if( ret3 == 6 ) v = 0.25f;
+      if( ret3 == 7 ) v = 0.50f;
 
       char cmd[64];
       snprintf( cmd, 63, "vol %4.2f\r\n", v );

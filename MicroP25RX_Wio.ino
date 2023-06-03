@@ -21,7 +21,7 @@
 //OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 //SOFTWARE.
 
-#include <FlashAsEEPROM.h>
+//#include <FlashAsEEPROM.h> // temp disabled for hardcoded brightness
 #include "TFT_eSPI.h"
 #include "Free_Fonts.h"
 #include "Free_Keybord.h"
@@ -31,7 +31,7 @@
 #include "meta_config_info.h"
 #include "two_tone.h"
 
-#include "lcd_backlight.hpp" 
+#include "lcd_backlight.hpp"
 
 TFT_eSPI tft;
 TFT_eSprite spr = TFT_eSprite( &tft );
@@ -50,9 +50,10 @@ Keybord mykey; // Cleate a keybord
 #include <Seeed_FS.h>
 #include <SD/Seeed_SD.h>
 
-static LCDBackLight backLight; 
-static uint8_t brightness = 5; 
-static uint8_t maxBrightness = 100; 
+static LCDBackLight backLight;
+//static uint8_t brightness = 5;
+uint8_t brightness = 5;
+static uint8_t maxBrightness = 100;
 
 static int two_tone_A;
 static int two_tone_B;
@@ -109,13 +110,18 @@ volatile uint16_t meta_len;
 volatile uint32_t sclk_count;
 /////////////////////////////////////////////////////
 //////////////////////////////////////////////////TG LOG////////////////
-bool TGLogScreen = false;
+bool TGLogScreen = true; //<< set true for default
 char TGlog1[35];
 char TGlog2[35];
 char TGlog3[35];
 char TGlog4[35];
 char TGlog5[35];
+char TGlog6[35];
+char TGlog7[35];
+char TGlog8[35];
 char tglog_buf[35];
+
+char ToneAlias[25];
 ///////////////////////////////////////////////////////////////////////////////
 //
 
@@ -137,6 +143,8 @@ double current_freq;
 double next_freq;
 static int freq_idx;
 static uint32_t status_timer;
+
+char rid_alias[64];   // <<<<<<<<<<<<<<<< for rid on line 2
 
 
 static uint32_t init_wdog1; //const
@@ -269,30 +277,30 @@ void clr_screen()
 }
 
 #if 0
-  uint16_t col1;
-  uint16_t col2;
-  uint16_t col3;
-  uint16_t col4;
-  uint16_t col5;
-  uint16_t col6;
-  uint16_t col7;
-  uint16_t col8;
-  uint16_t col9;
-  uint16_t col10;
-  uint16_t col11;
-  uint16_t col12;
-  uint16_t line0_bg;
-  uint16_t line0_fg;
-  uint16_t col_menu_fg;
-  uint16_t col_menu_bg;
-  uint16_t col_def_bg;
-  uint16_t col_def_fg;
-  uint16_t col_def_led1_on;
-  uint16_t col_def_led2_on;
-  uint16_t col_def_led1_off;
-  uint16_t col_def_led2_off;
-  uint16_t col_def_indicator;
-  uint16_t col_def_const;
+uint16_t col1;
+uint16_t col2;
+uint16_t col3;
+uint16_t col4;
+uint16_t col5;
+uint16_t col6;
+uint16_t col7;
+uint16_t col8;
+uint16_t col9;
+uint16_t col10;
+uint16_t col11;
+uint16_t col12;
+uint16_t line0_bg;
+uint16_t line0_fg;
+uint16_t col_menu_fg;
+uint16_t col_menu_bg;
+uint16_t col_def_bg;
+uint16_t col_def_fg;
+uint16_t col_def_led1_on;
+uint16_t col_def_led2_on;
+uint16_t col_def_led1_off;
+uint16_t col_def_led2_off;
+uint16_t col_def_indicator;
+uint16_t col_def_const;
 #endif
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
@@ -316,7 +324,7 @@ void clear_line2()
 //////////////////////////////////////////////////////////////////////////
 void clear_line3()
 {
-  tft.fillRect( 0, 60, 320, 35, mptr->col_def_bg ); // height 30 to 35 (desc sometimes leaves 'marks' below line 3 with h 30
+  tft.fillRect( 0, 60, 325, 40, mptr->col_def_bg ); // height 40 - width to 325
 }
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
@@ -346,13 +354,14 @@ void clear_line7()
 //////////////////////////////////////////////////////////////////////////
 void clear_line8()
 {
-  tft.fillRect( 0, 210, 235, 30, mptr->col_def_bg );
+  tft.fillRect( 0, 207, 235, 35, mptr->col_def_bg );
 }
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
 void setup()
 {
 
+  pinMode( WIO_BUZZER, OUTPUT ); // <<<<<play buzzer tone
 
   mptr = &minfo_verified;
 
@@ -363,11 +372,12 @@ void setup()
   tft.fillScreen( mptr->col_def_bg ); //background
 
 
-  brightness = EEPROM.read(0); 
-  if(brightness<5) brightness=5;
-  if(brightness>100) brightness=100;
-  backLight.initialize(); 
-  backLight.setBrightness(brightness); 
+// brightness = EEPROM.read(0); //disabled eeprom
+  brightness = 50; //hardcoded brightness startup value
+  if( brightness < 5 ) brightness = 5;
+  if( brightness > 100 ) brightness = 100;
+  backLight.initialize();
+  backLight.setBrightness( brightness );
 
   init_sprites();
 
@@ -382,14 +392,6 @@ void setup()
   pinMode( WIO_KEY_A, INPUT_PULLUP );
   pinMode( WIO_KEY_B, INPUT_PULLUP );
   pinMode( WIO_KEY_C, INPUT_PULLUP );
-
-
-
-  pinMode(OUTPUT_CTR_5V, OUTPUT);
-  digitalWrite(OUTPUT_CTR_5V, HIGH);  //high=on
-
-  pinMode(OUTPUT_CTR_3V3, OUTPUT);
-  digitalWrite(OUTPUT_CTR_3V3, HIGH); //high=off
 
 
   tft.setFreeFont( NULL );
@@ -421,39 +423,39 @@ void setup()
 
 ///////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////
-void draw_button_modes() 
+void draw_button_modes()
 {
   FNT = 2;
 
   tft.setTextColor( mptr->line0_fg, mptr->line0_bg );
 
   if( strncmp( ( char * )line0_str, ( char * )disp_buf, 63 ) != 0 ) {
-    clear_line0();
+    // clear_line0();
     strncpy( line0_str, disp_buf, 63 );
 
-    switch(current_button_mode) {
-      case    WIO_BUTTON_MODE_MONITOR :
-        snprintf( disp_buf, 63, "TG HOLD        AUDIO MUTE        TG SKIP");
-        tft.drawString( disp_buf, 5, 0, FNT );
+    switch( current_button_mode ) {
+    case    WIO_BUTTON_MODE_MONITOR :
+      snprintf( disp_buf, 63,   "TG HOLD        AUDIO MUTE        TG SKIP " );
+      tft.drawString( disp_buf, 5, 0, FNT );
       break;
 
-      case    WIO_BUTTON_MODE_CONFIG :
-        if( mptr->roaming == 5 ) {
-          snprintf( disp_buf, 63, "INC SCAN     CONFIG MENU   EXC SCAN   ");
-        } else {
-          snprintf( disp_buf, 63, "LEARN ON/OFF CONFIG MENU   DEMOD MODE ");
-        }
-        tft.drawString( disp_buf, 5, 0, FNT );
+    case    WIO_BUTTON_MODE_CONFIG :
+      if( mptr->roaming == 5 ) {
+        snprintf( disp_buf, 63, "INC SCAN     CONFIG MENU     EXC SCAN    " );
+      } else {
+        snprintf( disp_buf, 63, "LEARN ON/OFF CONFIG MENU   DEMOD MODE    " );
+      }
+      tft.drawString( disp_buf, 5, 0, FNT );
       break;
 
-      case    WIO_BUTTON_MODE_TG_ZONE :
-        snprintf( disp_buf, 63, "TOGGLE EN    EDIT Z-NAME   MONITOR MODE   ");
-        tft.drawString( disp_buf, 5, 0, FNT );
+    case    WIO_BUTTON_MODE_TG_ZONE :
+      snprintf( disp_buf, 63, "TOGGLE EN    EDIT Z-NAME   MONITOR MODE    " );
+      tft.drawString( disp_buf, 5, 0, FNT );
       break;
 
-      case    WIO_BUTTON_MODE_RF_GAIN :
-        snprintf( disp_buf, 63, "TOGGLE SCAN  SAVE GAINS    DEMOD MODE   ");
-        tft.drawString( disp_buf, 5, 0, FNT );
+    case    WIO_BUTTON_MODE_RF_GAIN :
+      snprintf( disp_buf, 63, "TOGGLE SCAN  SAVE GAINS    DEMOD MODE     " );
+      tft.drawString( disp_buf, 5, 0, FNT );
       break;
     }
   }
@@ -469,7 +471,7 @@ void loop()
 
 
   //check for edit menu shortcut. must be in monitor mode
-  if( current_button_mode == WIO_BUTTON_MODE_MONITOR || current_button_mode==WIO_BUTTON_MODE_CONFIG) {
+  if( current_button_mode == WIO_BUTTON_MODE_MONITOR || current_button_mode == WIO_BUTTON_MODE_CONFIG ) {
     //middle-top button held for more than 3 seconds?
     if( !did_edit && C_but_pressed && ( millis() - c_button_press_time > 1000 ) && C_but == 0xff ) {
       //do edit here
@@ -491,7 +493,7 @@ void loop()
   if( !did_save && B_but_pressed && ( millis() - b_button_press_time > 3000 ) && B_but == 0xff ) {
     send_cmd( "save", 4 ); //save config
     did_save = 1;
-    EEPROM.commit();  //save brightness
+//   EEPROM.commit();  //save brightness // disabled with hardcoded brightness
   } else if( did_save && B_but == 0x00 ) {
     did_save = 0;
     b_button_press_time = 0;
@@ -669,22 +671,22 @@ void loop()
   /////////////////////////////////////////////////////////////////////////
   else if( current_button_mode == WIO_BUTTON_MODE_MONITOR ) {
 
-    if(up_but_pressed && up_but == 0x00) { 
+    if( up_but_pressed && up_but == 0x00 ) {
       up_but_pressed = 0; // Joystick Up
       brightness += 5; // step up by 5 (range 5 to 100)
-      if(brightness >= maxBrightness) brightness = 5; // At Max cycle back to 5
-      backLight.setBrightness(brightness); 
-      EEPROM.write(0,brightness);
+      if( brightness >= maxBrightness ) brightness = 5; // At Max cycle back to 5
+      backLight.setBrightness( brightness );
+      //   EEPROM.write(0,brightness); // disabled with hardcoded brightness
     } //change backlight
-    if(down_but_pressed && down_but == 0x00) { 
+    if( down_but_pressed && down_but == 0x00 ) {
       down_but_pressed = 0; // Joystick Down
       brightness -= 5; // step down by 5 (range 5 to 100)
-      if(brightness >= maxBrightness) brightness = 5; // low set at 5
-      if(brightness <= 0 ) brightness = maxBrightness; // At 0 cycle back to Max
-      backLight.setBrightness(brightness);
-      EEPROM.write(0,brightness);
+      if( brightness >= maxBrightness ) brightness = 5; // low set at 5
+      if( brightness <= 0 ) brightness = maxBrightness; // At 0 cycle back to Max
+      backLight.setBrightness( brightness );
+      // EEPROM.write(0,brightness);// disabled with hardcoded brightness
     } //change backlight
-    
+
     //pressed and released
     if( press_but_pressed && press_but == 0x00 ) { //select button mode menu
       press_but_pressed = 0;
@@ -997,7 +999,7 @@ void loop()
         goto draw_end;  //it really is ok to use goto. don't worry about it.
       } else if( current_button_mode == WIO_BUTTON_MODE_RF_GAIN ) {
 
-        int y_offset=15;
+        int y_offset = 15;
 
         draw_button_modes();
 
@@ -1018,7 +1020,7 @@ void loop()
               spr.drawLine( i, ( 110 - ( int )fft_data[i] ) + 90, i + 1, ( 110 - ( int )fft_data[i + 1] ) + 90, TFT_GREEN );
             }
           }
-          spr.pushSprite( 5, 90+y_offset ); //send to lcd. upper left corner of sprite
+          spr.pushSprite( 5, 90 + y_offset ); //send to lcd. upper left corner of sprite
           spr.deleteSprite();  //free memory
         }
 #if 1
@@ -1036,17 +1038,18 @@ void loop()
           spr.createSprite( 80, 80 ); //allocate memory for 80 x 80 sprite
           spr.fillSprite( mptr->col_def_bg );
           //grid lines
-          spr.drawLine( 40, 0, 40, 80, TFT_DARKGREY );
-          spr.drawLine( 0, 40, 80, 40, TFT_DARKGREY );
+          //   spr.drawLine( 40, 0, 40, 80, TFT_DARKGREY ); //remove axis lines
+          //   spr.drawLine( 0, 40, 80, 40, TFT_DARKGREY ); // remove axis lines
           //draw 64-symbol constellation
           idx = 0;
           for( int i = 0; i < 64; i++ ) {
             ii = *ptr++ / 2; //scale to +/- 32 range
             qq = *ptr++ / 2;
 
-            spr.fillCircle( 40 + ii, 40 + qq, 1, mptr->col_def_const ); //symbols
+            //  spr.fillCircle( 40 + ii, 40 + qq, 1, mptr->col_def_const ); //symbols
+            spr.drawPixel( 40 + ii, 40 + qq, mptr->col_def_const ); // use Pixel rather than Circle
           }
-          spr.pushSprite( 220, 115+y_offset ); //send to lcd. upper left corner of sprite
+          spr.pushSprite( 220, 115 + y_offset ); //send to lcd. upper left corner of sprite
           spr.deleteSprite();  //free memory
         }
 #endif
@@ -1085,7 +1088,7 @@ void loop()
             spr.drawLine( 40 + iq8_data[i], 40 + iq8_data[i + 1], 40 + iq8_data[i + 2], 40 + iq8_data[i + 3], TFT_CYAN );
           }
 
-          spr.pushSprite( 30, 8+y_offset ); //send to lcd. upper left corner of sprite
+          spr.pushSprite( 30, 8 + y_offset ); //send to lcd. upper left corner of sprite
           //}
           spr.deleteSprite();  //free memory
         }
@@ -1110,7 +1113,7 @@ void loop()
           else sprintf( disp_buf, "LNA AUTO" );
           spr.drawString( disp_buf, 0, 0, FNT );
         }
-        spr.pushSprite( 140, 50+y_offset ); //send to lcd. upper left corner of sprite
+        spr.pushSprite( 140, 50 + y_offset ); //send to lcd. upper left corner of sprite
         spr.deleteSprite();  //free memory
 
         spr.createSprite( 170, 20 ); //allocate memory for 80 x 80 sprite
@@ -1129,7 +1132,7 @@ void loop()
           else sprintf( disp_buf, "MIX AUTO" );
           spr.drawString( disp_buf, 0, 0, FNT );
         }
-        spr.pushSprite( 140, 70+y_offset ); //send to lcd. upper left corner of sprite
+        spr.pushSprite( 140, 70 + y_offset ); //send to lcd. upper left corner of sprite
         spr.deleteSprite();  //free memory
 
         spr.createSprite( 170, 20 ); //allocate memory for 80 x 80 sprite
@@ -1153,7 +1156,7 @@ void loop()
           else sprintf( disp_buf, "VGA AUTO %d  ", _vga_gain );
           spr.drawString( disp_buf, 0, 0, FNT );
         }
-        spr.pushSprite( 140, 90+y_offset ); //send to lcd. upper left corner of sprite
+        spr.pushSprite( 140, 90 + y_offset ); //send to lcd. upper left corner of sprite
         spr.deleteSprite();  //free memory
 
 
@@ -1163,7 +1166,7 @@ void loop()
         if( gain_select == 3 ) sprintf( disp_buf, "> SAVE GAINS" );
         else sprintf( disp_buf, "SAVE GAINS" );
         spr.drawString( disp_buf, 0, 0, FNT );
-        spr.pushSprite( 140, 110+y_offset ); //send to lcd. upper left corner of sprite
+        spr.pushSprite( 140, 110 + y_offset ); //send to lcd. upper left corner of sprite
         spr.deleteSprite();  //free memory
 #endif
 
@@ -1175,7 +1178,7 @@ void loop()
         if( mptr->use_demod == 1 ) strcpy( demod_str, "FM" );
 
         sprintf( disp_buf, "DEMOD %s   ", demod_str );
-        tft.drawString( disp_buf, 140, 110+y_offset, FNT );
+        tft.drawString( disp_buf, 140, 110 + y_offset, FNT );
 
 
         FNT = 4;
@@ -1187,17 +1190,17 @@ void loop()
 
         FNT = 2;
         snprintf( disp_buf, 32, "FREQ: %3.6f MHz", mptr->current_freq );
-        tft.drawString( disp_buf, 140, 0+y_offset, FNT );
+        tft.drawString( disp_buf, 140, 0 + y_offset, FNT );
 
         if( mptr->on_control_b && mptr->total_session_time > 1500 ) {
           sprintf( disp_buf, "TSBK/SEC %u      ", mptr->tsbk_sec );
         } else {
           sprintf( disp_buf, "ERATE %1.3f      ", mptr->erate );
         }
-        tft.drawString( disp_buf, 140, 15+y_offset, FNT );
+        tft.drawString( disp_buf, 140, 15 + y_offset, FNT );
 
         sprintf( disp_buf, "SITE %d, RFSS %d     ", mptr->site_id, mptr->rf_id );
-        tft.drawString( disp_buf, 140, 30+y_offset, FNT );
+        tft.drawString( disp_buf, 140, 30 + y_offset, FNT );
 
         goto draw_end;  //it really is ok to use goto. don't worry about it.
       }
@@ -1226,7 +1229,7 @@ void loop()
 
 
       if( mptr->tg_s <= 0 ) {
-        snprintf( disp_buf2, 32, "FREQ: %3.6f MHz", mptr->current_freq );
+        snprintf( disp_buf2, 32, " %3.6f MHz", mptr->current_freq );   // changes for rid on line 2 - remove "FREQ:" text
 
         if( strncmp( ( char * )disp_buf2, ( char * )line3_str, 31 ) != 0 ) clear_line3();
         strncpy( line3_str, disp_buf2, 31 );
@@ -1248,9 +1251,9 @@ void loop()
         if( !mptr->do_wio_lines ) {
           snprintf( disp_buf, 32, "TG: %d, %s", mptr->tg_s, mptr->alpha );
           mptr->desc[19] = 0;
-          if( strncmp( ( char * )disp_buf, ( char * )line2_str, 31 ) != 0 ) clear_line2();
-          strncpy( line2_str, disp_buf, 31 );
-          tft.drawString( disp_buf, 5, 40, FNT );
+          //   if( strncmp( ( char * )disp_buf, ( char * )line2_str, 31 ) != 0 ) clear_line2();   // changes for rid on line 2
+          //   strncpy( line2_str, disp_buf, 31 );
+          //   tft.drawString( disp_buf, 5, 40, FNT );
         }
 
         snprintf( disp_buf2, 24, "%s", mptr->desc );
@@ -1263,6 +1266,9 @@ void loop()
           snprintf( tglog_buf, 32, "%s  %d  ", disp_buf2, mptr->tg_s ); // send desc and tg number to buf
 
           // move the TG log down
+          strncpy( TGlog8, TGlog7, 32 );
+          strncpy( TGlog7, TGlog6, 32 );
+          strncpy( TGlog6, TGlog5, 32 );
           strncpy( TGlog5, TGlog4, 32 );
           strncpy( TGlog4, TGlog3, 32 );
           strncpy( TGlog3, TGlog2, 32 );
@@ -1273,13 +1279,41 @@ void loop()
 
 
           if( TGLogScreen == true ) {
-            tft.setTextColor( mptr->col5, mptr->col_def_bg ); // set tg log to blue
-            tft.fillRect( 0, 118, 235, 70, mptr->col_def_bg ); //
-            tft.drawString( TGlog1, 5, 116, 2 ); //
-            tft.drawString( TGlog2, 5, 130, 2 ); //
-            tft.drawString( TGlog3, 5, 144, 2 ); //
-            tft.drawString( TGlog4, 5, 158, 2 ); //
-            tft.drawString( TGlog5, 5, 172, 2 ); //
+            tft.setTextColor( mptr->col5, mptr->col_def_bg ); //
+            tft.fillRect( 0, 115, 240, 75,  mptr->col_def_bg ); //
+            // Highlight FTOs in red in TG log by looking for ">>".
+            if( strstr( TGlog1, ">>" ) ) {
+              tft.setTextColor( ILI9341_RED, mptr->col_def_bg );
+            } else tft.setTextColor( mptr->col5, mptr->col_def_bg );
+            tft.drawString( TGlog1, 5, 117, 1 ); //
+            if( strstr( TGlog2, ">>" ) ) {
+              tft.setTextColor( ILI9341_RED, mptr->col_def_bg );
+            } else tft.setTextColor( mptr->col5, mptr->col_def_bg );
+            tft.drawString( TGlog2, 5, 126, 1 ); // 130
+            if( strstr( TGlog3, ">>" ) ) {
+              tft.setTextColor( ILI9341_RED, mptr->col_def_bg );
+            } else tft.setTextColor( mptr->col5, mptr->col_def_bg );
+            tft.drawString( TGlog3, 5, 135, 1 ); // 144
+            if( strstr( TGlog4, ">>" ) ) {
+              tft.setTextColor( ILI9341_RED, mptr->col_def_bg );
+            } else tft.setTextColor( mptr->col5, mptr->col_def_bg );
+            tft.drawString( TGlog4, 5, 144, 1 ); // 158
+            if( strstr( TGlog5, ">>" ) ) {
+              tft.setTextColor( ILI9341_RED, mptr->col_def_bg );
+            } else tft.setTextColor( mptr->col5, mptr->col_def_bg );
+            tft.drawString( TGlog5, 5, 153, 1 ); // 172
+            if( strstr( TGlog6, ">>" ) ) {
+              tft.setTextColor( ILI9341_RED, mptr->col_def_bg );
+            } else tft.setTextColor( mptr->col5, mptr->col_def_bg );
+            tft.drawString( TGlog6, 5, 162, 1 ); //
+            if( strstr( TGlog7, ">>" ) ) {
+              tft.setTextColor( ILI9341_RED, mptr->col_def_bg );
+            } else tft.setTextColor( mptr->col5, mptr->col_def_bg );
+            tft.drawString( TGlog7, 5, 171, 1 ); //
+            if( strstr( TGlog8, ">>" ) ) {
+              tft.setTextColor( ILI9341_RED, mptr->col_def_bg );
+            } else tft.setTextColor( mptr->col5, mptr->col_def_bg );
+            tft.drawString( TGlog8, 5, 180, 1 ); //
           } //
 
         } //
@@ -1288,8 +1322,15 @@ void loop()
         strncpy( line3_str, disp_buf2, 31 );
 
       }
-      tft.setTextColor( mptr->col3, mptr->col_def_bg ); // was orange
+      if( mptr->tg_s <= 0 ) {
+        tft.setTextColor( 0xF643, mptr->col_def_bg ); // set color to a yellow (0xF643) for on CCH freq
+      } else {
+        tft.setTextColor( mptr->col3, mptr->col_def_bg ); // set to line 3 color
+      }
+
       tft.drawString( disp_buf2, 5, 70, FNT );
+
+
       //}
 
       FNT = 2;
@@ -1298,10 +1339,21 @@ void loop()
       uint8_t nac_lock_str = 'U';
       if( mptr->lock_nac ) nac_lock_str = 'L';
 
-      sprintf( disp_buf, "%05X-%03X-%03X%c  RSSI %3.1f dBm    ", mptr->wacn_id, mptr->sys_id, mptr->p25_sys_nac, nac_lock_str, mptr->rssi_f );
+      if( mptr->on_control_b ) {
+        tft.setTextColor( 0xF643, mptr->col_def_bg ); // set color to a yellow for on CCH freq
+
+        sprintf( disp_buf, " %3.0fdBm CCH TSBK/SEC %u                    ", mptr->rssi_f, mptr->tsbk_sec ); // removed cal freq //
+
+      } else {
+        tft.setTextColor( mptr->col4, mptr->col_def_bg );
+
+        sprintf( disp_buf, " %3.0fdBm TCH %3.6f MHz                     ", mptr->rssi_f, mptr->current_freq ); // removed erate
+
+      }
+
       if( strcmp( disp_buf, line4_str ) != 0 ) {
         //clear_line4(); //space at the end of this line is better solution
-        tft.drawString( disp_buf, 5, 100, FNT );
+        tft.drawString( disp_buf, 5, 99, FNT ); // move up from 100 to 99
       }
       strcpy( line4_str, disp_buf );
 
@@ -1324,7 +1376,7 @@ void loop()
       strcpy( line5_str, disp_buf );
 
       tft.setTextColor( mptr->col6, mptr->col_def_bg );
-      sprintf( disp_buf, "NCO1 %3.3f, NCO2 %3.2f, EVM %3.1f    ", mptr->nco_offset, mptr->loop_freq, mptr->evm_p );
+      sprintf( disp_buf, "NCO1 %3.3f, NCO2 %3.2f                  ", mptr->nco_offset, mptr->loop_freq ); //remove evm
       if( strcmp( disp_buf, line6_str ) != 0 ) {
         //clear_line6(); //space at the end of this line is better solution
         if( TGLogScreen != true ) {
@@ -1335,13 +1387,9 @@ void loop()
       strcpy( line6_str, disp_buf );
 
       tft.setTextColor( mptr->col7, mptr->col_def_bg );
-      sprintf( disp_buf, "NCO1 %3.3f, NCO2 %3.2f, EVM %3.1f    ", mptr->nco_offset, mptr->loop_freq, mptr->evm_p );
-      //if(mptr->on_control_b && mptr->total_session_time>1500) {
-      if( mptr->on_control_b ) {
-        sprintf( disp_buf, "TSBK/SEC %u    REF %u        ", mptr->tsbk_sec, mptr->ref_freq_cal );
-      } else {
-        sprintf( disp_buf, "FREQ %3.6f MHz  ERATE %1.3f       ", mptr->current_freq, mptr->erate );
-      }
+      sprintf( disp_buf, " %s EV %3.1f ER %1.3f        ", demod_str, mptr->evm_p, mptr->erate ); // <<<<<<<< removed wacn plus added evm and erate here
+
+
       if( strcmp( disp_buf, line7_str ) != 0 ) {
         //clear_line7(); //space at the end of this line is better solution
         tft.drawString( disp_buf, 5, 190, FNT );
@@ -1352,29 +1400,44 @@ void loop()
       memset( disp_buf, 0x00, sizeof( disp_buf ) );
       tft.setTextColor( mptr->col8, mptr->col_def_bg );
       sprintf( disp_buf, "NCO1 %3.3f, NCO2 %3.2f, EVM %3.1f    ", mptr->nco_offset, mptr->loop_freq, mptr->evm_p );
-      if( mptr->on_control_b == 0 && mptr->RID != 0 && mptr->alias != NULL ) {
-        sprintf( disp_buf, "RID %u, %s", mptr->RID, mptr->alias );
+      if( mptr->on_control_b == 0 && mptr->RID != 0 && mptr->wio_line2[0] == 0 ) {
+
+
+        sprintf( disp_buf, "%s", mptr->sys_name );
+
+        sprintf( rid_alias, " %s %u", mptr->alias, mptr->RID );
+        if( strcmp( rid_alias, line2_str ) != 0 ) {
+          tft.setTextColor( mptr->col2, mptr->col_def_bg );
+          clear_line2(); // changes for rid on line 2 // below highlight Town of Brookfield RIDs in red
+          tft.drawString( rid_alias, 5, 40, 4 );
+          strcpy( line2_str, rid_alias );
+        }
+        sprintf( disp_buf, "                      " );
       } else {
         if( current_button_mode == WIO_BUTTON_MODE_CONFIG ) {
+          draw_button_modes(); //<<< added
           if( mptr->roaming ) {
             sprintf( disp_buf, "CONFIG  ROAM-PAUSE" );
           } else {
             sprintf( disp_buf, "MODE: CONFIG          " );
           }
         } else if( current_button_mode == WIO_BUTTON_MODE_MONITOR ) {
+          draw_button_modes(); //<<< added
           if( mptr->roaming ) {
             sprintf( disp_buf, "MONITOR ROAM-ON-%u Free %u", mptr->roaming, freeMemory() );
           } else {
-            sprintf( disp_buf, "MONITOR ROAM-OFF" );
+            // sprintf( disp_buf, "MONITOR ROAM-OFF" );
+            sprintf( disp_buf, "MONITOR - MEM %u         ", freeMemory() ); // <<<<<<<<<<<<
           }
         } else {
           sprintf( disp_buf, " " );
         }
       }
       if( strcmp( disp_buf, line8_str ) != 0 ) {
+        tft.setTextColor( mptr->col8, mptr->col_def_bg );
         strcpy( line8_str, disp_buf );
         clear_line8();
-        tft.drawString( disp_buf, 5, 220, FNT );
+        tft.drawString( disp_buf, 5, 220, 1 ); // FNT 1 from 2
       }
 
       //start of sprites
@@ -1448,15 +1511,16 @@ void loop()
         spr.createSprite( 80, 80 ); //allocate memory for 80 x 80 sprite
         spr.fillSprite( TFT_BLACK );
         //grid lines
-        spr.drawLine( 40, 0, 40, 80, TFT_DARKGREY );
-        spr.drawLine( 0, 40, 80, 40, TFT_DARKGREY );
+        //    spr.drawLine( 40, 0, 40, 80, TFT_DARKGREY );
+        //    spr.drawLine( 0, 40, 80, 40, TFT_DARKGREY );
         //draw 64-symbol constellation
         idx = 0;
         for( int i = 0; i < 64; i++ ) {
           ii = *ptr++ / 2; //scale to +/- 32 range
           qq = *ptr++ / 2;
 
-          spr.fillCircle( 40 + ii, 40 + qq, 1, mptr->col_def_const ); //symbols
+          //  spr.fillCircle( 40 + ii, 40 + qq, 1, mptr->col_def_const ); //symbols
+          spr.drawPixel( 40 + ii, 40 + qq, mptr->col_def_const ); //symbols
         }
         spr.pushSprite( 233, 98 ); //send to lcd. upper left corner of sprite
         spr.deleteSprite();  //free memory
@@ -1472,12 +1536,15 @@ void loop()
 
         if( mptr->wio_line1[0] != 0 ) {
           snprintf( disp_buf, 25, "%s", mptr->wio_line1 );
+          tonelookup(); //<<<<<<<<<<<<<<<<<<< TONE lookup for alias
           FNT = 2;
 
           if( strncmp( ( char * )line1_str, ( char * )disp_buf, 63 ) != 0 ) clear_line1();
           strncpy( line1_str, disp_buf, 63 );
-
-          tft.drawString( disp_buf, 20, 20, FNT );
+          if( ( strstr( disp_buf, "TONE_A:" ) ) != NULL ) {
+            tft.setTextColor( ILI9341_ORANGE, mptr->col_def_bg );
+            tft.drawString( disp_buf, 9, 18, 4 );
+          } else tft.drawString( disp_buf, 20, 20, FNT );
         } else {
           FNT = 2;
           mptr->sys_name[18] = 0;
@@ -1496,7 +1563,12 @@ void loop()
           if( strncmp( ( char * )line2_str, ( char * )disp_buf, 63 ) != 0 ) clear_line2();
           strncpy( line2_str, disp_buf, 63 );
 
-          tft.drawString( disp_buf, 5, 40, FNT );
+          if( ( strstr( disp_buf, "FREQ_A:" ) ) != NULL ) { //do not display tone freq info wio line2 (tone lookup will display alias)
+            tft.setTextColor( ILI9341_RED, mptr->col_def_bg ); // show line2 in RED during tone out
+            tft.drawString( ToneAlias, 9, 44, 4 ); //
+            strcpy( line2_str, ToneAlias ); // show tone alias
+          }  else if( ( strstr( disp_buf, "FREQ_A:" ) ) != NULL ) {;} //do not show freq info
+          else  tft.drawString( disp_buf, 5, 40, FNT );
         } else {
           FNT = 2;
           //mptr->sys_name[18]=0;
@@ -1515,65 +1587,63 @@ void loop()
         mptr->site_name[18] = 0;
 
         //clear values
-        if(freq_changed ) {
+        if( freq_changed ) {
           freq_changed = 0; //keep this at the end within valid crc check
-          two_tone_A=0;
-          two_tone_B=0;
+          two_tone_A = 0;
+          two_tone_B = 0;
         }
 
 #if 0
-        int freq_idx=-1;
+        int freq_idx = -1;
 
         float fm = -1.0f;
         //we wait for a value update before processing
-        if( mptr->max_freq_cnt > 8) { 
+        if( mptr->max_freq_cnt > 8 ) {
           //freq_idx = two_tone_get_idx((int) mptr->max_freq_hz);
           fm = mptr->max_freq_hz;
 
         }
-          #if 0
-          if(mptr->max_freq_cnt==0 ) {
-            two_tone_A=0;
-            two_tone_B=0;
-          }
-          #endif
+#if 0
+        if( mptr->max_freq_cnt == 0 ) {
+          two_tone_A = 0;
+          two_tone_B = 0;
+        }
+#endif
 
-     #if 1
+#if 1
         if( fm > 0 ) {  //valid frequency from table?
-          if( two_tone_A==0 ) {
-            two_tone_A= (int) fm;
-          }
-          else if( two_tone_B==0) {
-            if( (int) fm!=two_tone_A ) {
-              two_tone_B= (int) fm;
+          if( two_tone_A == 0 ) {
+            two_tone_A = ( int ) fm;
+          } else if( two_tone_B == 0 ) {
+            if( ( int ) fm != two_tone_A ) {
+              two_tone_B = ( int ) fm;
             }
           }
         }
 
-        if(two_tone_A>0 || two_tone_B>0) {
-          if(two_tone_A && two_tone_B) snprintf( disp_buf, 50, "TWO-TONE A:%u  B:%u", two_tone_A, two_tone_B);
-              else snprintf( disp_buf, 50, "TWO-TONE A:%u", two_tone_A);
-        }
-        else {
+        if( two_tone_A > 0 || two_tone_B > 0 ) {
+          if( two_tone_A && two_tone_B ) snprintf( disp_buf, 50, "TWO-TONE A:%u  B:%u", two_tone_A, two_tone_B )
+            else snprintf( disp_buf, 50, "TWO-TONE A:%u", two_tone_A );
+        } else {
           snprintf( disp_buf, 50, "%s / %s", mptr->sys_name, mptr->site_name );
         }
         if( strncmp( ( char * )line1_str, ( char * )disp_buf, 31 ) != 0 ) clear_line1();
         strncpy( line1_str, disp_buf, 31 );
         tft.drawString( disp_buf, 5, 10, FNT );
-     #else
-       //if(freq_idx>0) {
-        snprintf( disp_buf, 50, "Freq: %3.1f Hz, CNT: %u", fm, mptr->max_freq_cnt);
+#else
+        //if(freq_idx>0) {
+        snprintf( disp_buf, 50, "Freq: %3.1f Hz, CNT: %u", fm, mptr->max_freq_cnt );
         if( strncmp( ( char * )line1_str, ( char * )disp_buf, 31 ) != 0 ) clear_line1();
         strncpy( line1_str, disp_buf, 31 );
         tft.drawString( disp_buf, 5, 10, FNT );
-       //}
-     #endif
+        //}
+#endif
 #else
-        if(demod==0 || demod==1) {
-          snprintf( disp_buf, 50, "%s / %s    ", mptr->sys_name, mptr->site_name );
-        }
-        else if(demod==2) {
-          snprintf( disp_buf, 50, "FMNB     ");
+        if( demod == 0 || demod == 1 ) {
+          snprintf( disp_buf, 50, "%s / %s   %05X-%03X-%03X%c  ", mptr->sys_name, mptr->site_name, mptr->wacn_id, mptr->sys_id, mptr->p25_sys_nac, nac_lock_str ); // <<<< moved wacn to line 1
+
+        } else if( demod == 2 ) {
+          snprintf( disp_buf, 50, "FMNB     " );
         }
         if( strncmp( ( char * )line1_str, ( char * )disp_buf, 63 ) != 0 ) clear_line1();
         strncpy( line1_str, disp_buf, 63 );
@@ -1663,4 +1733,24 @@ int is_valid_freq( double freq )
 
   return band;
   //return 1;
+}
+
+void tonelookup()  // <<<<<<<< tone lookup
+{
+  tft.setTextColor( ILI9341_RED, mptr->col_def_bg );   // set line 1 to red
+  strncpy( ToneAlias, " FTO ALIAS HERE  ", 23 );
+//example of tone lookup lines
+// if ((strstr(disp_buf,"TONE_A:64,  TONE_B:16"))) {strncpy( TGlog1, " >> FIRE DEPT NAME  <<   ", 33 );  tft.drawString( TGlog1, 5, 220, 2 ); strncpy(ToneAlias, "FIRE DEPT NAME  ",23);  playTone(400, 100);}
+
+} //end tonelookup
+
+
+void playTone( int tone, int duration )
+{
+  for( long i = 0; i < duration * 1000L; i += tone * 2 ) {
+    digitalWrite( WIO_BUZZER, HIGH );
+    delayMicroseconds( tone );
+    digitalWrite( WIO_BUZZER, LOW );
+    delayMicroseconds( tone );
+  }
 }

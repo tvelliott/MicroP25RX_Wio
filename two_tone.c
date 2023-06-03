@@ -67,7 +67,7 @@ static const two_tone_table two_tones[] = {
   64, 2573.5f,  //2546.9 - 2609.3
   65, 2633.75f, //2609.4 - 2671.8
   66, 2697.0f,  //2671.9 - 2734.3
-  67, 2763.75f, //2734.4 - 2796.8 
+  67, 2763.75f, //2734.4 - 2796.8
   68, 2813.25f, //2796.9 - 2859.3
   69, 2875.5f,  //2859.4 - 2921.8
   70, 2941.25f, //2921.9 - 2984.3
@@ -78,14 +78,15 @@ static const two_tone_table two_tones[] = {
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-float two_tone_get_freq(int idx) {
+float two_tone_get_freq( int idx )
+{
 
-  if(idx<1) return 0.0f; 
-  if(idx>72) return 0.0f; 
+  if( idx < 1 ) return 0.0f;
+  if( idx > 72 ) return 0.0f;
 
   two_tone_table *rec;
-  rec = (two_tone_table *) &two_tones[idx-1];
-  return rec->tone_freq_hz; 
+  rec = ( two_tone_table * ) &two_tones[idx - 1];
+  return rec->tone_freq_hz;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -94,17 +95,18 @@ float two_tone_get_freq(int idx) {
 // Returns:  -1 if frequency is out of range
 //           1-72 are valid range for tone index as defined for G4/G5 pagers in QCII document, Figure 2.
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-int two_tone_get_idx( float measured_freq_hz ) {
+int two_tone_get_idx( float measured_freq_hz )
+{
 
   if( measured_freq_hz < 265.0f ) return -1;
   if( measured_freq_hz > 3110.0f ) return -1;
 
   two_tone_table *rec;
 
-  int idx=-1;
+  int idx = -1;
   float min_diff = 100.0f;
-  for(int i=0;i<72;i++) {
-    rec = (two_tone_table *) &two_tones[i];
+  for( int i = 0; i < 72; i++ ) {
+    rec = ( two_tone_table * ) &two_tones[i];
     if( fabs( rec->tone_freq_hz - measured_freq_hz ) < min_diff ) {
       min_diff = fabs( rec->tone_freq_hz - measured_freq_hz );
       idx = rec->tone_idx;
@@ -116,5 +118,6 @@ int two_tone_get_idx( float measured_freq_hz ) {
 
 ////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////
-void process_tone_pair_qcii( int TONE_A, int TONE_B ) {
+void process_tone_pair_qcii( int TONE_A, int TONE_B )
+{
 }

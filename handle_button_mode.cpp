@@ -63,6 +63,5 @@ int handle_button_mode( void )
 
   send_cmd( cmd, strlen( cmd ) );
   clr_screen();
-
   return current_button_mode;
 }

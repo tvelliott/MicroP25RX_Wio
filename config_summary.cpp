@@ -42,6 +42,8 @@ extern metainfo minfo_verified;
 extern meta_config_info minfo_config;
 meta_config_info *mi;
 
+extern uint8_t brightness;
+
 static int x = 0;
 static int y = 0;
 
@@ -121,25 +123,33 @@ void draw_config_summary()
   } meta_config_info;
 #endif
 
-  char vol_level[8];
+  char vol_level[15];
 
-  if( test_doubles_equal( 0.0f, mi->audio_vol ) ) strcpy( vol_level, "OFF" );
-  if( test_doubles_equal( 0.5f, mi->audio_vol ) ) strcpy( vol_level, "VERY LOW" );
-  if( test_doubles_equal( 1.0f, mi->audio_vol ) ) strcpy( vol_level, "LOW" );
-  if( test_doubles_equal( 2.0f, mi->audio_vol ) ) strcpy( vol_level, "NORMAL" );
-  if( test_doubles_equal( 4.0f, mi->audio_vol ) ) strcpy( vol_level, "LOUD1" );
-  if( test_doubles_equal( 5.0f, mi->audio_vol ) ) strcpy( vol_level, "LOUD2" );
-  if( test_doubles_equal( 6.0f, mi->audio_vol ) ) strcpy( vol_level, "LOUD3" );
-  if( test_doubles_equal( 8.0f, mi->audio_vol ) ) strcpy( vol_level, "VERY LOUD" );
-
+  if( test_doubles_equal( 0.0f, mi->audio_vol ) )  strcpy( vol_level, "OFF" );
+  if( test_doubles_equal( 0.01f, mi->audio_vol ) ) strcpy( vol_level, "0.01" );
+  if( test_doubles_equal( 0.02f, mi->audio_vol ) ) strcpy( vol_level, "0.02" );
+  if( test_doubles_equal( 0.03f, mi->audio_vol ) ) strcpy( vol_level, "0.03" );
+  if( test_doubles_equal( 0.04f, mi->audio_vol ) ) strcpy( vol_level, "0.04" );
+  if( test_doubles_equal( 0.05f, mi->audio_vol ) ) strcpy( vol_level, "0.05" );
+  if( test_doubles_equal( 0.10f, mi->audio_vol ) ) strcpy( vol_level, "0.10" );
+  if( test_doubles_equal( 0.25f, mi->audio_vol ) ) strcpy( vol_level, "0.25" );
+  if( test_doubles_equal( 0.5f, mi->audio_vol ) )  strcpy( vol_level, "0.50" );
+  if( test_doubles_equal( 1.0f, mi->audio_vol ) )  strcpy( vol_level, "1.0" );
+  if( test_doubles_equal( 2.0f, mi->audio_vol ) )  strcpy( vol_level, "2.0" );
+  if( test_doubles_equal( 4.0f, mi->audio_vol ) )  strcpy( vol_level, "4.0" );
+  if( test_doubles_equal( 5.0f, mi->audio_vol ) )  strcpy( vol_level, "5.0" );
+  if( test_doubles_equal( 6.0f, mi->audio_vol ) )  strcpy( vol_level, "6.0" );
+  if( test_doubles_equal( 8.0f, mi->audio_vol ) )  strcpy( vol_level, "8.0" );
 
   //sprintf((char *)str1,"ROAMING TO  %u ms", m->roaming_timeout);
   sprintf( ( char * )str1, "IP %u.%u.%u.%u", mi->ip_addr[0], mi->ip_addr[1], mi->ip_addr[2], mi->ip_addr[3] );
   sprintf( ( char * )str2, "GW %u.%u.%u.%u", mi->gw_addr[0], mi->gw_addr[1], mi->gw_addr[2], mi->gw_addr[3] );
   sprintf( ( char * )str3, "NM %u.%u.%u.%u", mi->net_mask[0], mi->net_mask[1], mi->net_mask[2], mi->net_mask[3] );
   sprintf( ( char * )str4, "UDP HOST %u.%u.%u.%u", mi->udp_host[0], mi->udp_host[1], mi->udp_host[2], mi->udp_host[3] );
-  sprintf( ( char * )str5, "PORTS %u %u %u", mi->udp_port[0], mi->udp_port[1], mi->udp_port[2] );
-  sprintf( ( char * )str6, "%u %u", mi->udp_port[3], mi->udp_port[4] );
+  //sprintf( ( char * )str5, "PORTS %u %u %u", mi->udp_port[0], mi->udp_port[1], mi->udp_port[2] ); // removed ports for ref cal displaying
+  sprintf( ( char * )str5, "REF_CAL %u",  mptr->ref_freq_cal ); // added ref cal here
+//  sprintf( ( char * )str6, "%u %u", mi->udp_port[3], mi->udp_port[4] ); // removed ports for ref cal displaying
+  sprintf( ( char * )str6, "LCD Brightness %d", brightness ); // added brightness value here
   sprintf( ( char * )str7, "SPKR AWAKE %u", mi->do_brown_noise );
   sprintf( ( char * )str8, "SKIP TONES %u", mi->skip_tones );
   sprintf( ( char * )str9, "TG HOLD %u ms", mi->tgtimeout );
@@ -149,7 +159,7 @@ void draw_config_summary()
   sprintf( ( char * )str13, "AUD AGC %u", mi->do_audio_agc );
   sprintf( ( char * )str14, "LEARN MODE %u", mi->learn_mode );
   sprintf( ( char * )str15, "RX FW %u", mi->fw_version );
-  sprintf( ( char * )str16, "WIO FW 2023011601" );
+  sprintf( ( char * )str16, "05252023UPDATES " );
 
   //////////////////////////////////////////////////////////
   //////////////////////////////////////////////////////////
@@ -209,7 +219,7 @@ void draw_config_summary()
   spr.createSprite( 160, 35 ); //allocate sprite memory
   spr.fillSprite( TFT_BLACK ); //clear to black bground
 
-  spr.setTextColor( TFT_WHITE, TFT_BLACK );
+  spr.setTextColor( TFT_CYAN, TFT_BLACK );
   spr.drawString( ( const char * )str5, 5, 5, FNT );
 
   spr.pushSprite( 5, 60 ); //transfer to lcd, x,y = 240,210
@@ -222,7 +232,7 @@ void draw_config_summary()
   spr.createSprite( 160, 35 ); //allocate sprite memory
   spr.fillSprite( TFT_BLACK ); //clear to black bground
 
-  spr.setTextColor( TFT_WHITE, TFT_BLACK );
+  spr.setTextColor( TFT_CYAN, TFT_BLACK );
   spr.drawString( ( const char * )str6, 5, 5, FNT );
 
   spr.pushSprite( 165, 60 ); //transfer to lcd, x,y = 240,210
@@ -300,7 +310,7 @@ void draw_config_summary()
   spr.createSprite( 160, 35 ); //allocate sprite memory
   spr.fillSprite( TFT_BLACK ); //clear to black bground
 
-  spr.setTextColor( TFT_WHITE, TFT_BLACK );
+  spr.setTextColor( TFT_CYAN, TFT_BLACK );
   spr.drawString( ( const char * )str12, 5, 5, FNT );
 
   spr.pushSprite( 165, 150 ); //transfer to lcd, x,y = 240,210
@@ -339,7 +349,7 @@ void draw_config_summary()
   spr.createSprite( 160, 35 ); //allocate sprite memory
   spr.fillSprite( TFT_BLACK ); //clear to black bground
 
-  spr.setTextColor( TFT_WHITE, TFT_BLACK );
+  spr.setTextColor( TFT_CYAN, TFT_BLACK );
   spr.drawString( ( const char * )str15, 5, 5, FNT );
 
   spr.pushSprite( 5, 210 ); //transfer to lcd, x,y = 240,210
@@ -352,7 +362,7 @@ void draw_config_summary()
   spr.createSprite( 160, 35 ); //allocate sprite memory
   spr.fillSprite( TFT_BLACK ); //clear to black bground
 
-  spr.setTextColor( TFT_WHITE, TFT_BLACK );
+  spr.setTextColor( TFT_CYAN, TFT_BLACK );
   spr.drawString( ( const char * )str16, 5, 5, FNT );
 
   spr.pushSprite( 165, 210 ); //transfer to lcd, x,y = 240,210
