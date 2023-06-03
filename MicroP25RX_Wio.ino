@@ -1046,8 +1046,12 @@ void loop()
             ii = *ptr++ / 2; //scale to +/- 32 range
             qq = *ptr++ / 2;
 
-            //  spr.fillCircle( 40 + ii, 40 + qq, 1, mptr->col_def_const ); //symbols
-            spr.drawPixel( 40 + ii, 40 + qq, mptr->col_def_const ); // use Pixel rather than Circle
+            if( mptr->draw_const_circles) {
+              spr.fillCircle( 40 + ii, 40 + qq, 2, mptr->col_def_const ); //symbols
+            }
+            else {
+              spr.drawPixel( 40 + ii, 40 + qq, mptr->col_def_const ); // use Pixel rather than Circle
+            }
           }
           spr.pushSprite( 220, 115 + y_offset ); //send to lcd. upper left corner of sprite
           spr.deleteSprite();  //free memory
@@ -1519,8 +1523,12 @@ void loop()
           ii = *ptr++ / 2; //scale to +/- 32 range
           qq = *ptr++ / 2;
 
-          //  spr.fillCircle( 40 + ii, 40 + qq, 1, mptr->col_def_const ); //symbols
-          spr.drawPixel( 40 + ii, 40 + qq, mptr->col_def_const ); //symbols
+          if( mptr->draw_const_circles) {
+            spr.fillCircle( 40 + ii, 40 + qq, 2, mptr->col_def_const ); //symbols
+          }
+          else {
+            spr.drawPixel( 40 + ii, 40 + qq, mptr->col_def_const ); // use Pixel rather than Circle
+          }
         }
         spr.pushSprite( 233, 98 ); //send to lcd. upper left corner of sprite
         spr.deleteSprite();  //free memory

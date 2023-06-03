@@ -172,7 +172,7 @@ typedef struct {
   uint16_t col_def_indicator;
   uint16_t col_def_const;
 
-  uint8_t padd1;
+  uint8_t draw_const_circles;
   uint32_t crc_val;
 }
 metainfo;
