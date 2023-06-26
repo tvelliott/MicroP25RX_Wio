@@ -91,6 +91,7 @@ static int clean_wio_line2;
 
 metainfo *mptr;
 
+extern uint32_t power_button_press_time;
 extern uint32_t b_button_press_time;
 extern uint32_t c_button_press_time;
 static int did_save;
@@ -418,6 +419,7 @@ void setup()
   did_save = 0;
   b_button_press_time = 0;
   c_button_press_time = 0;
+  power_button_press_time = 0;
 
 }
 
@@ -469,6 +471,13 @@ void loop()
 
   check_buttons();
 
+  //POWER OFF
+  if( press_but_pressed && ( millis() - power_button_press_time > 2000 ) && press_but == 0xff ) {
+    send_cmd( "power_off", 9 ); //power down
+  }
+  else {
+    press_but_pressed=0;
+  }
 
   //check for edit menu shortcut. must be in monitor mode
   if( current_button_mode == WIO_BUTTON_MODE_MONITOR || current_button_mode == WIO_BUTTON_MODE_CONFIG ) {
@@ -1227,7 +1236,7 @@ void loop()
 
       //if( !mptr->do_wio_lines ) {
       if( mptr->tg_s != prev_tgs ) {
-        clear_line2();
+        //clear_line2();
       }
       prev_tgs = mptr->tg_s;
 
@@ -1412,11 +1421,15 @@ void loop()
         sprintf( rid_alias, " %s %u", mptr->alias, mptr->RID );
         if( strcmp( rid_alias, line2_str ) != 0 ) {
           tft.setTextColor( mptr->col2, mptr->col_def_bg );
-          clear_line2(); // changes for rid on line 2 // below highlight Town of Brookfield RIDs in red
-          tft.drawString( rid_alias, 5, 40, 4 );
-          strcpy( line2_str, rid_alias );
+
+          if( strncmp( ( char * )rid_alias, ( char * )line2_str, 64 ) != 0 ) {
+            clear_line2();
+            tft.drawString( rid_alias, 5, 40, 4 );
+            strncpy( line2_str, rid_alias, 64 );
+          }
+
         }
-        sprintf( disp_buf, "                      " );
+        //sprintf( disp_buf, "                      " );
       } else {
         if( current_button_mode == WIO_BUTTON_MODE_CONFIG ) {
           draw_button_modes(); //<<< added

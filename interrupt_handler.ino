@@ -52,6 +52,7 @@ volatile int cmd_acked;
 
 uint32_t b_button_press_time;
 uint32_t c_button_press_time;
+uint32_t power_button_press_time;
 
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
@@ -100,6 +101,7 @@ void check_buttons()
   //button press
   if( press_but == 0xff ) {
     press_but_pressed = 1;
+    if( power_button_press_time == 0 ) power_button_press_time = millis();
   }
   //button press
   if( up_but == 0xff ) {
