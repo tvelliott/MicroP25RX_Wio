@@ -107,7 +107,7 @@ typedef struct {
   uint8_t slot_b;
   uint32_t send_const_count;
   uint8_t roam;
-  uint32_t padding1;
+  float bat_volt_f;
   uint32_t global_sync_count;
   uint16_t tgzone_s;
   uint32_t lsm_std;

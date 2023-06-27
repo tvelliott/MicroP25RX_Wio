@@ -1451,12 +1451,26 @@ void loop()
           }
         } else if( current_button_mode == WIO_BUTTON_MODE_MONITOR ) {
           draw_button_modes(); //<<< added
+
+
+          #if 0
           if( mptr->roaming ) {
             sprintf( disp_buf, "MONITOR ROAM-ON-%u Free %u", mptr->roaming, freeMemory() );
           } else {
             // sprintf( disp_buf, "MONITOR ROAM-OFF" );
             sprintf( disp_buf, "MONITOR - MEM %u         ", freeMemory() ); // <<<<<<<<<<<<
           }
+          #else
+            if( mptr->roaming ) {
+              sprintf( disp_buf, "MONITOR ROAM-ON-%u BAT %1.2fv", mptr->roaming, mptr->bat_volt_f );
+            } else {
+              // sprintf( disp_buf, "MONITOR ROAM-OFF" );
+              sprintf( disp_buf, "MONITOR - BAT %1.2fv        ", mptr->bat_volt_f ); // <<<<<<<<<<<<
+            }
+          #endif
+
+
+
         } else {
           sprintf( disp_buf, " " );
         }
