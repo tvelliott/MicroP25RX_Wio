@@ -508,6 +508,19 @@ void loop()
     }
   }
 
+  if( current_button_mode == WIO_BUTTON_MODE_MONITOR ) {
+    //pressed and released
+    if( up_but_pressed && up_but == 0x00 ) {
+      up_but_pressed = 0;
+      send_cmd( "vol_up", 6 );
+    }
+    //pressed and released
+    if( down_but_pressed && down_but == 0x00 ) {
+      down_but_pressed = 0;
+      send_cmd( "vol_down", 8 );
+    }
+  }
+
 
   //middle-top button held for more than 3 seconds?
   if( !did_save && B_but_pressed && ( millis() - b_button_press_time > 3000 ) && B_but == 0xff ) {
