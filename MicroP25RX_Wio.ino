@@ -486,7 +486,7 @@ void loop()
       tft.drawString( line1_str, 20, 20, FNT );
     }
   }
-  if( press_but_pressed && press_but == 0x00 ) { //select button mode menu
+  if( press_but == 0x00 ) { //select button mode menu
     power_button_press_time=0;
   }
 
