@@ -1462,10 +1462,10 @@ void loop()
           }
           #else
             if( mptr->roaming ) {
-              sprintf( disp_buf, "MONITOR ROAM-ON-%u BAT %1.2fv", mptr->roaming, mptr->bat_volt_f );
+              sprintf( disp_buf, "MONITOR ROAM-ON-%u BAT %1.2fV", mptr->roaming, mptr->bat_volt_f );
             } else {
               // sprintf( disp_buf, "MONITOR ROAM-OFF" );
-              sprintf( disp_buf, "MONITOR - BAT %1.2fv        ", mptr->bat_volt_f ); // <<<<<<<<<<<<
+              sprintf( disp_buf, "MONITOR - BAT %1.2fV        ", mptr->bat_volt_f ); // <<<<<<<<<<<<
             }
           #endif
 
