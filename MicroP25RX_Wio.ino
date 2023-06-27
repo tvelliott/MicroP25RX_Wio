@@ -486,8 +486,8 @@ void loop()
       tft.drawString( line1_str, 20, 20, FNT );
     }
   }
-  else {
-    press_but_pressed=0;
+  if( press_but_pressed && press_but == 0x00 ) { //select button mode menu
+    power_button_press_time=0;
   }
 
   //check for edit menu shortcut. must be in monitor mode
