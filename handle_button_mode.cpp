@@ -46,8 +46,26 @@ extern Keybord mykey; // Cleate a keybord
 
 int handle_button_mode( void )
 {
-  int ret = get_menu_choice( 4, "MONITOR  MODE", "CONFIG  MODE", "TG  ZONE MODE", "SIGNALS / GAIN  MODE", NULL, NULL, NULL, NULL );
+  int ret = -1; 
+
+  if( mptr->speaker_en==0) {
+    ret = get_menu_choice( 5, "MONITOR  MODE", "CONFIG  MODE", "TG  ZONE MODE", "SIGNALS / GAIN  MODE", "ENABLE SPEAKER", NULL, NULL, NULL );
+  }
+  else {
+    ret = get_menu_choice( 5, "MONITOR  MODE", "CONFIG  MODE", "TG  ZONE MODE", "SIGNALS / GAIN  MODE", "DISABLE SPEAKER", NULL, NULL, NULL );
+  }
+
   if( ret == -1 ) return -1;
+
+  if( ret==4 ) {
+    if( mptr->speaker_en==1 ) {
+      send_cmd("speaker_en 0",12);
+    }
+    else {
+      send_cmd("speaker_en 1",12);
+    }
+    ret=0;
+  }
 
   current_button_mode = ret;
   char cmd[64];

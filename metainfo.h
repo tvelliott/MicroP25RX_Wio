@@ -173,6 +173,18 @@ typedef struct {
   uint16_t col_def_const;
 
   uint8_t draw_const_circles;
+
+  float audio_volume_f;
+  uint32_t speaker_en;
+
+  uint32_t padding3;
+  uint32_t padding4;
+  uint32_t padding5;
+  uint32_t padding6;
+  uint32_t padding7;
+  uint32_t padding8;
+  uint32_t padding9;
+
   uint32_t crc_val;
 }
 metainfo;

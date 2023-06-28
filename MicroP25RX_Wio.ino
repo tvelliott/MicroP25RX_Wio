@@ -374,7 +374,7 @@ void setup()
 
 
 // brightness = EEPROM.read(0); //disabled eeprom
-  brightness = 50; //hardcoded brightness startup value
+  brightness = 100; //hardcoded brightness startup value
   if( brightness < 5 ) brightness = 5;
   if( brightness > 100 ) brightness = 100;
   backLight.initialize();
@@ -704,6 +704,7 @@ void loop()
   /////////////////////////////////////////////////////////////////////////
   else if( current_button_mode == WIO_BUTTON_MODE_MONITOR ) {
 
+    #if 0
     if( up_but_pressed && up_but == 0x00 ) {
       up_but_pressed = 0; // Joystick Up
       brightness += 5; // step up by 5 (range 5 to 100)
@@ -719,6 +720,7 @@ void loop()
       backLight.setBrightness( brightness );
       // EEPROM.write(0,brightness);// disabled with hardcoded brightness
     } //change backlight
+    #endif
 
     //pressed and released
     if( press_but_pressed && press_but == 0x00 ) { //select button mode menu
