@@ -396,7 +396,7 @@ void handle_main_menu( metainfo *m )
     if( ret2 == -1 ) return;
 
     if( ret2 == 1 ) { //volume
-      int ret3 = get_menu_choice( 8, "OFF", "VERY LOW 0.5", "LOW 1.0", "NORMAL 2.0", "LOUD 4.0", "LOUD 5.0", "LOUD 6.0", "VERY LOUD 8.0" );
+      int ret3 = get_menu_choice( 5, "OFF", "VERY LOW 0.5", "LOW 1.0", "NORMAL 2.0", "LOUD 2.8", NULL, NULL, NULL );
       if( ret3 == -1 ) return;
 
       float v = 0.0f;
@@ -404,10 +404,7 @@ void handle_main_menu( metainfo *m )
       if( ret3 == 1 ) v = 0.5f;
       if( ret3 == 2 ) v = 1.0f;
       if( ret3 == 3 ) v = 2.0f;
-      if( ret3 == 4 ) v = 4.0f;
-      if( ret3 == 5 ) v = 5.0f;
-      if( ret3 == 6 ) v = 6.0f;
-      if( ret3 == 7 ) v = 8.0f;
+      if( ret3 == 4 ) v = 2.8f;
 
       char cmd[64];
       snprintf( cmd, 63, "vol %3.1f\r\n", v );
