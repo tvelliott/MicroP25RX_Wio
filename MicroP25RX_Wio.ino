@@ -70,6 +70,8 @@ uint8_t fft_data[FFT_M];
 int8_t iq8_data[512];
 uint8_t iq8_idx;
 
+static int do_update_vol;
+
 static int force_scan;
 static int gain_select;
 static int _lna_gain;
@@ -513,11 +515,13 @@ void loop()
     if( up_but_pressed && up_but == 0x00 ) {
       up_but_pressed = 0;
       send_cmd( "vol_up", 6 );
+      do_update_vol=1;
     }
     //pressed and released
     if( down_but_pressed && down_but == 0x00 ) {
       down_but_pressed = 0;
       send_cmd( "vol_down", 8 );
+      do_update_vol=1;
     }
   }
 
@@ -721,6 +725,8 @@ void loop()
       // EEPROM.write(0,brightness);// disabled with hardcoded brightness
     } //change backlight
     #endif
+
+
 
     //pressed and released
     if( press_but_pressed && press_but == 0x00 ) { //select button mode menu
@@ -1713,6 +1719,25 @@ void loop()
       }
 
     }
+
+    #if 1
+    //draw audio volume bar
+    if(do_update_vol || do_draw_rx) {
+        do_update_vol=0;
+        FNT = 2;
+        spr.createSprite( 220, 4); //allocate memory for 80 x 80 sprite
+        spr.fillSprite( TFT_BLACK );
+
+        int v = (int) (mptr->audio_volume_f*78.0f);
+        if(v>220) v=220;
+
+        //x,y,w,h
+        spr.fillRect( 0, 0, v, 4, TFT_WHITE );
+
+        spr.pushSprite( 0, 236  ); //send to lcd. upper left corner of sprite
+        spr.deleteSprite();  //free memory
+     }
+    #endif
 
 draw_end:
     status_timer = millis();
