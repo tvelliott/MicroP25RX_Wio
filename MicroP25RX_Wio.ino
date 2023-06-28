@@ -484,6 +484,7 @@ void loop()
     }
     else if( ( millis() - power_button_press_time > 500 ) ) {
       if( strncmp( ( char * )line1_str, ( char * )"POWER OFF", 63 ) != 0 ) clear_line1();
+      tft.setTextColor( ILI9341_RED, mptr->col_def_bg );   // set line 1 to red
       strncpy( line1_str, "POWER OFF", 63 );
       tft.drawString( line1_str, 20, 20, FNT );
     }
