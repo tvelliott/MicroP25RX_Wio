@@ -1734,7 +1734,8 @@ void loop()
         if(v>220) v=220;
 
         //x,y,w,h
-        spr.fillRect( 0, 0, v, 4, TFT_WHITE );
+        if(mptr->audio_volume_f<2.1) spr.fillRect( 0, 0, v, 4, TFT_WHITE );
+          else spr.fillRect( 0, 0, v, 4, TFT_RED );
 
         spr.pushSprite( 0, 230  ); //send to lcd. upper left corner of sprite
         spr.deleteSprite();  //free memory
