@@ -1735,7 +1735,7 @@ void loop()
         //x,y,w,h
         spr.fillRect( 0, 0, v, 4, TFT_WHITE );
 
-        spr.pushSprite( 0, 234  ); //send to lcd. upper left corner of sprite
+        spr.pushSprite( 0, 230  ); //send to lcd. upper left corner of sprite
         spr.deleteSprite();  //free memory
      }
     #endif
