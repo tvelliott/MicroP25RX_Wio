@@ -1433,7 +1433,7 @@ void loop()
       strcpy( line6_str, disp_buf );
 
       tft.setTextColor( mptr->col7, mptr->col_def_bg );
-      sprintf( disp_buf, " %s EV %3.1f ER %1.3f        ", demod_str, mptr->evm_p, mptr->erate ); // <<<<<<<< removed wacn plus added evm and erate here
+      sprintf( disp_buf, " %s EVM %3.1f ER %1.3f        ", demod_str, mptr->evm_p, mptr->erate ); // <<<<<<<< removed wacn plus added evm and erate here
 
 
       if( strcmp( disp_buf, line7_str ) != 0 ) {
