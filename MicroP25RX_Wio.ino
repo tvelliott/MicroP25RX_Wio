@@ -1537,24 +1537,31 @@ void loop()
       spr.fillSprite( mptr->col_def_bg ); //clear to black bground
 
       spr.setTextColor( mptr->col_def_indicator, mptr->col_def_bg );
-      if( mptr->phase2 ) {
-        spr.drawString( "P2", 0, 8, FNT ); //p25 p2
-      } else {
-        spr.drawString( "P1", 0, 8, FNT ); //p25 p1
+
+      if(mptr->decoder==0) { //P25
+        if( mptr->phase2 ) {
+          spr.drawString( "P2", 0, 8, FNT ); //p25 p2
+        } else {
+          spr.drawString( "P1", 0, 8, FNT ); //p25 p1
+        }
       }
+      else if(mptr->decoder==1) { //DMR
+          spr.drawString( "DMR", 0, 8, FNT ); //DMR
+      }
+
 
       //status led
       if( mptr->status_led ) {
-        spr.fillCircle( 35, 12, 10, mptr->col_def_led1_on );
+        spr.fillCircle( 37, 12, 10, mptr->col_def_led1_on );
       } else {
-        spr.fillCircle( 35, 12, 10, mptr->col_def_led1_off );
+        spr.fillCircle( 37, 12, 10, mptr->col_def_led1_off );
       }
 
       //TG led
       if( mptr->tg_led ) {
-        spr.fillCircle( 60, 12, 10, mptr->col_def_led2_on );
+        spr.fillCircle( 62, 12, 10, mptr->col_def_led2_on );
       } else {
-        spr.fillCircle( 60, 12, 10, mptr->col_def_led2_off );
+        spr.fillCircle( 62, 12, 10, mptr->col_def_led2_off );
       }
       spr.pushSprite( 240, 212 ); //transfer to lcd, x,y = 240,210
       spr.deleteSprite(); //free memory
