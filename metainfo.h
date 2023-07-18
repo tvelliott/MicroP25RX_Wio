@@ -177,8 +177,8 @@ typedef struct {
   float audio_volume_f;
   uint32_t speaker_en;
 
-  uint32_t padding3;
-  uint32_t padding4;
+  uint32_t decoder;
+  int32_t  squelch_dbm;
   uint32_t padding5;
   uint32_t padding6;
   uint32_t padding7;
