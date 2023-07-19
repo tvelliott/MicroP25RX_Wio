@@ -1715,11 +1715,11 @@ void loop()
 #endif
 #else
         if( power_button_press_time==0) {
-          if( demod == 0 || demod == 1 ) {
+          //if( demod == 0 || demod == 1 ) {
             snprintf( disp_buf, 50, "%s / %s   %05X-%03X-%03X%c  ", mptr->sys_name, mptr->site_name, mptr->wacn_id, mptr->sys_id, mptr->p25_sys_nac, nac_lock_str ); // <<<< moved wacn to line 1
-          } else if( demod == 2 ) {
-            snprintf( disp_buf, 50, "FMNB     " );
-          }
+          //} else if( demod == 2 ) {
+           // snprintf( disp_buf, 50, "FMNB     " );
+          //}
           if( strncmp( ( char * )line1_str, ( char * )disp_buf, 63 ) != 0 ) clear_line1();
           strncpy( line1_str, disp_buf, 63 );
           tft.drawString( disp_buf, 5, 20, FNT );
