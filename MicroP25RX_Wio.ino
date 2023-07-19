@@ -1548,6 +1548,12 @@ void loop()
       else if(mptr->decoder==1) { //DMR
           spr.drawString( "DMR", 0, 8, FNT ); //DMR
       }
+      else if(mptr->decoder==2) { //ACARS
+          spr.drawString( "ACA", 0, 8, FNT ); 
+      }
+      else if(mptr->decoder==3) { //PAGERS
+          spr.drawString( "PGR", 0, 8, FNT ); 
+      }
 
 
       //status led
