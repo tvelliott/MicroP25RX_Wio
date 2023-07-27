@@ -400,7 +400,7 @@ void setup()
   tft.setFreeFont( FS18 );
   tft.setTextColor( TFT_WHITE, TFT_BLACK );
 
-  sprintf( disp_buf, "%s", "BlueTail    MicroP25RX" );
+  sprintf( disp_buf, "%s", "BlueTail Technologies 2023" );
   FNT = 4;
   tft.drawString( disp_buf, 5, 10, FNT );
 
