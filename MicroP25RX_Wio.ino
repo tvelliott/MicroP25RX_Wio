@@ -528,7 +528,7 @@ void loop()
 
 
   //middle-top button held for more than 3 seconds?
-  if( !did_save && B_but_pressed && ( millis() - b_button_press_time > 3000 ) && B_but == 0xff ) {
+  if( !did_save && B_but_pressed && ( millis() - b_button_press_time > 1500 ) && B_but == 0xff ) {
     send_cmd( "save", 4 ); //save config
     did_save = 1;
 //   EEPROM.commit();  //save brightness // disabled with hardcoded brightness
