@@ -397,8 +397,8 @@ void setup()
   pinMode( WIO_KEY_C, INPUT_PULLUP );
 
 
-  tft.setFreeFont( NULL );
-  tft.setTextColor( mptr->col_def_fg, mptr->col_def_bg );
+  tft.setFreeFont( FS18 );
+  tft.setTextColor( TFT_WHITE, TFT_BLACK );
 
   sprintf( disp_buf, "%s", "BlueTail    MicroP25RX" );
   FNT = 4;
@@ -1222,6 +1222,9 @@ void loop()
         demod_str[0] = 0;
         if( mptr->use_demod == 0 ) strcpy( demod_str, "LSM" );
         if( mptr->use_demod == 1 ) strcpy( demod_str, "FM" );
+        if( mptr->use_demod == 2 ) strcpy( demod_str, "FMNB" );
+        if( mptr->use_demod == 3 ) strcpy( demod_str, "AM" );
+        if( mptr->use_demod == 4 ) strcpy( demod_str, "AM+AGC" );
 
         sprintf( disp_buf, "DEMOD %s   ", demod_str );
         tft.drawString( disp_buf, 140, 110 + y_offset, FNT );
