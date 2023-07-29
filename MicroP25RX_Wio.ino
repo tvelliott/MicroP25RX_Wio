@@ -1241,12 +1241,14 @@ void loop()
         snprintf( disp_buf, 32, "FREQ: %3.6f MHz", mptr->current_freq );
         tft.drawString( disp_buf, 140, 0 + y_offset, FNT );
 
-        if( mptr->on_control_b && mptr->total_session_time > 1500 ) {
-          sprintf( disp_buf, "TSBK/SEC %u      ", mptr->tsbk_sec );
-        } else {
-          sprintf( disp_buf, "ERATE %1.3f      ", mptr->erate );
+        if(mptr->decoder<=1) { //p25 and dmr
+          if( mptr->on_control_b && mptr->total_session_time > 1500 ) {
+            sprintf( disp_buf, "TSBK/SEC %u      ", mptr->tsbk_sec );
+          } else {
+            sprintf( disp_buf, "ERATE %1.3f      ", mptr->erate );
+          }
+          tft.drawString( disp_buf, 140, 15 + y_offset, FNT );
         }
-        tft.drawString( disp_buf, 140, 15 + y_offset, FNT );
 
         sprintf( disp_buf, "SITE %d, RFSS %d     ", mptr->site_id, mptr->rf_id );
         tft.drawString( disp_buf, 140, 30 + y_offset, FNT );
@@ -1388,16 +1390,18 @@ void loop()
       uint8_t nac_lock_str = 'U';
       if( mptr->lock_nac ) nac_lock_str = 'L';
 
-      if( mptr->on_control_b ) {
-        tft.setTextColor( 0xF643, mptr->col_def_bg ); // set color to a yellow for on CCH freq
+      if(mptr->decoder<=1) { //p25 and dmr
+        if( mptr->on_control_b ) {
+          tft.setTextColor( 0xF643, mptr->col_def_bg ); // set color to a yellow for on CCH freq
 
-        sprintf( disp_buf, " %3.0fdBm CCH TSBK/SEC %u                    ", mptr->rssi_f, mptr->tsbk_sec ); // removed cal freq //
+          sprintf( disp_buf, " %3.0fdBm CCH TSBK/SEC %u                    ", mptr->rssi_f, mptr->tsbk_sec ); // removed cal freq //
 
-      } else {
-        tft.setTextColor( mptr->col4, mptr->col_def_bg );
+        } else {
+          tft.setTextColor( mptr->col4, mptr->col_def_bg );
 
-        sprintf( disp_buf, " %3.0fdBm TCH %3.6f MHz                     ", mptr->rssi_f, mptr->current_freq ); // removed erate
+          sprintf( disp_buf, " %3.0fdBm TCH %3.6f MHz                     ", mptr->rssi_f, mptr->current_freq ); // removed erate
 
+        }
       }
 
       if( strcmp( disp_buf, line4_str ) != 0 ) {
