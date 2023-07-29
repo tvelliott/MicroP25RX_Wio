@@ -1398,10 +1398,13 @@ void loop()
 
         } else {
           tft.setTextColor( mptr->col4, mptr->col_def_bg );
-
           sprintf( disp_buf, " %3.0fdBm TCH %3.6f MHz                     ", mptr->rssi_f, mptr->current_freq ); // removed erate
 
         }
+      }
+      else {
+          tft.setTextColor( mptr->col4, mptr->col_def_bg );
+          sprintf( disp_buf, " %3.0fdBm  %3.6f MHz                     ", mptr->rssi_f, mptr->current_freq ); // removed erate
       }
 
       if( strcmp( disp_buf, line4_str ) != 0 ) {
