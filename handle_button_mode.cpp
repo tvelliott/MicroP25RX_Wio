@@ -58,7 +58,7 @@ int handle_button_mode( void )
   if( ret == -1 ) return -1;
 
   if( ret==5) {
-    int ret3 = get_menu_choice( 7, "GC OFF", "GC MODE 1", "GC MODE 2", "GC MODE 3", "GC MODE 4", "GC MODE 5", "GC MODE 6", "" );
+    int ret3 = get_menu_choice( 7, "GC OFF", "GC-1 >6dB", "GC-2 >3dB", "GC-3 >6dB, EVM > 2.5", "GC-4 >6dB, EVM > 4.5", "GC-5 >6dB, EVM > 7", "GC-6 MC EVM > 8", "" );
 
     char cmd[64];
     snprintf( cmd, 63, "hw_gains %u\r\n", ret3 );
