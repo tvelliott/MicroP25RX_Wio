@@ -1045,6 +1045,9 @@ void loop()
 
         draw_button_modes();
 
+        //////////////////////////////////////////////////////////
+        //Draw FFT 
+        //////////////////////////////////////////////////////////
         __disable_irq();
         do_draw_rx = 0;
         memcpy( ( uint8_t * ) fft_data, ( uint8_t * ) mptr->data, FFT_M );
@@ -1057,7 +1060,7 @@ void loop()
           spr.fillSprite( mptr->col_def_bg ); //clear to black bground
 
           spr.fillSprite( mptr->col_def_bg );
-          for( int i = 0; i < 128; i++ ) {
+          for( int i = 0; i < 128-1; i++ ) {
             if( i > 0 ) {
               spr.drawLine( i, ( 110 - ( int )fft_data[i] ) + 90, i + 1, ( 110 - ( int )fft_data[i + 1] ) + 90, TFT_GREEN );
             }
@@ -1067,7 +1070,7 @@ void loop()
         }
 #if 1
         //////////////////////////////////////////////////////////
-        //Draw IQ Constellation
+        //Draw Constellation
         //////////////////////////////////////////////////////////
         int idx = 0;
         int ii;

@@ -42,6 +42,7 @@ extern "C" {
 #define WIO_BUTTON_MODE_CONFIG 1
 #define WIO_BUTTON_MODE_TG_ZONE 2
 #define WIO_BUTTON_MODE_RF_GAIN 3
+#define WIO_BUTTON_MODE_GAINCONTROL 5
 
 void update_metainfo( void );
 void init_metainfo( void );

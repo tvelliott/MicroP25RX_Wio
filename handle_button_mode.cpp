@@ -49,13 +49,22 @@ int handle_button_mode( void )
   int ret = -1; 
 
   if( mptr->speaker_en==0) {
-    ret = get_menu_choice( 5, "MONITOR  MODE", "CONFIG  MODE", "TG  ZONE MODE", "SIGNALS / GAIN  MODE", "ENABLE SPEAKER", NULL, NULL, NULL );
+    ret = get_menu_choice( 6, "MONITOR  MODE", "CONFIG  MODE", "TG  ZONE MODE", "SIGNALS / GAIN  MODE", "ENABLE SPEAKER", "GAIN CONTROLLER", NULL, NULL );
   }
   else {
-    ret = get_menu_choice( 5, "MONITOR  MODE", "CONFIG  MODE", "TG  ZONE MODE", "SIGNALS / GAIN  MODE", "DISABLE SPEAKER", NULL, NULL, NULL );
+    ret = get_menu_choice( 6, "MONITOR  MODE", "CONFIG  MODE", "TG  ZONE MODE", "SIGNALS / GAIN  MODE", "DISABLE SPEAKER", "GAIN CONTROLLER", NULL, NULL );
   }
 
   if( ret == -1 ) return -1;
+
+  if( ret==5) {
+    int ret3 = get_menu_choice( 7, "GC OFF", "GC MODE 1", "GC MODE 2", "GC MODE 3", "GC MODE 4", "GC MODE 5", "GC MODE 6", "" );
+
+    char cmd[64];
+    snprintf( cmd, 63, "hw_gains %u\r\n", ret3 );
+    send_cmd( cmd, strlen( cmd ) );
+    ret=0;
+  }
 
   if( ret==4 ) {
     if( mptr->speaker_en==1 ) {
