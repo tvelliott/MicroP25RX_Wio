@@ -180,8 +180,8 @@ typedef struct {
 
   uint32_t decoder;
   int32_t  squelch_dbm;
-  uint32_t padding5;
-  uint32_t padding6;
+  uint32_t peak_detector;
+  uint32_t gain_controller;
   uint32_t padding7;
   uint32_t padding8;
   uint32_t padding9;

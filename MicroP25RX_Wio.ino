@@ -1056,13 +1056,13 @@ void loop()
         if( mptr->data_type == META_DATA_TYPE_FFT ) {
           //draw_fft();
           init_sprites(); //best to re-init
-          spr.createSprite( 128, 95 ); //allocate sprite memory
+          spr.createSprite( 128, 95*2 ); //allocate sprite memory
           spr.fillSprite( mptr->col_def_bg ); //clear to black bground
 
           spr.fillSprite( mptr->col_def_bg );
           for( int i = 0; i < 128-1; i++ ) {
             if( i > 0 ) {
-              spr.drawLine( i, ( 110 - ( int )fft_data[i] ) + 90, i + 1, ( 110 - ( int )fft_data[i + 1] ) + 90, TFT_GREEN );
+              spr.drawLine( i, (  (( int )-fft_data[i]*1.5f+180) ) , i + 1, ( (( int )-fft_data[i + 1]*1.5f+180) ) , TFT_GREEN );
             }
           }
           spr.pushSprite( 5, 90 + y_offset ); //send to lcd. upper left corner of sprite
@@ -1497,10 +1497,10 @@ void loop()
           }
           #else
             if( mptr->roaming ) {
-              sprintf( disp_buf, "MONITOR ROAM-ON-%u BAT %1.2fV", mptr->roaming, mptr->bat_volt_f );
+              sprintf( disp_buf, "MONITOR ROAM-ON-%u BAT %1.2fV, GC %u, PD %u", mptr->roaming, mptr->bat_volt_f, mptr->gain_controller, mptr->peak_detector+1 );
             } else {
               // sprintf( disp_buf, "MONITOR ROAM-OFF" );
-              sprintf( disp_buf, "MONITOR - BAT %1.2fV        ", mptr->bat_volt_f ); // <<<<<<<<<<<<
+              sprintf( disp_buf, "MONITOR - BAT %1.2fV, GC %u, PD %u        ", mptr->bat_volt_f, mptr->gain_controller, mptr->peak_detector+1 ); // <<<<<<<<<<<<
             }
           #endif
 
