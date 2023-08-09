@@ -58,7 +58,7 @@ int handle_button_mode( void )
   if( ret == -1 ) return -1;
 
   if( ret==5) {
-    int ret3 = get_menu_choice( 5, "GC OFF", "GC-1 >6dB (SENSITIVE)", "GC-2 >6dB (LINEAR)", "PEAK DETECTOR 1", "PEAK DETECTOR 2", NULL, NULL, NULL );
+    int ret3 = get_menu_choice( 6, "GC OFF", "GC-1 >6dB (SENSITIVE)", "GC-2 >6dB (LINEAR)", "PEAK DETECTOR 1", "PEAK DETECTOR 2", "PEAK DETECTOR 3", NULL, NULL );
 
     if(ret3==-1) return -1;
 
@@ -67,10 +67,11 @@ int handle_button_mode( void )
       snprintf( cmd, 63, "hw_gains %u\r\n", ret3 );
       send_cmd( cmd, strlen( cmd ) );
     }
-    if(ret3==3 || ret3==4) {
+    if(ret3>=3) {
       char cmd[64];
       if(ret3==3) snprintf( cmd, 63, "peak_det 0\r\n");
       if(ret3==4) snprintf( cmd, 63, "peak_det 1\r\n");
+      if(ret3==5) snprintf( cmd, 63, "peak_det 2\r\n");
       send_cmd( cmd, strlen( cmd ) );
     }
 
