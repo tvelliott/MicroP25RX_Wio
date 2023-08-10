@@ -45,8 +45,8 @@ void scroll_tick(uint8_t p25_state) {
         //scroll_spr.pushSprite(0, 30);
       }
       else {
-        scroll_spr.setScrollRect(0, 152, 120, 8, TFT_BLACK); // Scroll the first 40 pixels
-        scroll_spr.scroll(-8,0);     // scroll stext 0 pixel right, 1 up
+        //scroll_spr.setScrollRect(0, 152, 120, 8, TFT_BLACK); // Scroll the first 40 pixels
+        //scroll_spr.scroll(-8,0);     // scroll stext 0 pixel right, 1 up
       }
 
       switch( p25_state) {
@@ -91,7 +91,7 @@ void scroll_tick(uint8_t p25_state) {
         break;
       }
       //scroll_spr.fillRect(120-8, 160-8, 8,8, rand()%0xffff);  //testing
-      scroll_spr.fillRect(120-8, 160-8, 8,8, col);
+      scroll_spr.fillRect(xpos*8, 160-8, 8,8, col);
       scroll_spr.pushSprite(0, 30);
     //}
 }
