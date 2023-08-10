@@ -67,15 +67,15 @@ void scroll_tick(uint8_t p25_state) {
         break;
 
         case  P25_STATE_TDULC  :
-          col = TFT_BLACK; 
+          col = TFT_CYAN; 
         break;
 
         case  P25_STATE_TDU  :
-          col = TFT_BLACK; 
+          col = TFT_ORANGE; 
         break;
 
         case  P25_STATE_VGRANT  :
-          col = TFT_CYAN; 
+          col = TFT_PURPLE; 
         break;
 
         case  P25_STATE_VERR1  :
