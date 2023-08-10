@@ -42,17 +42,31 @@ extern "C" {
 #define WIO_BUTTON_MODE_CONFIG 1
 #define WIO_BUTTON_MODE_TG_ZONE 2
 #define WIO_BUTTON_MODE_RF_GAIN 3
-#define WIO_BUTTON_MODE_GAINCONTROL 5
+
+#define P25_STATE_SYNC 1
+#define P25_STATE_TSBK 2
+#define P25_STATE_VOICE 3
+#define P25_STATE_TDU 4
+#define P25_STATE_TDULC 5
+#define P25_STATE_VGRANT 6
+#define P25_STATE_TSBK_ERR 7
+#define P25_STATE_VERR1 8
+#define P25_STATE_VERR2 9
 
 void update_metainfo( void );
+void init_metainfo( void );
 void init_metainfo( void );
 void meta_set_wioline1( char *str );
 void meta_set_wioline2( char *str );
 
+void p25_add_state(uint8_t state);
+uint8_t p25_get_state(void);
+
 extern int8_t sym_const[];
 extern uint32_t RID;
 
-typedef struct {
+typedef struct 
+{
 
   uint32_t magic;
   uint16_t port;
@@ -102,8 +116,8 @@ typedef struct {
 
   float squelch;
   int agcmode;
-  float max_freq_hz;
-  uint16_t max_freq_cnt;
+  volatile float max_freq_hz;
+  volatile uint16_t max_freq_cnt;
   uint8_t mode_b;
   uint8_t slot_b;
   uint32_t send_const_count;
@@ -112,7 +126,7 @@ typedef struct {
   uint32_t global_sync_count;
   uint16_t tgzone_s;
   uint32_t lsm_std;
-  uint8_t adc_clip;
+  uint8_t cc_pause;
 
   uint8_t wio_packet_id;
 
@@ -148,6 +162,7 @@ typedef struct {
   uint8_t inc_in_scan;
   uint8_t lock_nac;
 
+  #if 1
   uint16_t col1;
   uint16_t col2;
   uint16_t col3;
@@ -172,6 +187,7 @@ typedef struct {
   uint16_t col_def_led2_off;
   uint16_t col_def_indicator;
   uint16_t col_def_const;
+  #endif
 
   uint8_t draw_const_circles;
 
@@ -180,10 +196,11 @@ typedef struct {
 
   uint32_t decoder;
   int32_t  squelch_dbm;
-  uint32_t peak_detector;
+
+  uint32_t peak_det;
   uint32_t gain_controller;
-  uint32_t padding7;
-  uint32_t padding8;
+  uint32_t p25_state;
+  uint32_t p25_state_pid;
   uint32_t padding9;
 
   uint32_t crc_val;

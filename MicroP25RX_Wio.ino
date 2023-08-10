@@ -35,6 +35,7 @@
 
 TFT_eSPI tft;
 TFT_eSprite spr = TFT_eSprite( &tft );
+TFT_eSprite scroll_spr = TFT_eSprite( &tft );
 Keybord mykey; // Cleate a keybord
 
 
@@ -127,6 +128,10 @@ char tglog_buf[35];
 char ToneAlias[25];
 ///////////////////////////////////////////////////////////////////////////////
 //
+//
+
+void scroll_tick(uint8_t p25_state);
+uint32_t prev_p25_state;
 
 void reset_info( void );
 void change_freq( int freq, int is_inc );
@@ -175,6 +180,7 @@ void tgz_dec_y();
 
 static int scap_count;
 static int did_sd_init;
+
 
 
 #ifdef __arm__
@@ -797,6 +803,13 @@ void loop()
   // RF GAIN MODE
   /////////////////////////////////////////////////////////////////////////
   else if( current_button_mode == WIO_BUTTON_MODE_RF_GAIN ) {
+
+    uint32_t state_pid = mptr->p25_state_pid;
+    if(state_pid!=prev_p25_state) {
+      prev_p25_state = state_pid;
+      scroll_tick( (mptr->p25_state & 0xff) );
+    }
+
     //pressed and released
     if( press_but_pressed && press_but == 0x00 ) { //select button mode menu
       press_but_pressed = 0;
@@ -1142,6 +1155,10 @@ void loop()
           spr.deleteSprite();  //free memory
         }
 #endif
+
+
+
+
 
         FNT = 2;
         spr.createSprite( 170, 20 ); //allocate memory for 80 x 80 sprite
@@ -1497,10 +1514,10 @@ void loop()
           }
           #else
             if( mptr->roaming ) {
-              sprintf( disp_buf, "MONITOR ROAM-ON-%u BAT %1.2fV, GC %u, PD %u", mptr->roaming, mptr->bat_volt_f, mptr->gain_controller, mptr->peak_detector+1 );
+              sprintf( disp_buf, "MONITOR ROAM-ON-%u BAT %1.2fV, GC %u, PD %u", mptr->roaming, mptr->bat_volt_f, mptr->gain_controller, mptr->peak_det+1 );
             } else {
               // sprintf( disp_buf, "MONITOR ROAM-OFF" );
-              sprintf( disp_buf, "MONITOR - BAT %1.2fV, GC %u, PD %u        ", mptr->bat_volt_f, mptr->gain_controller, mptr->peak_detector+1 ); // <<<<<<<<<<<<
+              sprintf( disp_buf, "MONITOR - BAT %1.2fV, GC %u, PD %u        ", mptr->bat_volt_f, mptr->gain_controller, mptr->peak_det+1 ); // <<<<<<<<<<<<
             }
           #endif
 
