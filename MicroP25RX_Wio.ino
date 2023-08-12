@@ -714,6 +714,11 @@ void loop()
   // MONITOR MODE
   /////////////////////////////////////////////////////////////////////////
   else if( current_button_mode == WIO_BUTTON_MODE_MONITOR ) {
+    uint32_t state_pid = mptr->p25_state_pid;
+    if(state_pid!=prev_p25_state) {
+      prev_p25_state = state_pid;
+      scroll_tick( (mptr->p25_state & 0xff) );
+    }
 
     #if 0
     if( up_but_pressed && up_but == 0x00 ) {
