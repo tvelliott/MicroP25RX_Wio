@@ -1086,6 +1086,32 @@ void loop()
           spr.pushSprite( 5, 90 + y_offset ); //send to lcd. upper left corner of sprite
           spr.deleteSprite();  //free memory
         }
+
+#if 1
+      //////////////////////////////////////////////////////////
+      //Draw ANT SW indicator 
+      //////////////////////////////////////////////////////////
+      spr.createSprite( 80, 40 ); //allocate sprite memory
+      spr.fillSprite( mptr->col_def_bg ); //clear to black bground
+
+      spr.setTextColor( mptr->col_def_indicator, mptr->col_def_bg );
+
+      if( mptr->antenna==2 ) {
+        spr.drawString( "A2", 0, 8, FNT ); 
+        spr.fillCircle( 37, 12, 10, mptr->col_def_led1_off );
+        spr.fillCircle( 62, 12, 10, mptr->col_def_led2_on );
+      } 
+      else if(mptr->antenna==1) {
+        spr.drawString( "A1", 0, 8, FNT ); 
+        spr.fillCircle( 37, 12, 10, mptr->col_def_led1_on );
+        spr.fillCircle( 62, 12, 10, mptr->col_def_led2_off );
+      }
+
+      spr.pushSprite( 130, 170 ); //transfer to lcd
+      spr.deleteSprite(); //free memory
+#endif
+
+
 #if 1
         //////////////////////////////////////////////////////////
         //Draw Constellation
@@ -1563,6 +1589,7 @@ void loop()
       spr.pushSprite( 265, 185 ); //transfer to lcd, x,y = 240,210
       spr.deleteSprite(); //free memory
 #endif
+
 #if 1
       //////////////////////////////////////////////////////////
       //Draw ANT SW indicator 
@@ -1583,7 +1610,7 @@ void loop()
         spr.fillCircle( 62, 12, 10, mptr->col_def_led2_off );
       }
 
-      spr.pushSprite( 240, 60 ); //transfer to lcd
+      spr.pushSprite( 240, 40 ); //transfer to lcd
       spr.deleteSprite(); //free memory
 #endif
 
