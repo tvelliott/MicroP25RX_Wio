@@ -59,14 +59,13 @@ void init_metainfo( void );
 void meta_set_wioline1( char *str );
 void meta_set_wioline2( char *str );
 
-void p25_add_state(uint8_t state);
-uint8_t p25_get_state(void);
+void p25_add_state( uint8_t state );
+uint8_t p25_get_state( void );
 
 extern int8_t sym_const[];
 extern uint32_t RID;
 
-typedef struct 
-{
+typedef struct {
 
   uint32_t magic;
   uint16_t port;
@@ -162,7 +161,7 @@ typedef struct
   uint8_t inc_in_scan;
   uint8_t lock_nac;
 
-  #if 1
+#if 1
   uint16_t col1;
   uint16_t col2;
   uint16_t col3;
@@ -187,7 +186,7 @@ typedef struct
   uint16_t col_def_led2_off;
   uint16_t col_def_indicator;
   uint16_t col_def_const;
-  #endif
+#endif
 
   uint8_t draw_const_circles;
 

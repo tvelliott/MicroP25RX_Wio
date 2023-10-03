@@ -46,46 +46,44 @@ extern Keybord mykey; // Cleate a keybord
 
 int handle_button_mode( void )
 {
-  int ret = -1; 
+  int ret = -1;
 
-  if( mptr->speaker_en==0) {
+  if( mptr->speaker_en == 0 ) {
     ret = get_menu_choice( 6, "MONITOR  MODE", "CONFIG  MODE", "TG  ZONE MODE", "SIGNALS / GAIN  MODE", "ENABLE SPEAKER", "GAIN CONTROLLER", NULL, NULL );
-  }
-  else {
+  } else {
     ret = get_menu_choice( 6, "MONITOR  MODE", "CONFIG  MODE", "TG  ZONE MODE", "SIGNALS / GAIN  MODE", "DISABLE SPEAKER", "GAIN CONTROLLER", NULL, NULL );
   }
 
   if( ret == -1 ) return -1;
 
-  if( ret==5) {
+  if( ret == 5 ) {
     int ret3 = get_menu_choice( 6, "GC OFF", "GC-1 >6dB (SENSITIVE)", "GC-2 >6dB (LINEAR)", "PEAK DETECTOR 1", "PEAK DETECTOR 2", "PEAK DETECTOR 3", NULL, NULL );
 
-    if(ret3==-1) return -1;
+    if( ret3 == -1 ) return -1;
 
-    if(ret3>=0 && ret3<3) {
+    if( ret3 >= 0 && ret3 < 3 ) {
       char cmd[64];
       snprintf( cmd, 63, "hw_gains %u\r\n", ret3 );
       send_cmd( cmd, strlen( cmd ) );
     }
-    if(ret3>=3) {
+    if( ret3 >= 3 ) {
       char cmd[64];
-      if(ret3==3) snprintf( cmd, 63, "peak_det 0\r\n");
-      if(ret3==4) snprintf( cmd, 63, "peak_det 1\r\n");
-      if(ret3==5) snprintf( cmd, 63, "peak_det 2\r\n");
+      if( ret3 == 3 ) snprintf( cmd, 63, "peak_det 0\r\n" );
+      if( ret3 == 4 ) snprintf( cmd, 63, "peak_det 1\r\n" );
+      if( ret3 == 5 ) snprintf( cmd, 63, "peak_det 2\r\n" );
       send_cmd( cmd, strlen( cmd ) );
     }
 
-    ret=current_button_mode;
+    ret = current_button_mode;
   }
 
-  if( ret==4 ) {
-    if( mptr->speaker_en==1 ) {
-      send_cmd("speaker_en 0",12);
+  if( ret == 4 ) {
+    if( mptr->speaker_en == 1 ) {
+      send_cmd( "speaker_en 0", 12 );
+    } else {
+      send_cmd( "speaker_en 1", 12 );
     }
-    else {
-      send_cmd("speaker_en 1",12);
-    }
-    ret=0;
+    ret = 0;
   }
 
   current_button_mode = ret;

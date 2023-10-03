@@ -130,7 +130,7 @@ char ToneAlias[25];
 //
 //
 
-void scroll_tick(uint8_t p25_state);
+void scroll_tick( uint8_t p25_state );
 uint32_t prev_p25_state;
 
 void reset_info( void );
@@ -483,12 +483,11 @@ void loop()
   if( press_but_pressed && ( millis() - power_button_press_time > 0 ) && press_but == 0xff ) {
     if( ( millis() - power_button_press_time > 2000 ) ) {
       send_cmd( "power_off", 9 ); //power down
-      delay(100);
+      delay( 100 );
       send_cmd( "power_off", 9 ); //power down
-      delay(100);
+      delay( 100 );
       send_cmd( "power_off", 9 ); //power down
-    }
-    else if( ( millis() - power_button_press_time > 500 ) ) {
+    } else if( ( millis() - power_button_press_time > 500 ) ) {
       if( strncmp( ( char * )line1_str, ( char * )"POWER OFF", 63 ) != 0 ) clear_line1();
       tft.setTextColor( ILI9341_RED, mptr->col_def_bg );   // set line 1 to red
       strncpy( line1_str, "POWER OFF", 63 );
@@ -496,7 +495,7 @@ void loop()
     }
   }
   if( press_but == 0x00 ) { //select button mode menu
-    power_button_press_time=0;
+    power_button_press_time = 0;
   }
 
   //check for edit menu shortcut. must be in monitor mode
@@ -522,13 +521,13 @@ void loop()
     if( up_but_pressed && up_but == 0x00 ) {
       up_but_pressed = 0;
       send_cmd( "vol_up", 6 );
-      do_update_vol=1;
+      do_update_vol = 1;
     }
     //pressed and released
     if( down_but_pressed && down_but == 0x00 ) {
       down_but_pressed = 0;
       send_cmd( "vol_down", 8 );
-      do_update_vol=1;
+      do_update_vol = 1;
     }
   }
 
@@ -715,12 +714,12 @@ void loop()
   /////////////////////////////////////////////////////////////////////////
   else if( current_button_mode == WIO_BUTTON_MODE_MONITOR ) {
     uint32_t state_pid = mptr->p25_state_pid;
-    if(state_pid!=prev_p25_state) {
+    if( state_pid != prev_p25_state ) {
       prev_p25_state = state_pid;
-      scroll_tick( (mptr->p25_state & 0xff) );
+      scroll_tick( ( mptr->p25_state & 0xff ) );
     }
 
-    #if 0
+#if 0
     if( up_but_pressed && up_but == 0x00 ) {
       up_but_pressed = 0; // Joystick Up
       brightness += 5; // step up by 5 (range 5 to 100)
@@ -736,7 +735,7 @@ void loop()
       backLight.setBrightness( brightness );
       // EEPROM.write(0,brightness);// disabled with hardcoded brightness
     } //change backlight
-    #endif
+#endif
 
 
 
@@ -810,9 +809,9 @@ void loop()
   else if( current_button_mode == WIO_BUTTON_MODE_RF_GAIN ) {
 
     uint32_t state_pid = mptr->p25_state_pid;
-    if(state_pid!=prev_p25_state) {
+    if( state_pid != prev_p25_state ) {
       prev_p25_state = state_pid;
-      scroll_tick( (mptr->p25_state & 0xff) );
+      scroll_tick( ( mptr->p25_state & 0xff ) );
     }
 
     //pressed and released
@@ -1064,7 +1063,7 @@ void loop()
         draw_button_modes();
 
         //////////////////////////////////////////////////////////
-        //Draw FFT 
+        //Draw FFT
         //////////////////////////////////////////////////////////
         __disable_irq();
         do_draw_rx = 0;
@@ -1074,13 +1073,13 @@ void loop()
         if( mptr->data_type == META_DATA_TYPE_FFT ) {
           //draw_fft();
           init_sprites(); //best to re-init
-          spr.createSprite( 128, 95*2 ); //allocate sprite memory
+          spr.createSprite( 128, 95 * 2 ); //allocate sprite memory
           spr.fillSprite( mptr->col_def_bg ); //clear to black bground
 
           spr.fillSprite( mptr->col_def_bg );
-          for( int i = 0; i < 128-1; i++ ) {
+          for( int i = 0; i < 128 - 1; i++ ) {
             if( i > 0 ) {
-              spr.drawLine( i, (  (( int )-fft_data[i]*1.5f+180) ) , i + 1, ( (( int )-fft_data[i + 1]*1.5f+180) ) , TFT_GREEN );
+              spr.drawLine( i, ( ( ( int ) - fft_data[i] * 1.5f + 180 ) ), i + 1, ( ( ( int ) - fft_data[i + 1] * 1.5f + 180 ) ), TFT_GREEN );
             }
           }
           spr.pushSprite( 5, 90 + y_offset ); //send to lcd. upper left corner of sprite
@@ -1088,27 +1087,26 @@ void loop()
         }
 
 #if 1
-      //////////////////////////////////////////////////////////
-      //Draw ANT SW indicator 
-      //////////////////////////////////////////////////////////
-      spr.createSprite( 80, 40 ); //allocate sprite memory
-      spr.fillSprite( mptr->col_def_bg ); //clear to black bground
+        //////////////////////////////////////////////////////////
+        //Draw ANT SW indicator
+        //////////////////////////////////////////////////////////
+        spr.createSprite( 80, 40 ); //allocate sprite memory
+        spr.fillSprite( mptr->col_def_bg ); //clear to black bground
 
-      spr.setTextColor( mptr->col_def_indicator, mptr->col_def_bg );
+        spr.setTextColor( mptr->col_def_indicator, mptr->col_def_bg );
 
-      if( mptr->antenna==2 ) {
-        spr.drawString( "A2", 0, 8, FNT ); 
-        spr.fillCircle( 37, 12, 10, mptr->col_def_led1_off );
-        spr.fillCircle( 62, 12, 10, mptr->col_def_led2_on );
-      } 
-      else if(mptr->antenna==1) {
-        spr.drawString( "A1", 0, 8, FNT ); 
-        spr.fillCircle( 37, 12, 10, mptr->col_def_led1_on );
-        spr.fillCircle( 62, 12, 10, mptr->col_def_led2_off );
-      }
+        if( mptr->antenna == 2 ) {
+          spr.drawString( "A2", 0, 8, FNT );
+          spr.fillCircle( 37, 12, 10, mptr->col_def_led1_off );
+          spr.fillCircle( 62, 12, 10, mptr->col_def_led2_on );
+        } else if( mptr->antenna == 1 ) {
+          spr.drawString( "A1", 0, 8, FNT );
+          spr.fillCircle( 37, 12, 10, mptr->col_def_led1_on );
+          spr.fillCircle( 62, 12, 10, mptr->col_def_led2_off );
+        }
 
-      spr.pushSprite( 130, 170 ); //transfer to lcd
-      spr.deleteSprite(); //free memory
+        spr.pushSprite( 130, 170 ); //transfer to lcd
+        spr.deleteSprite(); //free memory
 #endif
 
 
@@ -1135,10 +1133,9 @@ void loop()
             ii = *ptr++ / 2; //scale to +/- 32 range
             qq = *ptr++ / 2;
 
-            if( mptr->draw_const_circles) {
+            if( mptr->draw_const_circles ) {
               spr.fillCircle( 40 + ii, 40 + qq, 2, mptr->col_def_const ); //symbols
-            }
-            else {
+            } else {
               spr.drawPixel( 40 + ii, 40 + qq, mptr->col_def_const ); // use Pixel rather than Circle
             }
           }
@@ -1292,7 +1289,7 @@ void loop()
         snprintf( disp_buf, 32, "FREQ: %3.6f MHz", mptr->current_freq );
         tft.drawString( disp_buf, 140, 0 + y_offset, FNT );
 
-        if(mptr->decoder<=1) { //p25 and dmr
+        if( mptr->decoder <= 1 ) { //p25 and dmr
           if( mptr->on_control_b && mptr->total_session_time > 1500 ) {
             sprintf( disp_buf, "TSBK/SEC %u      ", mptr->tsbk_sec );
           } else {
@@ -1441,22 +1438,21 @@ void loop()
       uint8_t nac_lock_str = 'U';
       if( mptr->lock_nac ) nac_lock_str = 'L';
 
-      if(mptr->decoder<=1) { //p25 and dmr
+      if( mptr->decoder <= 1 ) { //p25 and dmr
         if( mptr->on_control_b ) {
           tft.setTextColor( 0xF643, mptr->col_def_bg ); // set color to a yellow for on CCH freq
 
-        //  sprintf( disp_buf, " %3.0fdBm CCH TSBK/SEC %u                    ", mptr->rssi_f, mptr->tsbk_sec ); // removed cal freq //
-           sprintf( disp_buf, " CCH TSBK/SEC %u  %3.0fdBm                  ", mptr->tsbk_sec, mptr->rssi_f ); // moved rssi to last on line
+          //  sprintf( disp_buf, " %3.0fdBm CCH TSBK/SEC %u                    ", mptr->rssi_f, mptr->tsbk_sec ); // removed cal freq //
+          sprintf( disp_buf, " CCH TSBK/SEC %u  %3.0fdBm                  ", mptr->tsbk_sec, mptr->rssi_f ); // moved rssi to last on line
         } else {
           tft.setTextColor( mptr->col4, mptr->col_def_bg );
-       //   sprintf( disp_buf, " %3.0fdBm TCH %3.6f MHz                     ", mptr->rssi_f, mptr->current_freq ); // removed erate
-            sprintf( disp_buf, " TCH %3.6f MHz %3.0fdBm                   ",  mptr->current_freq, mptr->rssi_f ); //moved rssi to last on line
+          //   sprintf( disp_buf, " %3.0fdBm TCH %3.6f MHz                     ", mptr->rssi_f, mptr->current_freq ); // removed erate
+          sprintf( disp_buf, " TCH %3.6f MHz %3.0fdBm                   ",  mptr->current_freq, mptr->rssi_f ); //moved rssi to last on line
         }
-      }
-      else {
-          tft.setTextColor( mptr->col4, mptr->col_def_bg );
-      //  sprintf( disp_buf, " %3.0fdBm  %3.6f MHz                     ", mptr->rssi_f, mptr->current_freq ); // removed erate
-          sprintf( disp_buf, " %3.6f MHz  %3.0fdBm                    ",  mptr->current_freq, mptr->rssi_f ); // moved rssi to last on line
+      } else {
+        tft.setTextColor( mptr->col4, mptr->col_def_bg );
+        //  sprintf( disp_buf, " %3.0fdBm  %3.6f MHz                     ", mptr->rssi_f, mptr->current_freq ); // removed erate
+        sprintf( disp_buf, " %3.6f MHz  %3.0fdBm                    ",  mptr->current_freq, mptr->rssi_f ); // moved rssi to last on line
       }
 
       if( strcmp( disp_buf, line4_str ) != 0 ) {
@@ -1537,21 +1533,21 @@ void loop()
           draw_button_modes(); //<<< added
 
 
-          #if 0
+#if 0
           if( mptr->roaming ) {
             sprintf( disp_buf, "MONITOR ROAM-ON-%u Free %u", mptr->roaming, freeMemory() );
           } else {
             // sprintf( disp_buf, "MONITOR ROAM-OFF" );
             sprintf( disp_buf, "MONITOR - MEM %u         ", freeMemory() ); // <<<<<<<<<<<<
           }
-          #else
-            if( mptr->roaming ) {
-              sprintf( disp_buf, "MONITOR ROAM-ON-%u BAT %1.2fV, GC%u, PD%u", mptr->roaming, mptr->bat_volt_f, mptr->gain_controller, mptr->peak_det+1 ); // removed the space after "GC" and "PD". The PD number was not cleared on display.
-            } else {
-              // sprintf( disp_buf, "MONITOR ROAM-OFF" );
-              sprintf( disp_buf, "MONITOR - BAT %1.2fV, GC %u, PD %u        ", mptr->bat_volt_f, mptr->gain_controller, mptr->peak_det+1 ); // <<<<<<<<<<<<
-            }
-          #endif
+#else
+          if( mptr->roaming ) {
+            sprintf( disp_buf, "MONITOR ROAM-ON-%u BAT %1.2fV, GC%u, PD%u", mptr->roaming, mptr->bat_volt_f, mptr->gain_controller, mptr->peak_det + 1 ); // removed the space after "GC" and "PD". The PD number was not cleared on display.
+          } else {
+            // sprintf( disp_buf, "MONITOR ROAM-OFF" );
+            sprintf( disp_buf, "MONITOR - BAT %1.2fV, GC %u, PD %u        ", mptr->bat_volt_f, mptr->gain_controller, mptr->peak_det + 1 ); // <<<<<<<<<<<<
+          }
+#endif
 
 
 
@@ -1593,31 +1589,30 @@ void loop()
 
 #if 1
       //////////////////////////////////////////////////////////
-      //Draw ANT SW indicator 
+      //Draw ANT SW indicator
       //////////////////////////////////////////////////////////
       spr.createSprite( 80, 22 ); //allocate sprite memory //80,40
-      spr.fillSprite( mptr->col_def_bg ); //clear to black bground 
+      spr.fillSprite( mptr->col_def_bg ); //clear to black bground
 
       spr.setTextColor( mptr->col_def_indicator, mptr->col_def_bg );
 
-      if( mptr->antenna==2 ) {
-       spr.drawString( "A2", 18, 4, FNT ); 
-   //     spr.fillCircle( 37, 12, 8, mptr->col_def_led1_off ); //37,12,10
-   //     spr.fillCircle( 62, 12, 8, ILI9341_CYAN ); // 62,12,10 mptr->col_def_led2_on
+      if( mptr->antenna == 2 ) {
+        spr.drawString( "A2", 18, 4, FNT );
+        //     spr.fillCircle( 37, 12, 8, mptr->col_def_led1_off ); //37,12,10
+        //     spr.fillCircle( 62, 12, 8, ILI9341_CYAN ); // 62,12,10 mptr->col_def_led2_on
         spr.fillTriangle( 45, 5, 45, 15, 70, 10, ILI9341_CYAN ); // changed to look like a "right arrow"
-   
 
 
-        
-      } 
-      else if(mptr->antenna==1) {
-       spr.drawString( "A1", 45, 4, FNT ); 
-     //   spr.fillCircle( 37, 12, 8, ILI9341_BLUE ); //mptr->col_def_led1_on
-     //  spr.fillCircle( 62, 12, 8, mptr->col_def_led2_off );
+
+
+      } else if( mptr->antenna == 1 ) {
+        spr.drawString( "A1", 45, 4, FNT );
+        //   spr.fillCircle( 37, 12, 8, ILI9341_BLUE ); //mptr->col_def_led1_on
+        //  spr.fillCircle( 62, 12, 8, mptr->col_def_led2_off );
         spr.fillTriangle( 35, 5, 35, 15, 10, 10, ILI9341_CYAN ); // changed to look like an "left arrow"
       }
       spr.pushSprite( 180, 185 ); //transfer to lcd 240,180 240,80
-    //  spr.pushSprite( 240, 40 ); //transfer to lcd
+      //  spr.pushSprite( 240, 40 ); //transfer to lcd
       spr.deleteSprite(); //free memory
 #endif
 
@@ -1626,25 +1621,22 @@ void loop()
       //Draw Status LEDS  / P1-P2 indicator
       //////////////////////////////////////////////////////////
       spr.createSprite( 80, 40 ); //allocate sprite memory
-      spr.fillSprite( mptr->col_def_bg ); //clear to black bground 
+      spr.fillSprite( mptr->col_def_bg ); //clear to black bground
 
       spr.setTextColor( mptr->col_def_indicator, mptr->col_def_bg );
 
-      if(mptr->decoder==0) { //P25
+      if( mptr->decoder == 0 ) { //P25
         if( mptr->phase2 ) {
           spr.drawString( "P2", 0, 8, FNT ); //p25 p2
         } else {
           spr.drawString( "P1", 0, 8, FNT ); //p25 p1
         }
-      }
-      else if(mptr->decoder==1) { //DMR
-          spr.drawString( "DMR", 0, 8, FNT ); //DMR
-      }
-      else if(mptr->decoder==2) { //ACARS
-          spr.drawString( "ACA", 0, 8, FNT ); 
-      }
-      else if(mptr->decoder==3) { //PAGERS
-          spr.drawString( "PGR", 0, 8, FNT ); 
+      } else if( mptr->decoder == 1 ) { //DMR
+        spr.drawString( "DMR", 0, 8, FNT ); //DMR
+      } else if( mptr->decoder == 2 ) { //ACARS
+        spr.drawString( "ACA", 0, 8, FNT );
+      } else if( mptr->decoder == 3 ) { //PAGERS
+        spr.drawString( "PGR", 0, 8, FNT );
       }
 
 
@@ -1688,10 +1680,9 @@ void loop()
           ii = *ptr++ / 2; //scale to +/- 32 range
           qq = *ptr++ / 2;
 
-          if( mptr->draw_const_circles) {
+          if( mptr->draw_const_circles ) {
             spr.fillCircle( 40 + ii, 40 + qq, 2, mptr->col_def_const ); //symbols
-          }
-          else {
+          } else {
             spr.drawPixel( 40 + ii, 40 + qq, mptr->col_def_const ); // use Pixel rather than Circle
           }
         }
@@ -1812,11 +1803,11 @@ void loop()
         //}
 #endif
 #else
-        if( power_button_press_time==0) {
+        if( power_button_press_time == 0 ) {
           //if( demod == 0 || demod == 1 ) {
-            snprintf( disp_buf, 50, "%s / %s   %05X-%03X-%03X%c  ", mptr->sys_name, mptr->site_name, mptr->wacn_id, mptr->sys_id, mptr->p25_sys_nac, nac_lock_str ); // <<<< moved wacn to line 1
+          snprintf( disp_buf, 50, "%s / %s   %05X-%03X-%03X%c  ", mptr->sys_name, mptr->site_name, mptr->wacn_id, mptr->sys_id, mptr->p25_sys_nac, nac_lock_str ); // <<<< moved wacn to line 1
           //} else if( demod == 2 ) {
-           // snprintf( disp_buf, 50, "FMNB     " );
+          // snprintf( disp_buf, 50, "FMNB     " );
           //}
           if( strncmp( ( char * )line1_str, ( char * )disp_buf, 63 ) != 0 ) clear_line1();
           strncpy( line1_str, disp_buf, 63 );
@@ -1827,25 +1818,25 @@ void loop()
 
     }
 
-    #if 1
+#if 1
     //draw audio volume bar
-    if(do_update_vol || do_draw_rx) {
-        do_update_vol=0;
-        FNT = 2;
-        spr.createSprite( 220, 4); //allocate memory for 80 x 80 sprite
-        spr.fillSprite( TFT_BLACK );
+    if( do_update_vol || do_draw_rx ) {
+      do_update_vol = 0;
+      FNT = 2;
+      spr.createSprite( 220, 4 ); //allocate memory for 80 x 80 sprite
+      spr.fillSprite( TFT_BLACK );
 
-        int v = (int) (mptr->audio_volume_f*78.0f);
-        if(v>220) v=220;
+      int v = ( int )( mptr->audio_volume_f * 78.0f );
+      if( v > 220 ) v = 220;
 
-        //x,y,w,h
-        if(mptr->audio_volume_f<2.1) spr.fillRect( 0, 0, v, 4, TFT_WHITE );
-          else spr.fillRect( 0, 0, v, 4, TFT_RED );
+      //x,y,w,h
+      if( mptr->audio_volume_f < 2.1 ) spr.fillRect( 0, 0, v, 4, TFT_WHITE );
+      else spr.fillRect( 0, 0, v, 4, TFT_RED );
 
-        spr.pushSprite( 0, 230  ); //send to lcd. upper left corner of sprite
-        spr.deleteSprite();  //free memory
-     }
-    #endif
+      spr.pushSprite( 0, 230 );  //send to lcd. upper left corner of sprite
+      spr.deleteSprite();  //free memory
+    }
+#endif
 
 draw_end:
     status_timer = millis();
