@@ -357,7 +357,7 @@ void clear_line6()
 //////////////////////////////////////////////////////////////////////////
 void clear_line7()
 {
-  tft.fillRect( 0, 180, 320, 30, mptr->col_def_bg );
+  tft.fillRect( 0, 180, 235, 30, mptr->col_def_bg );
 }
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
@@ -1445,17 +1445,18 @@ void loop()
         if( mptr->on_control_b ) {
           tft.setTextColor( 0xF643, mptr->col_def_bg ); // set color to a yellow for on CCH freq
 
-          sprintf( disp_buf, " %3.0fdBm CCH TSBK/SEC %u                    ", mptr->rssi_f, mptr->tsbk_sec ); // removed cal freq //
-
+        //  sprintf( disp_buf, " %3.0fdBm CCH TSBK/SEC %u                    ", mptr->rssi_f, mptr->tsbk_sec ); // removed cal freq //
+           sprintf( disp_buf, " CCH TSBK/SEC %u  %3.0fdBm                  ", mptr->tsbk_sec, mptr->rssi_f ); // moved rssi to last on line
         } else {
           tft.setTextColor( mptr->col4, mptr->col_def_bg );
-          sprintf( disp_buf, " %3.0fdBm TCH %3.6f MHz                     ", mptr->rssi_f, mptr->current_freq ); // removed erate
-
+       //   sprintf( disp_buf, " %3.0fdBm TCH %3.6f MHz                     ", mptr->rssi_f, mptr->current_freq ); // removed erate
+            sprintf( disp_buf, " TCH %3.6f MHz %3.0fdBm                   ",  mptr->current_freq, mptr->rssi_f ); //moved rssi to last on line
         }
       }
       else {
           tft.setTextColor( mptr->col4, mptr->col_def_bg );
-          sprintf( disp_buf, " %3.0fdBm  %3.6f MHz                     ", mptr->rssi_f, mptr->current_freq ); // removed erate
+      //  sprintf( disp_buf, " %3.0fdBm  %3.6f MHz                     ", mptr->rssi_f, mptr->current_freq ); // removed erate
+          sprintf( disp_buf, " %3.6f MHz  %3.0fdBm                    ",  mptr->current_freq, mptr->rssi_f ); // moved rssi to last on line
       }
 
       if( strcmp( disp_buf, line4_str ) != 0 ) {
@@ -1494,7 +1495,7 @@ void loop()
       strcpy( line6_str, disp_buf );
 
       tft.setTextColor( mptr->col7, mptr->col_def_bg );
-      sprintf( disp_buf, " %s EVM %3.1f ER %1.3f        ", demod_str, mptr->evm_p, mptr->erate ); // <<<<<<<< removed wacn plus added evm and erate here
+      sprintf( disp_buf, " %s EVM %3.1f ER %1.3f   ", demod_str, mptr->evm_p, mptr->erate ); // <<<<<<<< removed wacn plus added evm and erate here
 
 
       if( strcmp( disp_buf, line7_str ) != 0 ) {
@@ -1545,7 +1546,7 @@ void loop()
           }
           #else
             if( mptr->roaming ) {
-              sprintf( disp_buf, "MONITOR ROAM-ON-%u BAT %1.2fV, GC %u, PD %u", mptr->roaming, mptr->bat_volt_f, mptr->gain_controller, mptr->peak_det+1 );
+              sprintf( disp_buf, "MONITOR ROAM-ON-%u BAT %1.2fV, GC%u, PD%u", mptr->roaming, mptr->bat_volt_f, mptr->gain_controller, mptr->peak_det+1 ); // removed the space after "GC" and "PD". The PD number was not cleared on display.
             } else {
               // sprintf( disp_buf, "MONITOR ROAM-OFF" );
               sprintf( disp_buf, "MONITOR - BAT %1.2fV, GC %u, PD %u        ", mptr->bat_volt_f, mptr->gain_controller, mptr->peak_det+1 ); // <<<<<<<<<<<<
@@ -1594,23 +1595,29 @@ void loop()
       //////////////////////////////////////////////////////////
       //Draw ANT SW indicator 
       //////////////////////////////////////////////////////////
-      spr.createSprite( 80, 40 ); //allocate sprite memory
-      spr.fillSprite( mptr->col_def_bg ); //clear to black bground
+      spr.createSprite( 80, 22 ); //allocate sprite memory //80,40
+      spr.fillSprite( mptr->col_def_bg ); //clear to black bground 
 
       spr.setTextColor( mptr->col_def_indicator, mptr->col_def_bg );
 
       if( mptr->antenna==2 ) {
-        spr.drawString( "A2", 0, 8, FNT ); 
-        spr.fillCircle( 37, 12, 10, mptr->col_def_led1_off );
-        spr.fillCircle( 62, 12, 10, mptr->col_def_led2_on );
+       spr.drawString( "A2", 18, 4, FNT ); 
+   //     spr.fillCircle( 37, 12, 8, mptr->col_def_led1_off ); //37,12,10
+   //     spr.fillCircle( 62, 12, 8, ILI9341_CYAN ); // 62,12,10 mptr->col_def_led2_on
+        spr.fillTriangle( 45, 5, 45, 15, 70, 10, ILI9341_CYAN ); // changed to look like a "right arrow"
+   
+
+
+        
       } 
       else if(mptr->antenna==1) {
-        spr.drawString( "A1", 0, 8, FNT ); 
-        spr.fillCircle( 37, 12, 10, mptr->col_def_led1_on );
-        spr.fillCircle( 62, 12, 10, mptr->col_def_led2_off );
+       spr.drawString( "A1", 45, 4, FNT ); 
+     //   spr.fillCircle( 37, 12, 8, ILI9341_BLUE ); //mptr->col_def_led1_on
+     //  spr.fillCircle( 62, 12, 8, mptr->col_def_led2_off );
+        spr.fillTriangle( 35, 5, 35, 15, 10, 10, ILI9341_CYAN ); // changed to look like an "left arrow"
       }
-
-      spr.pushSprite( 240, 40 ); //transfer to lcd
+      spr.pushSprite( 180, 185 ); //transfer to lcd 240,180 240,80
+    //  spr.pushSprite( 240, 40 ); //transfer to lcd
       spr.deleteSprite(); //free memory
 #endif
 
@@ -1619,7 +1626,7 @@ void loop()
       //Draw Status LEDS  / P1-P2 indicator
       //////////////////////////////////////////////////////////
       spr.createSprite( 80, 40 ); //allocate sprite memory
-      spr.fillSprite( mptr->col_def_bg ); //clear to black bground
+      spr.fillSprite( mptr->col_def_bg ); //clear to black bground 
 
       spr.setTextColor( mptr->col_def_indicator, mptr->col_def_bg );
 

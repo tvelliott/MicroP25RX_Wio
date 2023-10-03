@@ -28,7 +28,8 @@ void scroll_tick(uint8_t p25_state) {
 
       if(!did_init || current_mode!=mptr->wio_button_mode) {
         if(did_init) scroll_spr.deleteSprite();
-        scroll_spr.createSprite(90, 60);
+      //  scroll_spr.createSprite(90, 60);
+        scroll_spr.createSprite(60, 60); 
         scroll_spr.fillSprite(TFT_BLACK);
         scroll_spr.setTextColor(TFT_WHITE); 
         current_mode = WIO_BUTTON_MODE_MONITOR;
@@ -57,9 +58,10 @@ void scroll_tick(uint8_t p25_state) {
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 void draw_scroll_mon_page(uint8_t p25_state) {
-    if(++xpos >= 12) {
+    if(++xpos >= 6) { //reduced from 12 to 6 in MON screen to allow for better TG log display
       xpos=0;
-      scroll_spr.setScrollRect(0, 0, 96, 60, TFT_BLACK); 
+      // scroll_spr.setScrollRect(0, 0, 96, 60, TFT_BLACK); 
+      scroll_spr.setScrollRect(0, 0, 66, 60, TFT_BLACK); 
       scroll_spr.scroll(0,-8);
     }
 
@@ -105,7 +107,8 @@ void draw_scroll_mon_page(uint8_t p25_state) {
       break;
     }
     scroll_spr.fillRect(xpos*8, 60-8, 8,8, col);
-    scroll_spr.pushSprite(120, 120);
+  //  scroll_spr.pushSprite(120, 120);
+     scroll_spr.pushSprite(170, 120);
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
