@@ -21,6 +21,55 @@
 //OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 //SOFTWARE.
 
+#include <cdcacm.h>
+#include <usbhub.h>
+USBHost     UsbH;
+
+#include <stdint.h>
+#include "crc32.h"  //crc for validating the sysinfo structure
+
+///////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////
+class ACMAsyncOper : public CDCAsyncOper
+{
+  public:
+    uint8_t OnInit(ACM *pacm);
+};
+
+///////////////////////////////////////////////////////////////
+// need to keep this. otherwise CDC ACM will not initialize
+///////////////////////////////////////////////////////////////
+uint8_t ACMAsyncOper::OnInit(ACM *pacm)
+{
+  uint8_t rcode;
+  // Set DTR = 1 RTS=1
+  rcode = pacm->SetControlLineState(3);
+
+  if (rcode)
+  {
+    ErrorMessage<uint8_t>(PSTR("SetControlLineState"), rcode);
+    return rcode;
+  }
+
+  LINE_CODING	lc;
+  lc.dwDTERate	= 115200;
+  lc.bCharFormat	= 0;
+  lc.bParityType	= 0;
+  lc.bDataBits	= 8;
+
+  rcode = pacm->SetLineCoding(&lc);
+
+  if (rcode)
+    ErrorMessage<uint8_t>(PSTR("SetLineCoding"), rcode);
+
+  return rcode;
+}
+ACMAsyncOper  AsyncOper;
+ACM           AcmSerial(&UsbH, &AsyncOper);
+
+
+
+
 //#include <FlashAsEEPROM.h> // temp disabled for hardcoded brightness
 #include "TFT_eSPI.h"
 #include "Free_Fonts.h"
@@ -428,6 +477,9 @@ void setup()
   b_button_press_time = 0;
   c_button_press_time = 0;
   power_button_press_time = 0;
+
+  //initialize USB and CDC ACM
+  UsbH.Init();
 
 }
 
