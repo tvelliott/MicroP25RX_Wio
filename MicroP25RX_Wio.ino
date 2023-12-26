@@ -455,7 +455,7 @@ void setup()
   tft.setFreeFont( FS18 );
   tft.setTextColor( TFT_WHITE, TFT_BLACK );
 
-  sprintf( disp_buf, "%s", "BlueTail Technologies 2023" );
+  sprintf( disp_buf, "%s", "BlueTail Technologies 2024" );
   FNT = 4;
   tft.drawString( disp_buf, 5, 10, FNT );
 
@@ -1585,22 +1585,22 @@ void loop()
           draw_button_modes(); //<<< added
 
 
-#if 0
+        if(mptr->hw_type < HW_TYPE_EAGLE_HH) {
           if( mptr->roaming ) {
             sprintf( disp_buf, "MONITOR ROAM-ON-%u Free %u", mptr->roaming, freeMemory() );
           } else {
             // sprintf( disp_buf, "MONITOR ROAM-OFF" );
             sprintf( disp_buf, "MONITOR - MEM %u         ", freeMemory() ); // <<<<<<<<<<<<
           }
-#else
+        }
+        else {
           if( mptr->roaming ) {
             sprintf( disp_buf, "MONITOR ROAM-ON-%u BAT %1.2fV, GC%u, PD%u", mptr->roaming, mptr->bat_volt_f, mptr->gain_controller, mptr->peak_det + 1 ); // removed the space after "GC" and "PD". The PD number was not cleared on display.
           } else {
             // sprintf( disp_buf, "MONITOR ROAM-OFF" );
             sprintf( disp_buf, "MONITOR - BAT %1.2fV, GC %u, PD %u        ", mptr->bat_volt_f, mptr->gain_controller, mptr->peak_det + 1 ); // <<<<<<<<<<<<
           }
-#endif
-
+        }
 
 
         } else {
@@ -1640,6 +1640,7 @@ void loop()
 #endif
 
 #if 1
+    if( mptr->hw_type >= HW_TYPE_EAGLE_HH) {
       //////////////////////////////////////////////////////////
       //Draw ANT SW indicator
       //////////////////////////////////////////////////////////
@@ -1650,22 +1651,14 @@ void loop()
 
       if( mptr->antenna == 2 ) {
         spr.drawString( "A2", 18, 4, FNT );
-        //     spr.fillCircle( 37, 12, 8, mptr->col_def_led1_off ); //37,12,10
-        //     spr.fillCircle( 62, 12, 8, ILI9341_CYAN ); // 62,12,10 mptr->col_def_led2_on
         spr.fillTriangle( 45, 5, 45, 15, 70, 10, ILI9341_CYAN ); // changed to look like a "right arrow"
-
-
-
-
       } else if( mptr->antenna == 1 ) {
         spr.drawString( "A1", 45, 4, FNT );
-        //   spr.fillCircle( 37, 12, 8, ILI9341_BLUE ); //mptr->col_def_led1_on
-        //  spr.fillCircle( 62, 12, 8, mptr->col_def_led2_off );
         spr.fillTriangle( 35, 5, 35, 15, 10, 10, ILI9341_CYAN ); // changed to look like an "left arrow"
       }
       spr.pushSprite( 180, 185 ); //transfer to lcd 240,180 240,80
-      //  spr.pushSprite( 240, 40 ); //transfer to lcd
       spr.deleteSprite(); //free memory
+    }
 #endif
 
 #if 1

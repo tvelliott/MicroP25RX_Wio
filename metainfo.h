@@ -32,6 +32,11 @@
 extern "C" {
 #endif
 
+#define HW_TYPE_NANO 0
+#define HW_TYPE_MICRO 1
+#define HW_TYPE_EAGLE_HH 2
+#define HW_TYPE_EAGLE_HH_ANT_DIV 3
+
 #define META_DATA_TYPE_CONST 1
 #define META_DATA_TYPE_ZONEINFO 2
 #define META_DATA_TYPE_META_CONFIG_INFO 3
@@ -201,6 +206,7 @@ typedef struct {
   uint32_t p25_state;
   uint32_t p25_state_pid;
   uint32_t antenna;
+  uint32_t hw_type;
 
   uint32_t crc_val;
 }
