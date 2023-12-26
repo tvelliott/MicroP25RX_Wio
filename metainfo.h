@@ -207,6 +207,7 @@ typedef struct {
   uint32_t p25_state_pid;
   uint32_t antenna;
   uint32_t hw_type;
+  uint32_t en_traffic_scroll;
 
   uint32_t crc_val;
 }
