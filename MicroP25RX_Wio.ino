@@ -1640,7 +1640,7 @@ void loop()
 #endif
 
 #if 1
-    if( mptr->hw_type >= HW_TYPE_EAGLE_HH) {
+    if( mptr->hw_type > HW_TYPE_EAGLE_HH) {
       //////////////////////////////////////////////////////////
       //Draw ANT SW indicator
       //////////////////////////////////////////////////////////
