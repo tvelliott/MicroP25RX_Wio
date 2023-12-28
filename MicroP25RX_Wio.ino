@@ -1,7 +1,7 @@
-
+//
 //MIT License
 //
-//Copyright (c) 2022 tvelliott
+//Copyright (c) 2022, 2023, 2024 tvelliott
 //
 //Permission is hereby granted, free of charge, to any person obtaining a copy
 //of this software and associated documentation files (the "Software"), to deal
@@ -70,7 +70,7 @@ ACM           AcmSerial(&UsbH, &AsyncOper);
 
 
 
-//#include <FlashAsEEPROM.h> // temp disabled for hardcoded brightness
+#include <FlashAsEEPROM.h> //  brightness
 #include "TFT_eSPI.h"
 #include "Free_Fonts.h"
 #include "Free_Keybord.h"
@@ -100,7 +100,7 @@ Keybord mykey; // Cleate a keybord
 #include <Seeed_FS.h>
 #include <SD/Seeed_SD.h>
 
-static LCDBackLight backLight;
+ LCDBackLight backLight;
 //static uint8_t brightness = 5;
 uint8_t brightness = 5;
 static uint8_t maxBrightness = 100;
@@ -430,8 +430,8 @@ void setup()
   tft.fillScreen( mptr->col_def_bg ); //background
 
 
-// brightness = EEPROM.read(0); //disabled eeprom
-  brightness = 100; //hardcoded brightness startup value
+ brightness = EEPROM.read(0); //read eeprom
+//  brightness = 100; //hardcoded brightness startup value
   if( brightness < 5 ) brightness = 5;
   if( brightness > 100 ) brightness = 100;
   backLight.initialize();
@@ -588,7 +588,7 @@ void loop()
   if( !did_save && B_but_pressed && ( millis() - b_button_press_time > 1500 ) && B_but == 0xff ) {
     send_cmd( "save", 4 ); //save config
     did_save = 1;
-//   EEPROM.commit();  //save brightness // disabled with hardcoded brightness
+  // EEPROM.commit();  //save brightness // disabled with hardcoded brightness
   } else if( did_save && B_but == 0x00 ) {
     did_save = 0;
     b_button_press_time = 0;
@@ -1495,16 +1495,16 @@ void loop()
           tft.setTextColor( 0xF643, mptr->col_def_bg ); // set color to a yellow for on CCH freq
 
           //  sprintf( disp_buf, " %3.0fdBm CCH TSBK/SEC %u                    ", mptr->rssi_f, mptr->tsbk_sec ); // removed cal freq //
-          sprintf( disp_buf, " CCH TSBK/SEC %u  %3.0fdBm                  ", mptr->tsbk_sec, mptr->rssi_f ); // moved rssi to last on line
+           sprintf( disp_buf, " CCH TSBK/SEC %u        %3.0fdBm                  ", mptr->tsbk_sec, mptr->rssi_f ); //moved rssi to last on line
         } else {
           tft.setTextColor( mptr->col4, mptr->col_def_bg );
           //   sprintf( disp_buf, " %3.0fdBm TCH %3.6f MHz                     ", mptr->rssi_f, mptr->current_freq ); // removed erate
-          sprintf( disp_buf, " TCH %3.6f MHz %3.0fdBm                   ",  mptr->current_freq, mptr->rssi_f ); //moved rssi to last on line
+          sprintf( disp_buf, " TCH %3.6f MHz    %3.0fdBm                   ",  mptr->current_freq, mptr->rssi_f ); //moved rssi to last on line
         }
       } else {
         tft.setTextColor( mptr->col4, mptr->col_def_bg );
         //  sprintf( disp_buf, " %3.0fdBm  %3.6f MHz                     ", mptr->rssi_f, mptr->current_freq ); // removed erate
-        sprintf( disp_buf, " %3.6f MHz  %3.0fdBm                    ",  mptr->current_freq, mptr->rssi_f ); // moved rssi to last on line
+         sprintf( disp_buf, " %3.6f MHz        %3.0fdBm                    ",  mptr->current_freq, mptr->rssi_f );// moved rssi to last on line
       }
 
       if( strcmp( disp_buf, line4_str ) != 0 ) {

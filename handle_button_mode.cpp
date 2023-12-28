@@ -31,10 +31,17 @@
 #include "Free_Keybord.h"
 #include "metainfo.h"
 
+#include <FlashAsEEPROM.h> 
+#include "lcd_backlight.hpp"
+
 extern TFT_eSPI tft;
 extern int current_button_mode;
 extern int gen_screencaps;
 extern void do_screencap( void );
+
+extern LCDBackLight backLight;
+extern uint8_t brightness;
+
 
 extern bool TGLogScreen;  // <<<<<<<< TG LOG SCREEN
 
@@ -49,9 +56,9 @@ int handle_button_mode( void )
   int ret = -1;
 
   if( mptr->speaker_en == 0 ) {
-    ret = get_menu_choice( 6, "MONITOR  MODE", "CONFIG  MODE", "TG  ZONE MODE", "SIGNALS / GAIN  MODE", "ENABLE SPEAKER", "GAIN CONTROLLER", NULL, NULL );
+    ret = get_menu_choice( 7, "MONITOR  MODE", "CONFIG  MODE", "TG  ZONE MODE", "SIGNALS / GAIN  MODE", "ENABLE SPEAKER", "GAIN CONTROLLER", "SET WIO BRIGHTNESS", NULL );
   } else {
-    ret = get_menu_choice( 6, "MONITOR  MODE", "CONFIG  MODE", "TG  ZONE MODE", "SIGNALS / GAIN  MODE", "DISABLE SPEAKER", "GAIN CONTROLLER", NULL, NULL );
+    ret = get_menu_choice( 7, "MONITOR  MODE", "CONFIG  MODE", "TG  ZONE MODE", "SIGNALS / GAIN  MODE", "DISABLE SPEAKER", "GAIN CONTROLLER", "SET WIO BRIGHTNESS", NULL );
   }
 
   if( ret == -1 ) return -1;
@@ -85,6 +92,24 @@ int handle_button_mode( void )
     }
     ret = 0;
   }
+
+// brightness
+ if( ret == 6) { 
+  int ret3 = get_menu_choice( 8, "5 %", "10 %", "20 %", "30 %", "40 %", "50 %", "75 %", "100 %" );
+  if( ret3 == -1 ) return -1;
+  if( ret3 == 0 ) { brightness = 5; backLight.setBrightness( brightness ); EEPROM.write(0,brightness); }
+  if( ret3 == 1 ) { brightness = 10; backLight.setBrightness( brightness ); EEPROM.write(0,brightness); }
+  if( ret3 == 2 ) { brightness = 20; backLight.setBrightness( brightness ); EEPROM.write(0,brightness); }
+  if( ret3 == 3 ) { brightness = 30; backLight.setBrightness( brightness ); EEPROM.write(0,brightness);}
+  if( ret3 == 4 ) { brightness = 40; backLight.setBrightness( brightness ); EEPROM.write(0,brightness); }
+  if( ret3 == 5 ) { brightness = 50; backLight.setBrightness( brightness ); EEPROM.write(0,brightness); }
+  if( ret3 == 6 ) { brightness = 75; backLight.setBrightness( brightness ); EEPROM.write(0,brightness); }
+  if( ret3 == 7 ) { brightness = 100; backLight.setBrightness( brightness ); EEPROM.write(0,brightness); }
+
+   EEPROM.commit();  //save brightness
+   ret = 0;  }
+  
+// }
 
   current_button_mode = ret;
   char cmd[64];
