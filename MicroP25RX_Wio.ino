@@ -32,40 +32,39 @@ USBHost     UsbH;
 ///////////////////////////////////////////////////////////////
 class ACMAsyncOper : public CDCAsyncOper
 {
-  public:
-    uint8_t OnInit(ACM *pacm);
+public:
+  uint8_t OnInit( ACM *pacm );
 };
 
 ///////////////////////////////////////////////////////////////
 // need to keep this. otherwise CDC ACM will not initialize
 ///////////////////////////////////////////////////////////////
-uint8_t ACMAsyncOper::OnInit(ACM *pacm)
+uint8_t ACMAsyncOper::OnInit( ACM *pacm )
 {
   uint8_t rcode;
   // Set DTR = 1 RTS=1
-  rcode = pacm->SetControlLineState(3);
+  rcode = pacm->SetControlLineState( 3 );
 
-  if (rcode)
-  {
-    ErrorMessage<uint8_t>(PSTR("SetControlLineState"), rcode);
+  if( rcode ) {
+    ErrorMessage<uint8_t>( PSTR( "SetControlLineState" ), rcode );
     return rcode;
   }
 
-  LINE_CODING	lc;
-  lc.dwDTERate	= 115200;
-  lc.bCharFormat	= 0;
-  lc.bParityType	= 0;
-  lc.bDataBits	= 8;
+  LINE_CODING lc;
+  lc.dwDTERate  = 115200;
+  lc.bCharFormat  = 0;
+  lc.bParityType  = 0;
+  lc.bDataBits  = 8;
 
-  rcode = pacm->SetLineCoding(&lc);
+  rcode = pacm->SetLineCoding( &lc );
 
-  if (rcode)
-    ErrorMessage<uint8_t>(PSTR("SetLineCoding"), rcode);
+  if( rcode )
+    ErrorMessage<uint8_t>( PSTR( "SetLineCoding" ), rcode );
 
   return rcode;
 }
 ACMAsyncOper  AsyncOper;
-ACM           AcmSerial(&UsbH, &AsyncOper);
+ACM           AcmSerial( &UsbH, &AsyncOper );
 
 
 
@@ -100,7 +99,7 @@ Keybord mykey; // Cleate a keybord
 #include <Seeed_FS.h>
 #include <SD/Seeed_SD.h>
 
- LCDBackLight backLight;
+LCDBackLight backLight;
 //static uint8_t brightness = 5;
 uint8_t brightness = 5;
 static uint8_t maxBrightness = 100;
@@ -430,7 +429,7 @@ void setup()
   tft.fillScreen( mptr->col_def_bg ); //background
 
 
- brightness = EEPROM.read(0); //read eeprom
+  brightness = EEPROM.read( 0 ); //read eeprom
 //  brightness = 100; //hardcoded brightness startup value
   if( brightness < 5 ) brightness = 5;
   if( brightness > 100 ) brightness = 100;
@@ -588,7 +587,7 @@ void loop()
   if( !did_save && B_but_pressed && ( millis() - b_button_press_time > 1500 ) && B_but == 0xff ) {
     send_cmd( "save", 4 ); //save config
     did_save = 1;
-  // EEPROM.commit();  //save brightness // disabled with hardcoded brightness
+    // EEPROM.commit();  //save brightness // disabled with hardcoded brightness
   } else if( did_save && B_but == 0x00 ) {
     did_save = 0;
     b_button_press_time = 0;
@@ -766,7 +765,7 @@ void loop()
   /////////////////////////////////////////////////////////////////////////
   else if( current_button_mode == WIO_BUTTON_MODE_MONITOR ) {
     uint32_t state_pid = mptr->p25_state_pid;
-    if( state_pid != prev_p25_state && mptr->en_traffic_scroll) {
+    if( state_pid != prev_p25_state && mptr->en_traffic_scroll ) {
       prev_p25_state = state_pid;
       scroll_tick( ( mptr->p25_state & 0xff ) );
     }
@@ -861,7 +860,7 @@ void loop()
   else if( current_button_mode == WIO_BUTTON_MODE_RF_GAIN ) {
 
     uint32_t state_pid = mptr->p25_state_pid;
-    if( state_pid != prev_p25_state && mptr->en_traffic_scroll) {
+    if( state_pid != prev_p25_state && mptr->en_traffic_scroll ) {
       prev_p25_state = state_pid;
       scroll_tick( ( mptr->p25_state & 0xff ) );
     }
@@ -1495,7 +1494,7 @@ void loop()
           tft.setTextColor( 0xF643, mptr->col_def_bg ); // set color to a yellow for on CCH freq
 
           //  sprintf( disp_buf, " %3.0fdBm CCH TSBK/SEC %u                    ", mptr->rssi_f, mptr->tsbk_sec ); // removed cal freq //
-           sprintf( disp_buf, " CCH TSBK/SEC %u        %3.0fdBm                  ", mptr->tsbk_sec, mptr->rssi_f ); //moved rssi to last on line
+          sprintf( disp_buf, " CCH TSBK/SEC %u        %3.0fdBm                  ", mptr->tsbk_sec, mptr->rssi_f ); //moved rssi to last on line
         } else {
           tft.setTextColor( mptr->col4, mptr->col_def_bg );
           //   sprintf( disp_buf, " %3.0fdBm TCH %3.6f MHz                     ", mptr->rssi_f, mptr->current_freq ); // removed erate
@@ -1504,7 +1503,7 @@ void loop()
       } else {
         tft.setTextColor( mptr->col4, mptr->col_def_bg );
         //  sprintf( disp_buf, " %3.0fdBm  %3.6f MHz                     ", mptr->rssi_f, mptr->current_freq ); // removed erate
-         sprintf( disp_buf, " %3.6f MHz        %3.0fdBm                    ",  mptr->current_freq, mptr->rssi_f );// moved rssi to last on line
+        sprintf( disp_buf, " %3.6f MHz        %3.0fdBm                    ",  mptr->current_freq, mptr->rssi_f );// moved rssi to last on line
       }
 
       if( strcmp( disp_buf, line4_str ) != 0 ) {
@@ -1585,22 +1584,21 @@ void loop()
           draw_button_modes(); //<<< added
 
 
-        if(mptr->hw_type < HW_TYPE_EAGLE_HH) {
-          if( mptr->roaming ) {
-            sprintf( disp_buf, "MONITOR ROAM-ON-%u Free %u", mptr->roaming, freeMemory() );
+          if( mptr->hw_type < HW_TYPE_EAGLE_HH ) {
+            if( mptr->roaming ) {
+              sprintf( disp_buf, "MONITOR ROAM-ON-%u Free %u", mptr->roaming, freeMemory() );
+            } else {
+              // sprintf( disp_buf, "MONITOR ROAM-OFF" );
+              sprintf( disp_buf, "MONITOR - MEM %u         ", freeMemory() ); // <<<<<<<<<<<<
+            }
           } else {
-            // sprintf( disp_buf, "MONITOR ROAM-OFF" );
-            sprintf( disp_buf, "MONITOR - MEM %u         ", freeMemory() ); // <<<<<<<<<<<<
+            if( mptr->roaming ) {
+              sprintf( disp_buf, "MONITOR ROAM-ON-%u BAT %1.2fV, GC%u, PD%u", mptr->roaming, mptr->bat_volt_f, mptr->gain_controller, mptr->peak_det + 1 ); // removed the space after "GC" and "PD". The PD number was not cleared on display.
+            } else {
+              // sprintf( disp_buf, "MONITOR ROAM-OFF" );
+              sprintf( disp_buf, "MONITOR - BAT %1.2fV, GC %u, PD %u        ", mptr->bat_volt_f, mptr->gain_controller, mptr->peak_det + 1 ); // <<<<<<<<<<<<
+            }
           }
-        }
-        else {
-          if( mptr->roaming ) {
-            sprintf( disp_buf, "MONITOR ROAM-ON-%u BAT %1.2fV, GC%u, PD%u", mptr->roaming, mptr->bat_volt_f, mptr->gain_controller, mptr->peak_det + 1 ); // removed the space after "GC" and "PD". The PD number was not cleared on display.
-          } else {
-            // sprintf( disp_buf, "MONITOR ROAM-OFF" );
-            sprintf( disp_buf, "MONITOR - BAT %1.2fV, GC %u, PD %u        ", mptr->bat_volt_f, mptr->gain_controller, mptr->peak_det + 1 ); // <<<<<<<<<<<<
-          }
-        }
 
 
         } else {
@@ -1640,25 +1638,25 @@ void loop()
 #endif
 
 #if 1
-    if( mptr->hw_type > HW_TYPE_EAGLE_HH) {
-      //////////////////////////////////////////////////////////
-      //Draw ANT SW indicator
-      //////////////////////////////////////////////////////////
-      spr.createSprite( 80, 22 ); //allocate sprite memory //80,40
-      spr.fillSprite( mptr->col_def_bg ); //clear to black bground
+      if( mptr->hw_type > HW_TYPE_EAGLE_HH ) {
+        //////////////////////////////////////////////////////////
+        //Draw ANT SW indicator
+        //////////////////////////////////////////////////////////
+        spr.createSprite( 80, 22 ); //allocate sprite memory //80,40
+        spr.fillSprite( mptr->col_def_bg ); //clear to black bground
 
-      spr.setTextColor( mptr->col_def_indicator, mptr->col_def_bg );
+        spr.setTextColor( mptr->col_def_indicator, mptr->col_def_bg );
 
-      if( mptr->antenna == 2 ) {
-        spr.drawString( "A2", 18, 4, FNT );
-        spr.fillTriangle( 45, 5, 45, 15, 70, 10, ILI9341_CYAN ); // changed to look like a "right arrow"
-      } else if( mptr->antenna == 1 ) {
-        spr.drawString( "A1", 45, 4, FNT );
-        spr.fillTriangle( 35, 5, 35, 15, 10, 10, ILI9341_CYAN ); // changed to look like an "left arrow"
+        if( mptr->antenna == 2 ) {
+          spr.drawString( "A2", 18, 4, FNT );
+          spr.fillTriangle( 45, 5, 45, 15, 70, 10, ILI9341_CYAN ); // changed to look like a "right arrow"
+        } else if( mptr->antenna == 1 ) {
+          spr.drawString( "A1", 45, 4, FNT );
+          spr.fillTriangle( 35, 5, 35, 15, 10, 10, ILI9341_CYAN ); // changed to look like an "left arrow"
+        }
+        spr.pushSprite( 180, 185 ); //transfer to lcd 240,180 240,80
+        spr.deleteSprite(); //free memory
       }
-      spr.pushSprite( 180, 185 ); //transfer to lcd 240,180 240,80
-      spr.deleteSprite(); //free memory
-    }
 #endif
 
 #if 1
