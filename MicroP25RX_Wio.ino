@@ -418,6 +418,9 @@ void clear_line8()
 void setup()
 {
 
+  pinMode(OUTPUT_CTR_5V, OUTPUT);
+  digitalWrite(OUTPUT_CTR_5V, HIGH);//high is on
+
   pinMode( WIO_BUZZER, OUTPUT ); // <<<<<play buzzer tone
 
   mptr = &minfo_verified;
