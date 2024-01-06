@@ -421,6 +421,9 @@ void setup()
   pinMode(OUTPUT_CTR_5V, OUTPUT);
   digitalWrite(OUTPUT_CTR_5V, HIGH);//high is on
 
+  //pinMode(PIN_USB_HOST_ENABLE, OUTPUT);
+  //digitalWrite(PIN_USB_HOST_ENABLE, HIGH);
+
   pinMode( WIO_BUZZER, OUTPUT ); // <<<<<play buzzer tone
 
   mptr = &minfo_verified;
@@ -1407,6 +1410,10 @@ void loop()
           //   if( strncmp( ( char * )disp_buf, ( char * )line2_str, 31 ) != 0 ) clear_line2();   // changes for rid on line 2
           //   strncpy( line2_str, disp_buf, 31 );
           //   tft.drawString( disp_buf, 5, 40, FNT );
+        }
+
+        if( mptr->use_demod >= 2 ) { //use site_name for analog demod
+          strncpy( (char *) mptr->desc, (char *) mptr->site_name, 31);
         }
 
         snprintf( disp_buf2, 24, "%s", mptr->desc );
