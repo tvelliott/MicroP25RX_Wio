@@ -21,53 +21,8 @@
 //OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 //SOFTWARE.
 
-#include <cdcacm.h>
-#include <usbhub.h>
-USBHost     UsbH;
-
 #include <stdint.h>
 #include "crc32.h"  //crc for validating the sysinfo structure
-
-///////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////
-class ACMAsyncOper : public CDCAsyncOper
-{
-public:
-  uint8_t OnInit( ACM *pacm );
-};
-
-///////////////////////////////////////////////////////////////
-// need to keep this. otherwise CDC ACM will not initialize
-///////////////////////////////////////////////////////////////
-uint8_t ACMAsyncOper::OnInit( ACM *pacm )
-{
-  uint8_t rcode;
-  // Set DTR = 1 RTS=1
-  rcode = pacm->SetControlLineState( 3 );
-
-  if( rcode ) {
-    ErrorMessage<uint8_t>( PSTR( "SetControlLineState" ), rcode );
-    return rcode;
-  }
-
-  LINE_CODING lc;
-  lc.dwDTERate  = 115200;
-  lc.bCharFormat  = 0;
-  lc.bParityType  = 0;
-  lc.bDataBits  = 8;
-
-  rcode = pacm->SetLineCoding( &lc );
-
-  if( rcode )
-    ErrorMessage<uint8_t>( PSTR( "SetLineCoding" ), rcode );
-
-  return rcode;
-}
-ACMAsyncOper  AsyncOper;
-ACM           AcmSerial( &UsbH, &AsyncOper );
-
-
-
 
 #include <FlashAsEEPROM.h> //  brightness
 #include "TFT_eSPI.h"
@@ -418,12 +373,6 @@ void clear_line8()
 void setup()
 {
 
-  pinMode(OUTPUT_CTR_5V, OUTPUT);
-  digitalWrite(OUTPUT_CTR_5V, HIGH);//high is on
-
-  //pinMode(PIN_USB_HOST_ENABLE, OUTPUT);
-  //digitalWrite(PIN_USB_HOST_ENABLE, HIGH);
-
   pinMode( WIO_BUZZER, OUTPUT ); // <<<<<play buzzer tone
 
   mptr = &minfo_verified;
@@ -483,8 +432,6 @@ void setup()
   c_button_press_time = 0;
   power_button_press_time = 0;
 
-  //initialize USB and CDC ACM
-  UsbH.Init();
 
 }
 
