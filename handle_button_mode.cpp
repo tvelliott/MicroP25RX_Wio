@@ -43,7 +43,9 @@ extern LCDBackLight backLight;
 extern uint8_t brightness;
 
 
-extern bool TGLogScreen;  // <<<<<<<< TG LOG SCREEN
+extern int TGLogScreen;  
+
+int do_tglog_update;
 
 void clr_screen( void );
 void send_cmd( const char *str, int len );
@@ -85,13 +87,14 @@ int handle_button_mode( void )
   }
 
   if( ret == 7 ) {
-    int ret3 = get_menu_choice( 8, "LAYOUT 1 (default)", "LAYOUT 2", "LAYOUT 3", "LAYOUT 4", "LAYOUT 5", "LAYOUT 6", "LAYOUT 7", "LAYOUT 8" );
-    if( ret3 == -1 ) return -1;
+    int ret3 = get_menu_choice( 8, "TG HIST (default)", "DIAGNOSTIC", "LAYOUT 3", "LAYOUT 4", "LAYOUT 5", "LAYOUT 6", "LAYOUT 7", "LAYOUT 8" );
+    //if( ret3 == -1 ) return -1;
 
     char cmd[64];
     snprintf( cmd, 63, "layout %u\r\n", ret3+1 ); //layout 1-8
     send_cmd( cmd, strlen( cmd ) );
     ret = 0;
+    do_tglog_update=1;
   }
 
   if( ret == 4 ) {
@@ -159,12 +162,6 @@ int handle_button_mode( void )
   snprintf( cmd, 63, "wio_but_mode %u\r\n", ret );
 
   if( gen_screencaps ) do_screencap();
-  if( current_button_mode != 0 ) {
-    TGLogScreen = false; // <<<<<<<<<<<<<<<< TG LOG SCREEN
-  }
-  if( current_button_mode == 0 ) {
-    TGLogScreen = !TGLogScreen; // <<<<<<<<<< TG LOG SCREEN
-  }
 
   send_cmd( cmd, strlen( cmd ) );
   clr_screen();
