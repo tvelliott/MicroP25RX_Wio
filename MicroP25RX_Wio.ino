@@ -69,7 +69,6 @@ static uint32_t roam_time;
 
 extern volatile int cmd_acked;
 
-extern int do_tglog_update;
 
 #define FFT_M 128
 uint8_t fft_data[FFT_M];
@@ -119,7 +118,6 @@ volatile uint16_t meta_len;
 volatile uint32_t sclk_count;
 /////////////////////////////////////////////////////
 //////////////////////////////////////////////////TG LOG////////////////
-int  TGLogScreen = 1; //<< set true for default
 
 char TGlog1[35];
 char TGlog2[35];
@@ -949,12 +947,6 @@ void loop()
     if( mptr->crc_val == mi_crc && mptr->port == 8893 ) { //8893=metainfo structure
       rx_count++;
 
-      //handle layouts
-      TGLogScreen=0;
-      if(mptr->layout==1) TGLogScreen=1; //default layout
-      if(mptr->layout==2) TGLogScreen=0;
-
-
       tgzone = mptr->tgzone;
 
       if( mptr->data_type == META_DATA_TYPE_ZONEINFO ) {
@@ -1394,7 +1386,7 @@ void loop()
           sprintf( tglog_buf, " " ); // clear buf
 
 
-          if( TGLogScreen ) {
+          if( mptr->layout==1 ) {
             tft.setTextColor( mptr->col5, mptr->col_def_bg ); //
             tft.fillRect( 0, 115, 240, 75,  mptr->col_def_bg ); //
             // Highlight FTOs in red in TG log by looking for ">>".
@@ -1488,7 +1480,7 @@ void loop()
       sprintf( disp_buf, "SITE %d, RFSS %d  DEMOD %s", mptr->site_id, mptr->rf_id, demod_str );
       if( strcmp( disp_buf, line5_str ) != 0 ) {
         //   clear_line5();
-        if( TGLogScreen == 0 ) {
+        if( mptr->layout==2) {
           clear_line5();  // < tg log screen <<<<<<<<<
           tft.drawString( disp_buf, 5, 130, FNT );
         }
@@ -1500,7 +1492,7 @@ void loop()
       sprintf( disp_buf, "NCO1 %3.3f, NCO2 %3.2f                  ", mptr->nco_offset, mptr->loop_freq ); //remove evm
       if( strcmp( disp_buf, line6_str ) != 0 ) {
         //clear_line6(); //space at the end of this line is better solution
-        if( TGLogScreen == 0 ) {
+        if( mptr->layout==2 ) {
           tft.drawString( disp_buf, 5, 160, FNT ); // < tg log screen <<<<<<<<<<<<<<<<
         }
         // tft.drawString(disp_buf, 5, 160, FNT);

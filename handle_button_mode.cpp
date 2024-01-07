@@ -43,10 +43,6 @@ extern LCDBackLight backLight;
 extern uint8_t brightness;
 
 
-extern int TGLogScreen;  
-
-int do_tglog_update;
-
 void clr_screen( void );
 void send_cmd( const char *str, int len );
 static int FNT = 4;
@@ -94,7 +90,7 @@ int handle_button_mode( void )
     snprintf( cmd, 63, "layout %u\r\n", ret3+1 ); //layout 1-8
     send_cmd( cmd, strlen( cmd ) );
     ret = 0;
-    do_tglog_update=1;
+    clr_screen();
   }
 
   if( ret == 4 ) {

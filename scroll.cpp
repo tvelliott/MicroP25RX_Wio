@@ -16,7 +16,6 @@ void draw_scroll_signals_page( uint8_t state );
 void draw_scroll_mon_page( uint8_t state );
 
 static int current_mode = -1;
-extern bool TGLogScreen;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -25,7 +24,7 @@ void scroll_tick( uint8_t p25_state )
 
   if( p25_state == 0x00 || p25_state == P25_STATE_SYNC ) return;
 
-  if( mptr->wio_button_mode == WIO_BUTTON_MODE_MONITOR && TGLogScreen ) {
+  if( mptr->wio_button_mode == WIO_BUTTON_MODE_MONITOR && mptr->layout==1 ) {
 
     if( !did_init || current_mode != mptr->wio_button_mode ) {
       if( did_init ) scroll_spr.deleteSprite();
