@@ -69,6 +69,8 @@ static uint32_t roam_time;
 
 extern volatile int cmd_acked;
 
+int prev_layout;
+int current_layout;
 
 #define FFT_M 128
 uint8_t fft_data[FFT_M];
@@ -603,6 +605,8 @@ void loop()
         B_but_pressed = 0;
         clr_screen();
       }
+
+
     }
     //pressed and released
     if( right_but_pressed && right_but == 0x00 ) {
@@ -795,6 +799,7 @@ void loop()
         clr_screen();
       }
     }
+
     //pressed and released
     if( right_but_pressed && right_but == 0x00 ) {
       right_but_pressed = 0;
@@ -967,6 +972,7 @@ void loop()
 //  if( do_draw_rx ) {
   if( do_draw_rx && mptr->layout >= 3 ) {
 
+
 ///// Monitor Mode Screen Layouts
 
     if( mptr->layout == 3 ) {
@@ -995,6 +1001,11 @@ void loop()
     if( mptr->crc_val == mi_crc && mptr->port == 8893 ) { //8893=metainfo structure
       rx_count++;
 
+      current_layout = mptr->layout;
+      if(prev_layout!=current_layout) {
+        clr_screen();
+        prev_layout = current_layout;
+      }
 
       draw_button_modes();
       tgzone = mptr->tgzone;
