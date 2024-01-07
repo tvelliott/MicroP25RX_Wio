@@ -124,23 +124,24 @@ void draw_config_summary()
 #endif
 
   char vol_level[15];
-
+  sprintf( vol_level, "%1.2f", mi->audio_vol ); // fix audio level for show config
   if( test_doubles_equal( 0.0f, mi->audio_vol ) )  strcpy( vol_level, "OFF" );
-  if( test_doubles_equal( 0.01f, mi->audio_vol ) ) strcpy( vol_level, "0.01" );
-  if( test_doubles_equal( 0.02f, mi->audio_vol ) ) strcpy( vol_level, "0.02" );
-  if( test_doubles_equal( 0.03f, mi->audio_vol ) ) strcpy( vol_level, "0.03" );
-  if( test_doubles_equal( 0.04f, mi->audio_vol ) ) strcpy( vol_level, "0.04" );
-  if( test_doubles_equal( 0.05f, mi->audio_vol ) ) strcpy( vol_level, "0.05" );
-  if( test_doubles_equal( 0.10f, mi->audio_vol ) ) strcpy( vol_level, "0.10" );
-  if( test_doubles_equal( 0.25f, mi->audio_vol ) ) strcpy( vol_level, "0.25" );
-  if( test_doubles_equal( 0.5f, mi->audio_vol ) )  strcpy( vol_level, "0.50" );
-  if( test_doubles_equal( 1.0f, mi->audio_vol ) )  strcpy( vol_level, "1.0" );
-  if( test_doubles_equal( 2.0f, mi->audio_vol ) )  strcpy( vol_level, "2.0" );
-  if( test_doubles_equal( 4.0f, mi->audio_vol ) )  strcpy( vol_level, "4.0" );
-  if( test_doubles_equal( 5.0f, mi->audio_vol ) )  strcpy( vol_level, "5.0" );
-  if( test_doubles_equal( 6.0f, mi->audio_vol ) )  strcpy( vol_level, "6.0" );
-  if( test_doubles_equal( 8.0f, mi->audio_vol ) )  strcpy( vol_level, "8.0" );
-
+  /*
+    if( test_doubles_equal( 0.01f, mi->audio_vol ) ) strcpy( vol_level, "0.01" );
+    if( test_doubles_equal( 0.02f, mi->audio_vol ) ) strcpy( vol_level, "0.02" );
+    if( test_doubles_equal( 0.03f, mi->audio_vol ) ) strcpy( vol_level, "0.03" );
+    if( test_doubles_equal( 0.04f, mi->audio_vol ) ) strcpy( vol_level, "0.04" );
+    if( test_doubles_equal( 0.05f, mi->audio_vol ) ) strcpy( vol_level, "0.05" );
+    if( test_doubles_equal( 0.10f, mi->audio_vol ) ) strcpy( vol_level, "0.10" );
+    if( test_doubles_equal( 0.25f, mi->audio_vol ) ) strcpy( vol_level, "0.25" );
+    if( test_doubles_equal( 0.5f, mi->audio_vol ) )  strcpy( vol_level, "0.50" );
+    if( test_doubles_equal( 1.0f, mi->audio_vol ) )  strcpy( vol_level, "1.0" );
+    if( test_doubles_equal( 2.0f, mi->audio_vol ) )  strcpy( vol_level, "2.0" );
+    if( test_doubles_equal( 4.0f, mi->audio_vol ) )  strcpy( vol_level, "4.0" );
+    if( test_doubles_equal( 5.0f, mi->audio_vol ) )  strcpy( vol_level, "5.0" );
+    if( test_doubles_equal( 6.0f, mi->audio_vol ) )  strcpy( vol_level, "6.0" );
+    if( test_doubles_equal( 8.0f, mi->audio_vol ) )  strcpy( vol_level, "8.0" );
+  */
   //sprintf((char *)str1,"ROAMING TO  %u ms", m->roaming_timeout);
   sprintf( ( char * )str1, "IP %u.%u.%u.%u", mi->ip_addr[0], mi->ip_addr[1], mi->ip_addr[2], mi->ip_addr[3] );
   sprintf( ( char * )str2, "GW %u.%u.%u.%u", mi->gw_addr[0], mi->gw_addr[1], mi->gw_addr[2], mi->gw_addr[3] );
@@ -159,7 +160,7 @@ void draw_config_summary()
   sprintf( ( char * )str13, "AUD AGC %u", mi->do_audio_agc );
   sprintf( ( char * )str14, "LEARN MODE %u", mi->learn_mode );
   sprintf( ( char * )str15, "RX FW %u", mi->fw_version );
-  sprintf( ( char * )str16, "WIO_FW_010624-04" );
+  sprintf( ( char * )str16, "WIO_FW_010724_02" );
 
   //////////////////////////////////////////////////////////
   //////////////////////////////////////////////////////////

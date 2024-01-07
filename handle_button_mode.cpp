@@ -39,6 +39,7 @@ extern int current_button_mode;
 extern int gen_screencaps;
 extern void do_screencap( void );
 
+
 extern LCDBackLight backLight;
 extern uint8_t brightness;
 
@@ -54,9 +55,9 @@ int handle_button_mode( void )
   int ret = -1;
 
   if( mptr->speaker_en == 0 ) {
-    ret = get_menu_choice( 8, "MONITOR  MODE", "CONFIG  MODE", "TG  ZONE MODE", "SIGNALS / GAIN  MODE", "ENABLE SPEAKER", "GAIN CONTROLLER", "SET WIO BRIGHTNESS", "SET LAYOUT" );
+    ret = get_menu_choice( 8, "MONITOR  MODE", "CONFIG  MODE", "TG  ZONE MODE", "SIGNALS / GAIN  MODE", "ENABLE SPEAKER", "GAIN CONTROLLER", "SET WIO BRIGHTNESS", "SET DISPLAY LAYOUT" );
   } else {
-    ret = get_menu_choice( 8, "MONITOR  MODE", "CONFIG  MODE", "TG  ZONE MODE", "SIGNALS / GAIN  MODE", "DISABLE SPEAKER", "GAIN CONTROLLER", "SET WIO BRIGHTNESS", "SET LAYOUT" );
+    ret = get_menu_choice( 8, "MONITOR  MODE", "CONFIG  MODE", "TG  ZONE MODE", "SIGNALS / GAIN  MODE", "DISABLE SPEAKER", "GAIN CONTROLLER", "SET WIO BRIGHTNESS", "SET DISPLAY LAYOUT" );
   }
 
   if( ret == -1 ) return -1;
@@ -83,14 +84,21 @@ int handle_button_mode( void )
   }
 
   if( ret == 7 ) {
-    int ret3 = get_menu_choice( 8, "TG HIST (default)", "DIAGNOSTIC", "LAYOUT 3", "LAYOUT 4", "LAYOUT 5", "LAYOUT 6", "LAYOUT 7", "LAYOUT 8" );
-    //if( ret3 == -1 ) return -1;
+    int ret3 = get_menu_choice( 8, "TG HIST (default)", "DIAGNOSTIC", "SIMPLE", "(FUTURE 4)", "(FUTURE 5)", "(FUTURE 6)", "(FUTURE 7)", "(FUTURE 8)" );
+    // if( ret3 == -1 ) return -1;
 
-    char cmd[64];
-    snprintf( cmd, 63, "layout %u\r\n", ret3+1 ); //layout 1-8
-    send_cmd( cmd, strlen( cmd ) );
-    ret = 0;
-    clr_screen();
+    if( ret3 <= 2 ) { // only 3 screens built
+      char cmd[64];
+      snprintf( cmd, 63, "layout %u\r\n", ret3 + 1 ); //layout 1-8
+      send_cmd( cmd, strlen( cmd ) );
+      clr_screen();
+      ret = 0;
+      clr_screen();
+    } else if( ret3 >= 3 ) {
+      clr_screen();   // do nothing for layouts 4-8
+      ret = 0;
+      clr_screen();
+    }
   }
 
   if( ret == 4 ) {

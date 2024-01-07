@@ -1,4 +1,4 @@
-//
+
 //MIT License
 //
 //Copyright (c) 2022, 2023, 2024 tvelliott
@@ -130,9 +130,41 @@ char TGlog8[35];
 char tglog_buf[35];
 
 char ToneAlias[25];
-///////////////////////////////////////////////////////////////////////////////
-//
-//
+///////////////////////D Pin High Time/////////////////////////////////////////////////
+
+unsigned long D0_Timer; // HIGH time check
+unsigned long D1_Timer; // HIGH time check
+unsigned long D2_Timer; // HIGH time check
+unsigned long D3_Timer; // HIGH time check
+unsigned long D4_Timer; // HIGH time check
+unsigned long D5_Timer; // HIGH time check
+unsigned long D6_Timer; // HIGH time check
+unsigned long D7_Timer; // HIGH time check
+unsigned long D8_Timer; // HIGH time check
+
+unsigned long DPinHold; // High hold time
+unsigned long DPinTimeOut; // used to reset all pins low after this time out
+
+bool D0_State = false; // true D Pin is high
+bool D1_State = false; // true D Pin is high
+bool D2_State = false; // true D Pin is high
+bool D3_State = false; // true D Pin is high
+bool D4_State = false; // true D Pin is high
+bool D5_State = false; // true D Pin is high
+bool D6_State = false; // true D Pin is high
+bool D7_State = false; // true D Pin is high
+bool D8_State = false; // true D Pin is high
+
+unsigned long Last_Timer;
+
+void Screen_3( void );
+//bool screen_3_mode = true;
+bool screen_3_mode = false;
+////////////////////////////////////////////////////
+
+// antenna arrow rssi color
+uint16_t arrow_rssi;
+////////////////////////
 
 void scroll_tick( uint8_t p25_state );
 uint32_t prev_p25_state;
@@ -367,13 +399,14 @@ void clear_line7()
 //////////////////////////////////////////////////////////////////////////
 void clear_line8()
 {
-  tft.fillRect( 0, 207, 235, 35, mptr->col_def_bg );
+  // tft.fillRect( 0, 207, 235, 35, mptr->col_def_bg );
+  tft.fillRect( 0, 215, 235, 35, mptr->col_def_bg );
 }
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
 void setup()
 {
-
+  DPinSetup() ; // a_dig_pin.ino
   pinMode( WIO_BUZZER, OUTPUT ); // <<<<<play buzzer tone
 
   mptr = &minfo_verified;
@@ -481,6 +514,7 @@ void draw_button_modes()
 ///////////////////////////////////////////////////////////////////////////////////////
 void loop()
 {
+  DPinHold_check();  // a_dig_pin.ino
 
   check_buttons();
 
@@ -562,7 +596,7 @@ void loop()
       if( gen_screencaps ) do_screencap();
 
       int ret = handle_button_mode();
-      if( ret >= 0 ) {
+      if( ret > 0 ) {
         current_button_mode = ret;
       } else {
         B_but = 0;
@@ -649,7 +683,7 @@ void loop()
       if( gen_screencaps ) do_screencap();
 
       int ret = handle_button_mode();
-      if( ret >= 0 ) {
+      if( ret > 0 ) {
         current_button_mode = ret;
       } else {
         B_but = 0;
@@ -719,7 +753,7 @@ void loop()
   /////////////////////////////////////////////////////////////////////////
   else if( current_button_mode == WIO_BUTTON_MODE_MONITOR ) {
     uint32_t state_pid = mptr->p25_state_pid;
-    if( state_pid != prev_p25_state && mptr->en_traffic_scroll ) {
+    if( state_pid != prev_p25_state && mptr->en_traffic_scroll && mptr->layout == 1 ) { // scroll only on layout 1
       prev_p25_state = state_pid;
       scroll_tick( ( mptr->p25_state & 0xff ) );
     }
@@ -753,7 +787,7 @@ void loop()
       if( gen_screencaps ) do_screencap();
 
       int ret = handle_button_mode();
-      if( ret >= 0 ) {
+      if( ret > 0 ) {
         current_button_mode = ret;
       } else {
         B_but = 0;
@@ -828,7 +862,7 @@ void loop()
       if( gen_screencaps ) do_screencap();
 
       int ret = handle_button_mode();
-      if( ret >= 0 ) {
+      if( ret > 0 ) {
         current_button_mode = ret;
       } else {
         B_but = 0;
@@ -930,7 +964,21 @@ void loop()
   ///////////////////////////////////////////////////////////////////////
   // We received a new metainfo structure. Time to redraw the screen
   ///////////////////////////////////////////////////////////////////////
-  if( do_draw_rx ) {
+//  if( do_draw_rx ) {
+  if( do_draw_rx && mptr->layout >= 3 ) {
+
+///// Monitor Mode Screen Layouts
+
+    if( mptr->layout == 3 ) {
+      Screen_3();  // Simple Screen. Code in a_screen3.ino
+    }
+    // if(mptr->layout==4) // FUTURE
+    // if(mptr->layout==5) // FUTURE
+    // if(mptr->layout==6) // FUTURE
+    // if(mptr->layout==7) // FUTURE
+    // if(mptr->layout==8) // FUTURE
+
+  } else if( do_draw_rx && mptr->layout <= 2 ) { // Layout 1 TG Hist & Layout 2 Diagnostic in the main code
 
     __disable_irq();
     do_draw_rx = 0;
@@ -947,6 +995,8 @@ void loop()
     if( mptr->crc_val == mi_crc && mptr->port == 8893 ) { //8893=metainfo structure
       rx_count++;
 
+
+      draw_button_modes();
       tgzone = mptr->tgzone;
 
       if( mptr->data_type == META_DATA_TYPE_ZONEINFO ) {
@@ -1361,7 +1411,7 @@ void loop()
         }
 
         if( mptr->use_demod >= 2 ) { //use site_name for analog demod
-          strncpy( (char *) mptr->desc, (char *) mptr->site_name, 31);
+          strncpy( ( char * ) mptr->desc, ( char * ) mptr->site_name, 31 );
         }
 
         snprintf( disp_buf2, 24, "%s", mptr->desc );
@@ -1386,7 +1436,7 @@ void loop()
           sprintf( tglog_buf, " " ); // clear buf
 
 
-          if( mptr->layout==1 ) {
+          if( mptr->layout == 1 ) {
             tft.setTextColor( mptr->col5, mptr->col_def_bg ); //
             tft.fillRect( 0, 115, 240, 75,  mptr->col_def_bg ); //
             // Highlight FTOs in red in TG log by looking for ">>".
@@ -1480,7 +1530,7 @@ void loop()
       sprintf( disp_buf, "SITE %d, RFSS %d  DEMOD %s", mptr->site_id, mptr->rf_id, demod_str );
       if( strcmp( disp_buf, line5_str ) != 0 ) {
         //   clear_line5();
-        if( mptr->layout==2) {
+        if( mptr->layout == 2 ) {
           clear_line5();  // < tg log screen <<<<<<<<<
           tft.drawString( disp_buf, 5, 130, FNT );
         }
@@ -1492,7 +1542,7 @@ void loop()
       sprintf( disp_buf, "NCO1 %3.3f, NCO2 %3.2f                  ", mptr->nco_offset, mptr->loop_freq ); //remove evm
       if( strcmp( disp_buf, line6_str ) != 0 ) {
         //clear_line6(); //space at the end of this line is better solution
-        if( mptr->layout==2 ) {
+        if( mptr->layout == 2 ) {
           tft.drawString( disp_buf, 5, 160, FNT ); // < tg log screen <<<<<<<<<<<<<<<<
         }
         // tft.drawString(disp_buf, 5, 160, FNT);
@@ -1515,6 +1565,7 @@ void loop()
       sprintf( disp_buf, "NCO1 %3.3f, NCO2 %3.2f, EVM %3.1f    ", mptr->nco_offset, mptr->loop_freq, mptr->evm_p );
       if( mptr->on_control_b == 0 && mptr->RID != 0 && mptr->wio_line2[0] == 0 ) {
 
+// WCCRIDLookups(); // G99 a_wcc_ridlookup.ino
 
         sprintf( disp_buf, "%s", mptr->sys_name );
 
@@ -1544,10 +1595,11 @@ void loop()
 
           if( mptr->hw_type < HW_TYPE_EAGLE_HH ) {
             if( mptr->roaming ) {
-              sprintf( disp_buf, "MONITOR ROAM-ON-%u Free %u", mptr->roaming, freeMemory() );
+              //  sprintf( disp_buf, "MONITOR ROAM-ON-%u Free %u", mptr->roaming, freeMemory() );
+              sprintf( disp_buf, "MONITOR ROAM-ON-%u", mptr->roaming );
             } else {
-              // sprintf( disp_buf, "MONITOR ROAM-OFF" );
-              sprintf( disp_buf, "MONITOR - MEM %u         ", freeMemory() ); // <<<<<<<<<<<<
+              sprintf( disp_buf, "MONITOR ROAM-OFF" );
+              //sprintf( disp_buf, "MONITOR - MEM %u         ", freeMemory() ); // <<<<<<<<<<<<
             }
           } else {
             if( mptr->roaming ) {
@@ -1605,12 +1657,21 @@ void loop()
 
         spr.setTextColor( mptr->col_def_indicator, mptr->col_def_bg );
 
+        if( mptr->rssi_f <= -49 ); // do not update rssi color
+        if( mptr->rssi_f <= -50 && mptr->rssi_f >= -80 ) arrow_rssi = ILI9341_GREEN;
+        if( mptr->rssi_f <= -81 && mptr->rssi_f >= -95 ) arrow_rssi = ILI9341_CYAN;
+        if( mptr->rssi_f <= -96 && mptr->rssi_f >= -115 ) arrow_rssi = ILI9341_YELLOW;
+        if( mptr->rssi_f <= -116 ) arrow_rssi = ILI9341_RED;
+
+
         if( mptr->antenna == 2 ) {
           spr.drawString( "A2", 18, 4, FNT );
-          spr.fillTriangle( 45, 5, 45, 15, 70, 10, ILI9341_CYAN ); // changed to look like a "right arrow"
+          // spr.fillTriangle( 45, 5, 45, 15, 70, 10, ILI9341_CYAN ); // changed to look like a "right arrow"
+          spr.fillTriangle( 45, 5, 45, 15, 70, 10, arrow_rssi ); //37,12,10
         } else if( mptr->antenna == 1 ) {
           spr.drawString( "A1", 45, 4, FNT );
-          spr.fillTriangle( 35, 5, 35, 15, 10, 10, ILI9341_CYAN ); // changed to look like an "left arrow"
+          // spr.fillTriangle( 35, 5, 35, 15, 10, 10, ILI9341_CYAN ); // changed to look like an "left arrow"
+          spr.fillTriangle( 35, 5, 35, 15, 10, 10, arrow_rssi ); //37,12,10
         }
         spr.pushSprite( 180, 185 ); //transfer to lcd 240,180 240,80
         spr.deleteSprite(); //free memory
@@ -1842,7 +1903,7 @@ void loop()
 draw_end:
     status_timer = millis();
 
-  }
+  } /////////  end (do_draw_rx)
 
   if( status_timer > 0 && millis() - status_timer > 1000 ) {
     status_timer = 0;
