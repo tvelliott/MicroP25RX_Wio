@@ -208,6 +208,7 @@ typedef struct {
   uint32_t antenna;
   uint32_t hw_type;
   uint32_t en_traffic_scroll;
+  uint32_t layout;
 
   uint32_t crc_val;
 }

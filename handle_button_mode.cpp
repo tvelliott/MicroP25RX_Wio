@@ -56,9 +56,9 @@ int handle_button_mode( void )
   int ret = -1;
 
   if( mptr->speaker_en == 0 ) {
-    ret = get_menu_choice( 7, "MONITOR  MODE", "CONFIG  MODE", "TG  ZONE MODE", "SIGNALS / GAIN  MODE", "ENABLE SPEAKER", "GAIN CONTROLLER", "SET WIO BRIGHTNESS", NULL );
+    ret = get_menu_choice( 8, "MONITOR  MODE", "CONFIG  MODE", "TG  ZONE MODE", "SIGNALS / GAIN  MODE", "ENABLE SPEAKER", "GAIN CONTROLLER", "SET WIO BRIGHTNESS", "SET LAYOUT" );
   } else {
-    ret = get_menu_choice( 7, "MONITOR  MODE", "CONFIG  MODE", "TG  ZONE MODE", "SIGNALS / GAIN  MODE", "DISABLE SPEAKER", "GAIN CONTROLLER", "SET WIO BRIGHTNESS", NULL );
+    ret = get_menu_choice( 8, "MONITOR  MODE", "CONFIG  MODE", "TG  ZONE MODE", "SIGNALS / GAIN  MODE", "DISABLE SPEAKER", "GAIN CONTROLLER", "SET WIO BRIGHTNESS", "SET LAYOUT" );
   }
 
   if( ret == -1 ) return -1;
@@ -82,6 +82,16 @@ int handle_button_mode( void )
     }
 
     ret = current_button_mode;
+  }
+
+  if( ret == 7 ) {
+    int ret3 = get_menu_choice( 8, "LAYOUT 1 (default)", "LAYOUT 2", "LAYOUT 3", "LAYOUT 4", "LAYOUT 5", "LAYOUT 6", "LAYOUT 7", "LAYOUT 8" );
+    if( ret3 == -1 ) return -1;
+
+    char cmd[64];
+    snprintf( cmd, 63, "layout %u\r\n", ret3+1 ); //layout 1-8
+    send_cmd( cmd, strlen( cmd ) );
+    ret = 0;
   }
 
   if( ret == 4 ) {
