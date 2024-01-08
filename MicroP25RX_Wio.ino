@@ -160,8 +160,7 @@ bool D8_State = false; // true D Pin is high
 unsigned long Last_Timer;
 
 void Screen_3( void );
-//bool screen_3_mode = true;
-bool screen_3_mode = false;
+
 ////////////////////////////////////////////////////
 
 // antenna arrow rssi color
@@ -1002,7 +1001,7 @@ void loop()
       rx_count++;
 
       current_layout = mptr->layout;
-      if(prev_layout!=current_layout) {
+      if( prev_layout != current_layout ) {
         clr_screen();
         prev_layout = current_layout;
       }

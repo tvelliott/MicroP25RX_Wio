@@ -84,7 +84,7 @@ int handle_button_mode( void )
   }
 
   if( ret == 7 ) {
-    int ret3 = get_menu_choice( 8, "TG HIST (default)", "DIAGNOSTIC", "SIMPLE", "(FUTURE 4)", "(FUTURE 5)", "(FUTURE 6)", "(FUTURE 7)", "(FUTURE 8)" );
+    int ret3 = get_menu_choice( 8, "TG HISTORY (default)", "DIAGNOSTIC", "SIMPLE", "(FUTURE 4)", "(FUTURE 5)", "(FUTURE 6)", "(FUTURE 7)", "(FUTURE 8)" );
     // if( ret3 == -1 ) return -1;
 
     if( ret3 <= 2 ) { // only 3 screens built

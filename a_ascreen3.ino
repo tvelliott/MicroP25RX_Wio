@@ -406,7 +406,6 @@ void Screen_3( void )
       disp_buf[0] = {0};
       char wioZone [35]; // used for selected Zones displayed on line 7
 
-
       wioZone[0] = '\0';
       if( bitRead( mptr->tgzone, 0 ) == 1 )  {
         strcat( wioZone, "1" ); // lsb of the tgzone meta
@@ -457,9 +456,6 @@ void Screen_3( void )
         strcat( wioZone, " 16" );
       }
 
-
-
-
       if( strcmp( wioZone, line7_str ) != 0 ) {
 
         clear_line7();
@@ -475,7 +471,7 @@ void Screen_3( void )
         tft.drawString( disp_buf, 5, 190, FNT );
 
         strcpy( line7_str, wioZone );
-//        disp_buf[0]='\0';
+
         disp_buf[0] = {0};
       }
 
@@ -506,11 +502,11 @@ void Screen_3( void )
       tft.setTextColor( mptr->col7, mptr->col_def_bg );
 
 
-      #if 0
+#if 0
       if( strcmp( disp_buf, line7_str ) != 0 ) { //does nothing
       }
       strcpy( line7_str, disp_buf );
-      #endif
+#endif
 
       FNT = 2;
       memset( disp_buf, 0x00, sizeof( disp_buf ) );
@@ -521,6 +517,7 @@ void Screen_3( void )
 
         sprintf( disp_buf, "                      " );
         disp_buf[0] = {0};
+        sprintf( disp_buf, "%s", mptr->sys_name ); // prints sys name on line 8
       } else { // line8  showing mode/roam status
         if( current_button_mode == WIO_BUTTON_MODE_CONFIG ) {
           draw_button_modes(); //<<< added
@@ -759,23 +756,23 @@ void Screen_3( void )
 
 
 #if 1
-    //draw audio volume bar
-    if( do_update_vol || do_draw_rx ) {
-      do_update_vol = 0;
-      FNT = 2;
-      spr.createSprite( 220, 4 ); //allocate memory for 80 x 80 sprite
-      spr.fillSprite( TFT_BLACK );
+      //draw audio volume bar
+      if( do_update_vol || do_draw_rx ) {
+        do_update_vol = 0;
+        FNT = 2;
+        spr.createSprite( 220, 4 ); //allocate memory for 80 x 80 sprite
+        spr.fillSprite( TFT_BLACK );
 
-      int v = ( int )( mptr->audio_volume_f * 78.0f );
-      if( v > 220 ) v = 220;
+        int v = ( int )( mptr->audio_volume_f * 78.0f );
+        if( v > 220 ) v = 220;
 
-      //x,y,w,h
-      if( mptr->audio_volume_f < 2.1 ) spr.fillRect( 0, 0, v, 4, TFT_WHITE );
-      else spr.fillRect( 0, 0, v, 4, TFT_RED );
+        //x,y,w,h
+        if( mptr->audio_volume_f < 2.1 ) spr.fillRect( 0, 0, v, 4, TFT_WHITE );
+        else spr.fillRect( 0, 0, v, 4, TFT_RED );
 
-      spr.pushSprite( 0, 230 );  //send to lcd. upper left corner of sprite
-      spr.deleteSprite();  //free memory
-    }
+        spr.pushSprite( 0, 230 );  //send to lcd. upper left corner of sprite
+        spr.deleteSprite();  //free memory
+      }
 #endif
 
     }
