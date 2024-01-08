@@ -462,6 +462,8 @@ void Screen_3( void )
 
       if( strcmp( wioZone, line7_str ) != 0 ) {
 
+        clear_line7();
+
         if( strlen( wioZone ) >= 18 ) {
           FNT = 2;
           sprintf( disp_buf, "Z%s",  wioZone );
@@ -504,10 +506,11 @@ void Screen_3( void )
       tft.setTextColor( mptr->col7, mptr->col_def_bg );
 
 
+      #if 0
       if( strcmp( disp_buf, line7_str ) != 0 ) { //does nothing
-
       }
       strcpy( line7_str, disp_buf );
+      #endif
 
       FNT = 2;
       memset( disp_buf, 0x00, sizeof( disp_buf ) );
@@ -754,7 +757,6 @@ void Screen_3( void )
 #endif
       }
 
-    }
 
 #if 1
     //draw audio volume bar
@@ -775,6 +777,8 @@ void Screen_3( void )
       spr.deleteSprite();  //free memory
     }
 #endif
+
+    }
 
 draw_end2:
     status_timer = millis();
