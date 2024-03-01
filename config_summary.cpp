@@ -160,7 +160,7 @@ void draw_config_summary()
   sprintf( ( char * )str13, "AUD AGC %u", mi->do_audio_agc );
   sprintf( ( char * )str14, "LEARN MODE %u", mi->learn_mode );
   sprintf( ( char * )str15, "RX FW %u", mi->fw_version );
-  sprintf( ( char * )str16, "WIO_FW_020424_02" );
+  sprintf( ( char * )str16, "WIO_FW_021624_01" );
 
   //////////////////////////////////////////////////////////
   //////////////////////////////////////////////////////////
