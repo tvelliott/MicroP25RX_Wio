@@ -1,4 +1,5 @@
 ////
+/* turned off
 void DPinSetup()
 {
 //////////////////////////////////digital pins/////////////////
@@ -255,3 +256,5 @@ void DPinSprite()
   spr.deleteSprite(); //free memory
 
 }
+
+*/

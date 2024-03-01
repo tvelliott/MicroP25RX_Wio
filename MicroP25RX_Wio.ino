@@ -1,4 +1,6 @@
 
+// WIO_FW_022924_01
+
 //MIT License
 //
 //Copyright (c) 2022, 2023, 2024 tvelliott
@@ -133,7 +135,7 @@ char tglog_buf[35];
 
 char ToneAlias[25];
 ///////////////////////D Pin High Time/////////////////////////////////////////////////
-
+/* turned off
 unsigned long D0_Timer; // HIGH time check
 unsigned long D1_Timer; // HIGH time check
 unsigned long D2_Timer; // HIGH time check
@@ -158,9 +160,11 @@ bool D7_State = false; // true D Pin is high
 bool D8_State = false; // true D Pin is high
 
 unsigned long Last_Timer;
-
+*/
 void Screen_3( void );
-
+void Screen_4( void );
+bool Screen4_first_write;
+void Screen4_first_check( void );
 ////////////////////////////////////////////////////
 
 // antenna arrow rssi color
@@ -402,12 +406,13 @@ void clear_line8()
 {
   // tft.fillRect( 0, 207, 235, 35, mptr->col_def_bg );
   tft.fillRect( 0, 215, 235, 35, mptr->col_def_bg );
+
 }
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
 void setup()
 {
-  DPinSetup() ; // a_dig_pin.ino
+//  DPinSetup() ; // a_dig_pin.ino
   pinMode( WIO_BUZZER, OUTPUT ); // <<<<<play buzzer tone
 
   mptr = &minfo_verified;
@@ -515,7 +520,7 @@ void draw_button_modes()
 ///////////////////////////////////////////////////////////////////////////////////////
 void loop()
 {
-  DPinHold_check();  // a_dig_pin.ino
+//  DPinHold_check();  // a_dig_pin.ino
 
   check_buttons();
 
@@ -977,6 +982,12 @@ void loop()
     if( mptr->layout == 3 ) {
       Screen_3();  // Simple Screen. Code in a_screen3.ino
     }
+    if( mptr->layout == 4 ) {
+      strcpy( line5_str, "new" ); // force a line5 write at screen startup
+      Screen_4();  // Alt Diag. Code in a_screen4.ino
+    }
+
+
     // if(mptr->layout==4) // FUTURE
     // if(mptr->layout==5) // FUTURE
     // if(mptr->layout==6) // FUTURE

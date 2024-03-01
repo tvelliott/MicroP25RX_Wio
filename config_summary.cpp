@@ -152,7 +152,8 @@ void draw_config_summary()
 //  sprintf( ( char * )str6, "%u %u", mi->udp_port[3], mi->udp_port[4] ); // removed ports for ref cal displaying
   sprintf( ( char * )str6, "LCD Brightness %d", brightness ); // added brightness value here
   sprintf( ( char * )str7, "SPKR AWAKE %u", mi->do_brown_noise );
-  sprintf( ( char * )str8, "SKIP TONES %u", mi->skip_tones );
+//  sprintf( ( char * )str8, "SKIP TONES %u", mi->skip_tones );
+  sprintf( ( char * )str8, "HW TYPE %u", mptr->hw_type );  // added HW Type here
   sprintf( ( char * )str9, "TG HOLD %u ms", mi->tgtimeout );
   sprintf( ( char * )str10, "ROAM MODE %u", mi->roaming_mode );
   sprintf( ( char * )str11, "ROAM TO %u ms", m->roaming_timeout );
@@ -160,7 +161,7 @@ void draw_config_summary()
   sprintf( ( char * )str13, "AUD AGC %u", mi->do_audio_agc );
   sprintf( ( char * )str14, "LEARN MODE %u", mi->learn_mode );
   sprintf( ( char * )str15, "RX FW %u", mi->fw_version );
-  sprintf( ( char * )str16, "WIO_FW_021624_01" );
+  sprintf( ( char * )str16, "WIO_FW_022924_01" );
 
   //////////////////////////////////////////////////////////
   //////////////////////////////////////////////////////////

@@ -43,6 +43,7 @@ extern void do_screencap( void );
 extern LCDBackLight backLight;
 extern uint8_t brightness;
 
+extern bool Screen4_first_write;
 
 void clr_screen( void );
 void send_cmd( const char *str, int len );
@@ -84,17 +85,26 @@ int handle_button_mode( void )
   }
 
   if( ret == 7 ) {
-    int ret3 = get_menu_choice( 8, "TG HISTORY (default)", "DIAGNOSTIC", "SIMPLE", "(FUTURE 4)", "(FUTURE 5)", "(FUTURE 6)", "(FUTURE 7)", "(FUTURE 8)" );
+    int ret3 = get_menu_choice( 8, "TG HISTORY (default)", "DIAGNOSTIC", "SIMPLE", "ALT DIAGNOSTIC", "(FUTURE 5)", "(FUTURE 6)", "(FUTURE 7)", "(FUTURE 8)" );
     // if( ret3 == -1 ) return -1;
 
-    if( ret3 <= 2 ) { // only 3 screens built
+    if( ret3 <= 2 ) { // layouts 1, 2, 3
       char cmd[64];
       snprintf( cmd, 63, "layout %u\r\n", ret3 + 1 ); //layout 1-8
       send_cmd( cmd, strlen( cmd ) );
+      Screen4_first_write = true;
       clr_screen();
       ret = 0;
       clr_screen();
-    } else if( ret3 >= 3 ) {
+    }  else if( ret3 == 3 ) { // layout 4
+      char cmd[64];
+      snprintf( cmd, 63, "layout %u\r\n", ret3 + 1 ); //layout 1-8
+      send_cmd( cmd, strlen( cmd ) );
+      Screen4_first_write = true;
+      clr_screen();
+      ret = 0;
+      clr_screen();
+    } else if( ret3 >= 4 ) { // future layouts
       clr_screen();   // do nothing for layouts 4-8
       ret = 0;
       clr_screen();
