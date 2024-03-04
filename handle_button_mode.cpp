@@ -53,12 +53,19 @@ extern Keybord mykey; // Cleate a keybord
 
 int handle_button_mode( void )
 {
+
+  tft.setRotation( 3 );
   int ret = -1;
 
   if( mptr->speaker_en == 0 ) {
     ret = get_menu_choice( 8, "MONITOR  MODE", "CONFIG  MODE", "TG  ZONE MODE", "SIGNALS / GAIN  MODE", "ENABLE SPEAKER", "GAIN CONTROLLER", "SET WIO BRIGHTNESS", "SET DISPLAY LAYOUT" );
   } else {
     ret = get_menu_choice( 8, "MONITOR  MODE", "CONFIG  MODE", "TG  ZONE MODE", "SIGNALS / GAIN  MODE", "DISABLE SPEAKER", "GAIN CONTROLLER", "SET WIO BRIGHTNESS", "SET DISPLAY LAYOUT" );
+  }
+
+  if( ( mptr->layout == 5 ) && ( ret == 2 || ret == 3 ) ) {
+    clr_screen;
+    ret = 0 ;
   }
 
   if( ret == -1 ) return -1;
@@ -85,7 +92,7 @@ int handle_button_mode( void )
   }
 
   if( ret == 7 ) {
-    int ret3 = get_menu_choice( 8, "TG HISTORY (default)", "DIAGNOSTIC", "SIMPLE", "ALT DIAGNOSTIC", "(FUTURE 5)", "(FUTURE 6)", "(FUTURE 7)", "(FUTURE 8)" );
+    int ret3 = get_menu_choice( 8, "TG HISTORY (default)", "DIAGNOSTIC", "SIMPLE", "ALT DIAGNOSTIC", "ROTATE 90 TEST", "(FUTURE 6)", "(FUTURE 7)", "(FUTURE 8)" );
     // if( ret3 == -1 ) return -1;
 
     if( ret3 <= 2 ) { // layouts 1, 2, 3
@@ -104,7 +111,14 @@ int handle_button_mode( void )
       clr_screen();
       ret = 0;
       clr_screen();
-    } else if( ret3 >= 4 ) { // future layouts
+    } else if( ret3 == 4 ) { // future layouts
+      char cmd[64];
+      snprintf( cmd, 63, "layout %u\r\n", ret3 + 1 ); //layout 1-8
+      send_cmd( cmd, strlen( cmd ) );
+      clr_screen();
+      ret = 0;
+      clr_screen();
+    } else if( ret3 >= 5 ) { // future layouts
       clr_screen();   // do nothing for layouts 4-8
       ret = 0;
       clr_screen();

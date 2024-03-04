@@ -51,6 +51,8 @@ void menu_set_font_size( int size );
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void do_edit( metainfo *m )
 {
+
+  tft.setRotation( 3 );
   int ret2 = get_menu_choice( 8,
                               "EDIT  ALIAS",  //0
                               "EDIT  SYSTEM  NAME",//1
@@ -194,6 +196,7 @@ void do_edit( metainfo *m )
 
 void handle_main_menu( metainfo *m )
 {
+  tft.setRotation( 3 );
   int ret = get_menu_choice( 8, "ZIP  CODE  SEARCH", "ADD  P25  SYSTEM", "EDIT", "SD  CARD", "FLASH  CONFIG", "AUDIO", "ROAMING CFG", "ROAM  TIMEOUT" );
   if( ret == -1 ) return;
 

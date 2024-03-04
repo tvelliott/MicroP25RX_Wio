@@ -119,9 +119,10 @@ void tg_toggle_select()
 //////////////////////////////
 void draw_tg_zones()
 {
-#if 1
-  uint8_t FNT = 4;
 
+#if 1
+
+  uint8_t FNT = 4;
   init_sprites();
 
 #if 0 //testing

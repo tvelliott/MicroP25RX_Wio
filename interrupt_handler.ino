@@ -90,13 +90,58 @@ void clr_cmd()
 ////////////////////////////////////////////////////////////////////////
 void check_buttons()
 {
-  //button press
+
+  if( mptr->layout == 5 ) {
+    rotated_buttons();
+  } else {
+    //button press
+    if( right_but == 0xff ) {
+      right_but_pressed = 1;
+    }
+    //button press
+    if( left_but == 0xff ) {
+      left_but_pressed = 1;
+    }
+    //button press
+    if( press_but == 0xff ) {
+      press_but_pressed = 1;
+      if( power_button_press_time == 0 ) power_button_press_time = millis();
+    }
+    //button press
+    if( up_but == 0xff ) {
+      up_but_pressed = 1;
+    }
+    //button press
+    if( down_but == 0xff ) {
+      down_but_pressed = 1;
+    }
+
+    //pressed
+    if( A_but == 0xff ) {
+      A_but_pressed = 1;
+    }
+    if( B_but == 0xff ) {
+      B_but_pressed = 1;
+      if( b_button_press_time == 0 ) b_button_press_time = millis();
+    }
+    if( C_but == 0xff ) {
+      C_but_pressed = 1;
+      if( c_button_press_time == 0 ) c_button_press_time = millis();
+    }
+
+  }
+}
+
+void rotated_buttons()
+{
+
+//button press
   if( right_but == 0xff ) {
-    right_but_pressed = 1;
+    up_but_pressed = 1;
   }
   //button press
   if( left_but == 0xff ) {
-    left_but_pressed = 1;
+    down_but_pressed = 1;
   }
   //button press
   if( press_but == 0xff ) {
@@ -105,11 +150,11 @@ void check_buttons()
   }
   //button press
   if( up_but == 0xff ) {
-    up_but_pressed = 1;
+    left_but_pressed = 1;
   }
   //button press
   if( down_but == 0xff ) {
-    down_but_pressed = 1;
+    right_but_pressed = 1;
   }
 
   //pressed
@@ -124,6 +169,7 @@ void check_buttons()
     C_but_pressed = 1;
     if( c_button_press_time == 0 ) c_button_press_time = millis();
   }
+
 }
 
 //////////////////////////////////////////////////////////////////////////

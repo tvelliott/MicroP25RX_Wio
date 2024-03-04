@@ -612,6 +612,15 @@ draw_end4:
 
 void Screen4_first_check( void )
 {
+  current_layout = mptr->layout;
+  if( prev_layout != current_layout ) {
+    clr_screen();
+    prev_layout = current_layout;
+  }
+  if( tft.getRotation() == 8 ) {
+    clr_screen();
+    tft.setRotation( 3 );
+  }
 
   if( Screen4_first_write == true ) {  // force a line5 write at screen startup
     char demod_str[8];

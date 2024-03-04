@@ -1,5 +1,5 @@
 
-// WIO_FW_022924_01
+//WIO_FW_03_03_2406
 
 //MIT License
 //
@@ -165,6 +165,8 @@ void Screen_3( void );
 void Screen_4( void );
 bool Screen4_first_write;
 void Screen4_first_check( void );
+void Screen_5( void );
+void Screen5_first_check( void );
 ////////////////////////////////////////////////////
 
 // antenna arrow rssi color
@@ -651,8 +653,10 @@ void loop()
         snprintf( cmd, 31, "inc_scan %05X %03X %u %u 1\r\n", mptr->wacn_id, mptr->sys_id, mptr->site_id, mptr->rf_id );
         send_cmd( ( const char * ) cmd, strlen( cmd ) );
       } else {
-        snprintf( cmd, 31, "learn %d\r\n", ( learn ^ 0x01 ) ); //learn mode on/off
-        send_cmd( ( const char * ) cmd, strlen( cmd ) );
+        if( mptr->layout != 5 ) {   // disable learn button in layout 5
+          snprintf( cmd, 31, "learn %d\r\n", ( learn ^ 0x01 ) ); //learn mode on/off
+          send_cmd( ( const char * ) cmd, strlen( cmd ) );
+        }
       }
     }
     //middle-most button
@@ -980,22 +984,25 @@ void loop()
 ///// Monitor Mode Screen Layouts
 
     if( mptr->layout == 3 ) {
+      tft.setRotation( 3 );
       Screen_3();  // Simple Screen. Code in a_screen3.ino
     }
     if( mptr->layout == 4 ) {
       strcpy( line5_str, "new" ); // force a line5 write at screen startup
+      tft.setRotation( 3 );
       Screen_4();  // Alt Diag. Code in a_screen4.ino
+    }
+    if( mptr->layout == 5 ) {
+      Screen_5();  // Rotate 90 Code in a_screen5.ino
     }
 
 
-    // if(mptr->layout==4) // FUTURE
-    // if(mptr->layout==5) // FUTURE
     // if(mptr->layout==6) // FUTURE
     // if(mptr->layout==7) // FUTURE
     // if(mptr->layout==8) // FUTURE
 
   } else if( do_draw_rx && mptr->layout <= 2 ) { // Layout 1 TG Hist & Layout 2 Diagnostic in the main code
-
+    tft.setRotation( 3 );
     __disable_irq();
     do_draw_rx = 0;
     memcpy( ( uint8_t * ) &minfo, ( uint8_t * ) buf, sizeof( metainfo ) );
